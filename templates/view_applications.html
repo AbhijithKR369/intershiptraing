@@ -1,0 +1,16 @@
+<h2>Applications</h2>
+
+{% for app in apps %}
+    <h3>{{ app.student.username }}</h3>
+
+    <p><b>Full Name:</b> {{ app.student.profile.full_name }}</p>
+    <p><b>Email:</b> {{ app.student.profile.email }}</p>
+    <p><b>Phone:</b> {{ app.student.profile.phone }}</p>
+
+    <p><b>College:</b> {{ app.student.profile.college_name }}</p>
+    <p><b>Department:</b> {{ app.student.profile.department }}</p>
+
+    <p><b>Applied for:</b> {{ app.internship.title }}</p>
+
+    <hr>
+{% endfor %}

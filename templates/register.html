@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Account</title>
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="register-card">
+        <header>
+            <h1>Join the Platform</h1>
+            <p>Enter your details to create an account</p>
+        </header>
+
+        <form method="POST" onsubmit="return validateForm()">
+            {% csrf_token %}
+
+            <section class="form-section">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" name="username" required placeholder="johndoe">
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" placeholder="john@example.com">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="password" name="password" required placeholder="••••••••">
+                    </div>
+                    <div class="input-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
+                    </div>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <section class="form-section">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" name="full_name" placeholder="Johnathan Doe">
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" placeholder="+1 234 567 890">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Select Role</label>
+                        <select name="role" id="role" onchange="showFields()" required>
+                            <option value="">Choose your path...</option>
+                            <option value="student">Student</option>
+                            <option value="company">Company</option>
+                            <option value="trainer">Trainer</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Domain</label>
+                        <select name="domain">
+                            <option value="it">Information Technology</option>
+                            <option value="cloud">Cloud Computing</option>
+                            <option value="management">Management</option>
+                            <option value="ai">Artificial Intelligence</option>
+                            <option value="data">Data Science</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <div id="student_fields" class="dynamic-container" style="display:none;">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>College</label>
+                        <input type="text" name="college">
+                    </div>
+                    <div class="input-group">
+                        <label>Department</label>
+                        <input type="text" name="department">
+                    </div>
+                </div>
+            </div>
+
+            <div id="company_fields" class="dynamic-container" style="display:none;">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Company Name</label>
+                        <input type="text" name="company_name">
+                    </div>
+                    <div class="input-group">
+                        <label>Location</label>
+                        <input type="text" name="location">
+                    </div>
+                </div>
+            </div>
+
+            <div id="trainer_fields" class="dynamic-container" style="display:none;">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Qualification</label>
+                        <input type="text" name="qualification">
+                    </div>
+                    <div class="input-group">
+                        <label>Place</label>
+                        <input type="text" name="place">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="register-btn">Create Account</button>
+            <div class="divider"></div>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="/login/">Login here</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showFields() {
+    let role = document.getElementById("role").value;
+    const sections = ["student_fields", "company_fields", "trainer_fields"];
+    
+    sections.forEach(id => {
+        document.getElementById(id).style.display = "none";
+    });
+
+    if (role) {
+        let activeDiv = document.getElementById(role + "_fields");
+        activeDiv.style.display = "block";
+    }
+}
+
+function validateForm() {
+    let password = document.getElementById("password").value;
+    let confirmPassword = document.getElementById("confirm_password").value;
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return false;
+    }
+    return true;
+}
+</script>
+
+</body>
+</html>

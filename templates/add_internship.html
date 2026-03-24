@@ -1,0 +1,10 @@
+<h2>Add Internship</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    Title: <input type="text" name="title"><br><br>
+    Description: <textarea name="description"></textarea><br><br>
+    Location: <input type="text" name="location"><br><br>
+
+    <button type="submit">Add</button>
+</form>

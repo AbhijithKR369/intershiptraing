@@ -1,0 +1,14 @@
+<h2>Available Internships</h2>
+
+{% for i in internships %}
+    <h3>{{ i.title }}</h3>
+    <p>{{ i.description }}</p>
+    <p>Location: {{ i.location }}</p>
+
+    <!-- ✅ Company Details -->
+    <p><b>Company:</b> {{ i.company.profile.company_name }}</p>
+    <p><b>Email:</b> {{ i.company.profile.email }}</p>
+
+    <a href="{% url 'apply_internship' i.id %}">Apply</a>
+    <hr>
+{% endfor %}
