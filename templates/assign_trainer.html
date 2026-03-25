@@ -1,0 +1,17 @@
+<h2>Assign Trainer to {{ course.title }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <select name="trainer_id" required>
+        <option value="">Select Trainer</option>
+
+        {% for app in approved_apps %}
+            <option value="{{ app.trainer.id }}">
+                {{ app.trainer.username }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Assign</button>
+</form>

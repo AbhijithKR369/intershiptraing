@@ -1,0 +1,26 @@
+<h2>Trainer Applications</h2>
+
+{% for app in apps %}
+
+    <h3>{{ app.trainer.username }}</h3>
+
+    <p><b>Email:</b> {{ app.trainer.profile.email }}</p>
+    <p><b>Qualification:</b> {{ app.trainer.profile.qualification }}</p>
+    <p><b>Place:</b> {{ app.trainer.profile.place }}</p>
+
+    <!-- Resume -->
+    <p>
+        <b>Resume:</b>
+        <a href="{{ app.resume.url }}" target="_blank">View Resume</a>
+    </p>
+
+    <p><b>Status:</b> {{ app.status }}</p>
+
+    {% if app.status == 'pending' %}
+        <a href="{% url 'approve_trainer' app.id %}">Approve</a>
+        <a href="{% url 'reject_trainer' app.id %}">Reject</a>
+    {% endif %}
+
+    <hr>
+
+{% endfor %}

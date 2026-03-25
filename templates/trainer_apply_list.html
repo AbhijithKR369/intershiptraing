@@ -1,0 +1,32 @@
+<h2>Apply to Companies</h2>
+
+{% for c in companies %}
+
+    <h3>{{ c.profile.company_name }}</h3>
+
+    <p><b>Email:</b> {{ c.profile.email }}</p>
+    <p><b>Location:</b> {{ c.profile.location }}</p>
+    <p><b>Domain:</b> {{ c.profile.domain }}</p>
+
+    <!-- Courses Offered -->
+    <p><b>Courses Offered:</b></p>
+    {% for course in c.company_courses.all %}
+        <p>- {{ course.title }}</p>
+    {% empty %}
+        <p>No courses available</p>
+    {% endfor %}
+
+    <!-- Apply Section -->
+    {% if c.id in applied_ids %}
+        <p style="color: green;"><b>Applied</b></p>
+    {% else %}
+        <form method="POST" action="{% url 'apply_company' c.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            Upload Resume: <input type="file" name="resume" required><br><br>
+            <button type="submit">Apply</button>
+        </form>
+    {% endif %}
+
+    <hr>
+
+{% endfor %}

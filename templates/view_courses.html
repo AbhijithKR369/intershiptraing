@@ -1,0 +1,9 @@
+<h2>Available Courses</h2>
+
+{% for c in courses %}
+    <h3>{{ c.title }}</h3>
+    <p>{{ c.description }}</p>
+
+    <a href="/courses/enroll/{{ c.id }}/">Enroll</a>
+    <hr>
+{% endfor %}
