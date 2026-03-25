@@ -1,3 +1,21 @@
 <h2>Trainer Dashboard</h2>
+
 <a href="/courses/trainer/apply/">Apply to Companies</a><br><br>
+
+<h3>Assigned Courses</h3>
+
+{% for course in request.user.trainer_courses.all %}
+    <div style="margin-bottom: 10px;">
+        <strong>{{ course.title }}</strong><br>
+
+        <span>Company: {{ course.company.profile.company_name }}</span><br>
+
+        <!-- ✅ ADD MATERIAL ACCESS -->
+        <a href="/courses/materials/{{ course.id }}/">Add Material</a>
+    </div>
+{% empty %}
+    <p>No assigned courses</p>
+{% endfor %}
+
+<br>
 <a href="/logout/">Logout</a>

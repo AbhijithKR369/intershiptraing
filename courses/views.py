@@ -6,6 +6,7 @@ from .models import Material
 from .models import Enrollment
 from django.contrib.auth.models import User
 from .models import TrainerApplication
+from django.contrib import messages
 
 
 @login_required
@@ -29,21 +30,67 @@ def add_course(request):
 @login_required
 def add_material(request, course_id):
 
-    course = Course.objects.get(id=course_id)
+    try:
+        course = Course.objects.get(id=course_id)
+    except Course.DoesNotExist:
+        return HttpResponse("Course not found")
 
-    # ✅ Permission restriction (VERY IMPORTANT)
-    if request.user != course.company and request.user != course.trainer:
-        return HttpResponse("Not allowed")
+    user = request.user
+    role = user.profile.role
+
+    # 🚫 STRICT ACCESS CONTROL
+    if role == 'company':
+        if course.company != user:
+            return HttpResponse("Not allowed")
+
+    elif role == 'trainer':
+        # Trainer must be assigned to THIS course
+        if course.trainer != user:
+            return HttpResponse("You are not assigned to this course")
+
+    else:
+        return HttpResponse("Only company or assigned trainer allowed")
 
     if request.method == 'POST':
+
+        title = request.POST.get('title')
+        file = request.FILES.get('file')
+        link = request.POST.get('link')
+
+        # ❌ Must provide at least one
+        if not file and not link:
+            messages.error(request, "Provide file or link")
+            return redirect(request.path)
+
+        # 📁 File validation
+        if file:
+            allowed_extensions = ['pdf', 'jpg', 'jpeg', 'png']
+            ext = file.name.split('.')[-1].lower()
+
+            if ext not in allowed_extensions:
+                messages.error(request, "Only PDF or images allowed")
+                return redirect(request.path)
+
+            # 📏 Size limit (5MB)
+            if file.size > 5 * 1024 * 1024:
+                messages.error(request, "File too large (max 5MB)")
+                return redirect(request.path)
+
         Material.objects.create(
             course=course,
-            title=request.POST['title'],
-            file=request.FILES.get('file'),
-            link=request.POST.get('link'),
-            uploaded_by=request.user   # ✅ IMPORTANT (you missed this)
+            title=title,
+            file=file,
+            link=link,
+            uploaded_by=user
         )
-        return redirect('trainer_dashboard')
+
+        messages.success(request, "Material uploaded successfully")
+
+        # redirect based on role
+        if role == 'company':
+            return redirect('company_dashboard')
+        else:
+            return redirect('trainer_dashboard')
 
     return render(request, 'add_material.html', {'course': course})
 

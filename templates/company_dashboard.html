@@ -10,9 +10,11 @@
             <span style="color: red;">No trainer assigned</span><br>
         {% endif %}
 
-        <a href="{% url 'assign_trainer' course.id %}">
-            Assign Trainer
-        </a>
+        <!-- Assign Trainer -->
+        <a href="{% url 'assign_trainer' course.id %}">Assign Trainer</a><br>
+
+        <!-- ✅ ADD THIS -->
+        <a href="/courses/materials/{{ course.id }}/">Add Material</a>
     </div>
 {% empty %}
     <p>No courses</p>
