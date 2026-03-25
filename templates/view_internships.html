@@ -5,10 +5,19 @@
     <p>{{ i.description }}</p>
     <p>Location: {{ i.location }}</p>
 
-    <!-- ✅ Company Details -->
+    <!-- Company Details -->
     <p><b>Company:</b> {{ i.company.profile.company_name }}</p>
     <p><b>Email:</b> {{ i.company.profile.email }}</p>
 
-    <a href="{% url 'apply_internship' i.id %}">Apply</a>
+    {% if i.id in applied_ids %}
+        <p style="color: green;"><b>Applied</b></p>
+    {% else %}
+        <form method="POST" action="{% url 'apply_internship' i.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            Upload Resume: <input type="file" name="resume" required><br><br>
+            <button type="submit">Apply</button>
+        </form>
+    {% endif %}
+
     <hr>
 {% endfor %}

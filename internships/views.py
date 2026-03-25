@@ -32,23 +32,36 @@ def apply_internship(request, id):
     ).exists():
         return HttpResponse("Already applied")
 
-    Application.objects.create(
-        student=request.user,
-        internship=internship
-    )
+    if request.method == 'POST':
+        resume = request.FILES.get('resume')
 
-    return redirect('student_dashboard')
+        Application.objects.create(
+            student=request.user,
+            internship=internship,
+            resume=resume
+        )
+
+        return redirect('student_dashboard')
+
+    return HttpResponse("Invalid request")
 
 # student view internships
 
 
 def view_internships(request):
     internships = Internship.objects.all()
-    return render(
-        request,
-        'view_internships.html',
-        {'internships': internships}
-    )
+
+    applied_ids = []
+
+    if request.user.is_authenticated:
+        applied_ids = Application.objects.filter(
+            student=request.user
+        ).values_list('internship_id', flat=True)
+
+    return render(request, 'view_internships.html', {
+        'internships': internships,
+        'applied_ids': applied_ids
+    })
 
 
 # student apply internships
@@ -57,3 +70,29 @@ def view_internships(request):
 def view_applications(request):
     apps = Application.objects.filter(internship__company=request.user)
     return render(request, 'view_applications.html', {'apps': apps})
+
+
+@login_required
+def approve_application(request, id):
+    app = Application.objects.get(id=id)
+
+    if app.internship.company != request.user:
+        return HttpResponse("Unauthorized")
+
+    app.status = 'approved'
+    app.save()
+
+    return redirect('view_applications')
+
+
+@login_required
+def reject_application(request, id):
+    app = Application.objects.get(id=id)
+
+    if app.internship.company != request.user:
+        return HttpResponse("Unauthorized")
+
+    app.status = 'rejected'
+    app.save()
+
+    return redirect('view_applications')

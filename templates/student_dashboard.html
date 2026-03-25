@@ -1,2 +1,25 @@
 <h2>Student Dashboard</h2>
+
+<a href="/internships/list/">View Internships</a><br><br>
+
+<h3>My Applications</h3>
+
+{% for app in request.user.application_set.all %}
+    <p>
+        {{ app.internship.title }} - 
+        <b>
+            {% if app.status == 'pending' %}
+                Pending
+            {% elif app.status == 'approved' %}
+                Approved
+            {% elif app.status == 'rejected' %}
+                Rejected
+            {% endif %}
+        </b>
+    </p>
+{% empty %}
+    <p>No applications yet</p>
+{% endfor %}
+
+<br>
 <a href="/logout/">Logout</a>

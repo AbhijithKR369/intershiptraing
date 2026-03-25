@@ -12,5 +12,19 @@
 
     <p><b>Applied for:</b> {{ app.internship.title }}</p>
 
+    <!-- Resume -->
+    <p><b>Resume:</b> 
+        <a href="{{ app.resume.url }}" target="_blank">View Resume</a>
+    </p>
+
+    <!--  Status -->
+    <p><b>Status:</b> {{ app.status }}</p>
+
+    <!-- Approve / Reject -->
+    {% if app.status == 'pending' %}
+        <a href="{% url 'approve_application' app.id %}">Approve</a>
+        <a href="{% url 'reject_application' app.id %}">Reject</a>
+    {% endif %}
+
     <hr>
 {% endfor %}

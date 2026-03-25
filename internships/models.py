@@ -28,5 +28,7 @@ class Application(models.Model):
         default='pending'
     )
 
+    resume = models.FileField(upload_to='resumes/', null=True, blank=True)
+
     def __str__(self):
         return f"{self.student.username} - {self.internship.title}"
