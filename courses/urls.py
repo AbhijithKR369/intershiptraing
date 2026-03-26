@@ -40,4 +40,6 @@ urlpatterns = [
         views.assign_trainer,
         name='assign_trainer'
     ),
+    path('student-courses/', views.student_courses, name='student_courses'),
+
 ]

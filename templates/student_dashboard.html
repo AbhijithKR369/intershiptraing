@@ -1,6 +1,7 @@
 <h2>Student Dashboard</h2>
 
-<a href="/internships/list/">View Internships</a><br><br>
+<!-- Internship Section -->
+<a href="{% url 'view_internships' %}">View Internships</a><br><br>
 
 <h3>My Applications</h3>
 
@@ -21,5 +22,16 @@
     <p>No applications yet</p>
 {% endfor %}
 
-<br>
-<a href="/logout/">Logout</a>
+<hr>
+
+<!-- ✅ NEW: Course Section -->
+<h3>My Courses</h3>
+
+<a href="{% url 'student_courses' %}">
+    View My Courses & Materials
+</a>
+
+<hr>
+
+<a href="{% url 'logout' %}">Logout</a><br>
+<a href="{% url 'view_courses' %}">View Courses</a><br>

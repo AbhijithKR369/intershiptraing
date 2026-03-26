@@ -1,21 +1,56 @@
-<h3>Your Courses</h3>
+<h2>Company Dashboard</h2>
+
+<hr>
+
+<!-- 🔹 Internship Section -->
+<h3>Internships</h3>
+
+<a href="{% url 'add_internship' %}">Add Internship</a><br>
+<a href="{% url 'view_applications' %}">View Student Applications</a><br>
+
+<hr>
+
+<!-- 🔹 Trainer Section -->
+<h3>Trainer Management</h3>
+
+<a href="{% url 'view_trainer_requests' %}">View Trainer Requests</a><br>
+
+<hr>
+
+<!-- 🔹 Course Section -->
+<h3>Courses</h3>
+
+<a href="{% url 'add_course' %}">Add Course</a><br>
+
+<h4>Your Courses</h4>
 
 {% for course in request.user.company_courses.all %}
-    <div style="margin-bottom: 10px;">
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+
         <strong>{{ course.title }}</strong><br>
 
         {% if course.trainer %}
             <span>Trainer: {{ course.trainer.username }}</span><br>
         {% else %}
-            <span style="color: red;">No trainer assigned</span><br>
+            <span style="color: orange;">Handled by Company</span><br>
         {% endif %}
 
-        <!-- Assign Trainer -->
-        <a href="{% url 'assign_trainer' course.id %}">Assign Trainer</a><br>
+        <!-- Students Count -->
+        <p>
+            <b>Students:</b> 
+            {{ course.enrollment_set.count }} / {{ course.max_students }}
+        </p>
 
-        <!-- ✅ ADD THIS -->
-        <a href="/courses/materials/{{ course.id }}/">Add Material</a>
+        <!-- Actions -->
+        <a href="{% url 'assign_trainer' course.id %}">Assign Trainer</a><br>
+        <a href="{% url 'add_material' course.id %}">Add Material</a>
+
     </div>
 {% empty %}
-    <p>No courses</p>
+    <p>No courses created</p>
 {% endfor %}
+
+<hr>
+
+<!-- 🔹 Logout -->
+<a href="{% url 'logout' %}">Logout</a>

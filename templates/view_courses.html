@@ -1,9 +1,39 @@
 <h2>Available Courses</h2>
 
 {% for c in courses %}
-    <h3>{{ c.title }}</h3>
-    <p>{{ c.description }}</p>
 
-    <a href="/courses/enroll/{{ c.id }}/">Enroll</a>
+    <div style="margin-bottom: 20px;">
+
+        <h3>{{ c.title }}</h3>
+        <p>{{ c.description }}</p>
+
+        <p><b>Company:</b> {{ c.company.profile.company_name }}</p>
+
+        {% if c.trainer %}
+            <p><b>Trainer:</b> {{ c.trainer.username }}</p>
+        {% else %}
+            <p style="color:red;">Trainer not assigned (Company will handle)</p>
+        {% endif %}
+
+        <!-- ✅ Capacity Display -->
+        <p>
+            <b>Students:</b> 
+            {{ c.enrollment_set.count }} / {{ c.max_students }}
+        </p>
+
+        <!-- ✅ Enrollment Logic -->
+        {% if c.id in enrolled_ids %}
+            <p style="color: green;"><b>Enrolled</b></p>
+
+        {% elif c.enrollment_set.count >= c.max_students %}
+            <p style="color: red;"><b>Course Full</b></p>
+
+        {% else %}
+            <a href="{% url 'enroll_course' c.id %}">Enroll</a>
+        {% endif %}
+
+    </div>
+
     <hr>
+
 {% endfor %}

@@ -1,17 +1,53 @@
 <h2>Assign Trainer to {{ course.title }}</h2>
 
-<form method="post">
+<form method="POST">
     {% csrf_token %}
 
-    <select name="trainer_id" required>
+    <select name="trainer" id="trainerSelect" onchange="showDetails()">
         <option value="">Select Trainer</option>
 
         {% for app in approved_apps %}
-            <option value="{{ app.trainer.id }}">
+            <option 
+                value="{{ app.trainer.id }}"
+                data-email="{{ app.trainer.profile.email }}"
+                data-qualification="{{ app.trainer.profile.qualification }}"
+                data-place="{{ app.trainer.profile.place }}"
+            >
                 {{ app.trainer.username }}
             </option>
+        {% empty %}
+            <option disabled>No available trainers</option>
         {% endfor %}
     </select>
 
-    <button type="submit">Assign</button>
+    <br><br>
+
+    <!-- ✅ Trainer Details Box -->
+    <div id="trainerDetails" style="border:1px solid #ccc; padding:10px; display:none;">
+        <h4>Trainer Details</h4>
+        <p><b>Email:</b> <span id="email"></span></p>
+        <p><b>Qualification:</b> <span id="qualification"></span></p>
+        <p><b>Place:</b> <span id="place"></span></p>
+    </div>
+
+    <br>
+    <button type="submit">Assign Trainer</button>
 </form>
+
+<script>
+function showDetails() {
+    var select = document.getElementById("trainerSelect");
+    var selected = select.options[select.selectedIndex];
+
+    if (selected.value === "") {
+        document.getElementById("trainerDetails").style.display = "none";
+        return;
+    }
+
+    document.getElementById("trainerDetails").style.display = "block";
+
+    document.getElementById("email").innerText = selected.getAttribute("data-email");
+    document.getElementById("qualification").innerText = selected.getAttribute("data-qualification");
+    document.getElementById("place").innerText = selected.getAttribute("data-place");
+}
+</script>

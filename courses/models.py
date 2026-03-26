@@ -19,6 +19,7 @@ class Course(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField()
+    max_students = models.IntegerField(default=30)
 
     def __str__(self):
         return self.title
@@ -48,9 +49,12 @@ class Enrollment(models.Model):
     student = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='enrollments'   # ✅ added
+        related_name='enrollments'
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ['student', 'course']   # ✅ ADD THIS
 
     def __str__(self):
         return f"{self.student.username} - {self.course.title}"
