@@ -40,6 +40,17 @@ urlpatterns = [
         views.assign_trainer,
         name='assign_trainer'
     ),
+    path(
+        'add-question/<int:course_id>/',
+        views.add_question,
+        name='add_question'
+    ),
+    path(
+        'submit-quiz/<int:course_id>/',
+        views.submit_quiz,
+        name='submit_quiz'
+    ),
+    path('quiz/<int:course_id>/', views.take_quiz, name='take_quiz'),
     path('student-courses/', views.student_courses, name='student_courses'),
 
 ]

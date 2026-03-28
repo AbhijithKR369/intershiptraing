@@ -1,0 +1,7 @@
+<h2>Your Score: {{ score }} / {{ total }}</h2>
+
+{% if score >= total|divisibleby:2 %}
+    <p>✅ Passed</p>
+{% else %}
+    <p>❌ Failed</p>
+{% endif %}

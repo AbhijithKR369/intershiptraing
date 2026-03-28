@@ -1,37 +1,53 @@
 <h2>Student Dashboard</h2>
 
-<!-- Internship Section -->
+<!-- 🔹 Internship -->
 <a href="{% url 'view_internships' %}">View Internships</a><br><br>
 
 <h3>My Applications</h3>
 
 {% for app in request.user.application_set.all %}
-    <p>
-        {{ app.internship.title }} - 
-        <b>
-            {% if app.status == 'pending' %}
-                Pending
-            {% elif app.status == 'approved' %}
-                Approved
-            {% elif app.status == 'rejected' %}
-                Rejected
-            {% endif %}
-        </b>
-    </p>
+<p>
+    {{ app.internship.title }} - 
+    <b>{{ app.status|title }}</b>
+</p>
 {% empty %}
-    <p>No applications yet</p>
+<p>No applications yet</p>
 {% endfor %}
 
 <hr>
 
-<!-- ✅ NEW: Course Section -->
+<!-- 🔹 Courses -->
 <h3>My Courses</h3>
 
-<a href="{% url 'student_courses' %}">
-    View My Courses & Materials
-</a>
+<a href="{% url 'view_courses' %}">View Courses</a><br>
+<a href="{% url 'student_courses' %}">My Enrolled Courses</a>
 
 <hr>
 
-<a href="{% url 'logout' %}">Logout</a><br>
-<a href="{% url 'view_courses' %}">View Courses</a><br>
+<!-- 🔹 Quiz Section -->
+<h3>Quiz</h3>
+
+{% for item in course_quiz_status %}
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        
+        <strong>{{ item.course.title }}</strong><br>
+
+        {% if item.batch %}
+
+            {% if item.attempted %}
+                <span style="color: green;">✅ Attempted</span>
+            {% else %}
+                <a href="{% url 'take_quiz' item.course.id %}">
+                    Take Quiz
+                </a>
+            {% endif %}
+
+        {% else %}
+            <span style="color: gray;">No quiz available</span>
+        {% endif %}
+
+    </div>
+{% empty %}
+    <p>No enrolled courses</p>
+{% endfor %}
+<br><a href="{% url 'logout' %}">Logout</a>

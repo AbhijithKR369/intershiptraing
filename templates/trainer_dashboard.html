@@ -1,21 +1,25 @@
 <h2>Trainer Dashboard</h2>
 
-<a href="/courses/trainer/apply/">Apply to Companies</a><br><br>
+<a href="{% url 'trainer_apply_list' %}">Apply to Companies</a>s<br><br>
 
 <h3>Assigned Courses</h3>
 
 {% for course in request.user.trainer_courses.all %}
-    <div style="margin-bottom: 10px;">
-        <strong>{{ course.title }}</strong><br>
+<div style="margin-bottom: 10px; border:1px solid #ccc; padding:10px;">
 
-        <span>Company: {{ course.company.profile.company_name }}</span><br>
+    <strong>{{ course.title }}</strong><br>
+    Company: {{ course.company.profile.company_name }}<br><br>
 
-        <!-- ✅ ADD MATERIAL ACCESS -->
-        <a href="/courses/materials/{{ course.id }}/">Add Material</a>
-    </div>
+    <!-- Material -->
+    <a href="{% url 'add_material' course.id %}">Add Material</a><br>
+
+    <!-- ✅ NEW: Quiz -->
+    <a href="{% url 'add_question' course.id %}">Add Quiz Questions</a>
+
+</div>
 {% empty %}
-    <p>No assigned courses</p>
+<p>No assigned courses</p>
 {% endfor %}
 
 <br>
-<a href="/logout/">Logout</a>
+<a href="{% url 'logout' %}">Logout</a>

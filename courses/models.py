@@ -90,3 +90,50 @@ class TrainerApplication(models.Model):
 
     def __str__(self):
         return f"{self.trainer.username} → {self.company.username}"
+
+
+class QuizBatch(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,
+                               related_name='batches')
+    title = models.CharField(max_length=100)  # e.g. "Quiz 1", "Week 1 Test"
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.course.title} - {self.title}"
+
+
+class QuizResult(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    batch = models.ForeignKey(QuizBatch, on_delete=models.CASCADE)
+    score = models.IntegerField()
+    total = models.IntegerField()
+
+
+class Question(models.Model):
+    batch = models.ForeignKey(
+        QuizBatch,
+        on_delete=models.CASCADE,
+        related_name='questions'
+    )
+
+    question_text = models.CharField(max_length=255)
+
+    option1 = models.CharField(max_length=100)
+    option2 = models.CharField(max_length=100)
+    option3 = models.CharField(max_length=100)
+    option4 = models.CharField(max_length=100)
+
+    correct_option = models.IntegerField()
+
+    def __str__(self):
+        return self.question_text
+
+
+class StudentAnswer(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    selected_option = models.IntegerField()
+
+    class Meta:
+        unique_together = ('student', 'question')

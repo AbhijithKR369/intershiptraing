@@ -1,0 +1,16 @@
+<form method="POST" action="{% url 'submit_quiz' course.id %}">
+    {% csrf_token %}
+
+    {% for q in questions %}
+        <p>{{ q.question_text }}</p>
+
+        <input type="radio" name="{{ q.id }}" value="1"> {{ q.option1 }}<br>
+        <input type="radio" name="{{ q.id }}" value="2"> {{ q.option2 }}<br>
+        <input type="radio" name="{{ q.id }}" value="3"> {{ q.option3 }}<br>
+        <input type="radio" name="{{ q.id }}" value="4"> {{ q.option4 }}<br>
+
+        <hr>
+    {% endfor %}
+
+    <button type="submit">Submit Quiz</button>
+</form>

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
+from courses.models import Enrollment, QuizResult
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 
@@ -94,9 +95,37 @@ def is_trainer(user):
 
 
 @login_required
-@user_passes_test(is_student)
 def student_dashboard(request):
-    return render(request, 'student_dashboard.html')
+
+    enrollments = Enrollment.objects.filter(student=request.user)
+
+    results = QuizResult.objects.filter(student=request.user)
+
+    # ✅ Map latest batch + attempt status
+    course_quiz_status = []
+
+    for enroll in enrollments:
+        course = enroll.course
+        batch = course.batches.order_by('-id').first()
+
+        attempted = False
+        if batch:
+            attempted = QuizResult.objects.filter(
+                student=request.user,
+                batch=batch
+            ).exists()
+
+        course_quiz_status.append({
+            'course': course,
+            'batch': batch,
+            'attempted': attempted
+        })
+
+    return render(request, 'student_dashboard.html', {
+        'enrollments': enrollments,
+        'results': results,
+        'course_quiz_status': course_quiz_status
+    })
 
 
 @login_required

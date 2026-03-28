@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Course
+from .models import Course, QuizBatch
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .models import Material
@@ -7,6 +7,8 @@ from .models import Enrollment
 from django.contrib.auth.models import User
 from .models import TrainerApplication
 from django.contrib import messages
+from .models import Question, StudentAnswer
+from .models import QuizResult
 
 
 @login_required
@@ -155,7 +157,7 @@ def enroll_course(request, id):
 
     if total_students >= course.max_students:
         return HttpResponse("Course is full")
-    
+
     Enrollment.objects.create(
         student=request.user,
         course=course
@@ -300,4 +302,156 @@ def assign_trainer(request, course_id):
     return render(request, 'assign_trainer.html', {
         'course': course,
         'approved_apps': available_apps
+    })
+
+
+@login_required
+def add_question(request, course_id):
+
+    course = Course.objects.get(id=course_id)
+
+    if request.user != course.company and request.user != course.trainer:
+        return HttpResponse("Not allowed")
+
+    message = ""
+
+    # ✅ Get latest batch (not using is_active anymore)
+    batch = QuizBatch.objects.filter(course=course).last()
+
+    if request.method == "POST":
+
+        # ✅ Create NEW batch if button clicked
+        if 'new_batch' in request.POST:
+            batch = QuizBatch.objects.create(
+                course=course,
+                title=f"Quiz {course.batches.count() + 1}"
+            )
+
+        # ✅ If no batch exists, create first one
+        if not batch:
+            batch = QuizBatch.objects.create(
+                course=course,
+                title="Quiz 1"
+            )
+
+        # ✅ Add question to selected batch
+        Question.objects.create(
+            batch=batch,
+            question_text=request.POST['question'],
+            option1=request.POST['opt1'],
+            option2=request.POST['opt2'],
+            option3=request.POST['opt3'],
+            option4=request.POST['opt4'],
+            correct_option=request.POST['correct']
+        )
+
+        message = f"Question added to {batch.title}"
+
+    questions = batch.questions.all() if batch else []
+
+    return render(request, 'add_question.html', {
+        'course': course,
+        'message': message,
+        'count': len(questions),
+        'batch': batch
+    })
+
+
+@login_required
+def take_quiz(request, course_id):
+
+    if request.user.profile.role != 'student':
+        return HttpResponse("Only students allowed")
+
+    course = Course.objects.get(id=course_id)
+
+    # Ensure enrolled
+    if not Enrollment.objects.filter(
+        student=request.user,
+        course=course
+    ).exists():
+        return HttpResponse("Enroll first")
+
+    # ✅ Get latest batch (FIXED)
+    batch = QuizBatch.objects.filter(course=course).order_by('-id').first()
+
+    if not batch:
+        return HttpResponse("Quiz not available")
+
+    questions = batch.questions.all()
+
+    if not questions.exists():
+        return HttpResponse("No questions added yet")
+
+    return render(request, 'quiz.html', {
+        'course': course,
+        'questions': questions,
+        'batch': batch
+    })
+
+
+@login_required
+def submit_quiz(request, course_id):
+
+    if request.user.profile.role != 'student':
+        return HttpResponse("Only students allowed")
+
+    course = Course.objects.get(id=course_id)
+
+    # Ensure enrolled
+    if not Enrollment.objects.filter(
+        student=request.user,
+        course=course
+    ).exists():
+        return HttpResponse("Enroll first")
+
+    # ✅ FIXED: get latest batch
+    batch = QuizBatch.objects.filter(course=course).order_by('-id').first()
+
+    if not batch:
+        return HttpResponse("Quiz not available")
+
+    questions = batch.questions.all()
+
+    # ✅ Prevent re-submission PER BATCH (correct)
+    if QuizResult.objects.filter(
+        student=request.user,
+        batch=batch
+    ).exists():
+        return HttpResponse("Already submitted this quiz")
+
+    score = 0
+
+    for q in questions:
+        selected = request.POST.get(str(q.id))
+
+        if not selected:
+            continue
+
+        selected = int(selected)
+
+        StudentAnswer.objects.update_or_create(
+            student=request.user,
+            question=q,
+            defaults={'selected_option': selected}
+        )
+
+        if selected == q.correct_option:
+            score += 1
+
+    total = questions.count()
+
+    # ✅ Save result per batch
+    QuizResult.objects.update_or_create(
+        student=request.user,
+        batch=batch,
+        defaults={
+            'score': score,
+            'total': total
+        }
+    )
+
+    return render(request, 'result.html', {
+        'score': score,
+        'total': total
     })
