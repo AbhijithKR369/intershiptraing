@@ -20,6 +20,16 @@
 {% empty %}
 <p>No assigned courses</p>
 {% endfor %}
+<h3>Student Quiz Results</h3>
 
+{% for r in results %}
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <strong>{{ r.student.username }}</strong><br>
+        {{ r.batch.course.title }} - {{ r.batch.title }}<br>
+        Score: {{ r.score }}/{{ r.total }}
+    </div>
+{% empty %}
+    <p>No results yet</p>
+{% endfor %}
 <br>
 <a href="{% url 'logout' %}">Logout</a>

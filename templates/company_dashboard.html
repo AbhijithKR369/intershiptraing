@@ -42,11 +42,47 @@
 
     <!-- ✅ NEW: Quiz Management -->
     <a href="{% url 'add_question' course.id %}">Add Quiz Questions</a>
-
+    <a href="{% url 'view_results' course.id %}">View Quiz Results</a>
 </div>
 {% empty %}
 <p>No courses created</p>
 {% endfor %}
+<h3>Enrollment Requests</h3>
 
+{% for e in enroll_requests %}
+    <div style="border:1px solid #ccc; padding:15px; margin-bottom:15px;">
+
+        <!-- 👤 BASIC INFO -->
+        <h4>{{ e.student.profile.full_name|default:e.student.username }}</h4>
+        <p><b>Username:</b> {{ e.student.username }}</p>
+        <p><b>Email:</b> {{ e.student.profile.email }}</p>
+        <p><b>Phone:</b> {{ e.student.profile.phone }}</p>
+
+        <!-- 🎓 EDUCATION -->
+        <p><b>College:</b> {{ e.student.profile.college_name }}</p>
+        <p><b>Department:</b> {{ e.student.profile.department }}</p>
+
+        <!-- 📍 EXTRA -->
+        <p><b>Domain:</b> {{ e.student.profile.domain }}</p>
+
+        <!-- 📚 COURSE -->
+        <p><b>Course:</b> {{ e.course.title }}</p>
+
+        <!-- 📄 RESUME -->
+        {% if e.resume %}
+            <p><a href="{{ e.resume.url }}" target="_blank">📄 View Resume</a></p>
+        {% else %}
+            <p style="color:red;">No resume uploaded</p>
+        {% endif %}
+
+        <!-- ✅ ACTIONS -->
+        <a href="{% url 'approve_enrollment' e.id %}">Approve</a> |
+        <a href="{% url 'reject_enrollment' e.id %}">Reject</a>
+
+    </div>
+
+{% empty %}
+    <p>No enrollment requests</p>
+{% endfor %}
 <hr>
 <a href="{% url 'logout' %}">Logout</a>

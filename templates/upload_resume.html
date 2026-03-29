@@ -1,0 +1,9 @@
+<h3>Upload Resume for {{ course.title }}</h3>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <input type="file" name="resume" required><br><br>
+
+    <button type="submit">Submit</button>
+</form>

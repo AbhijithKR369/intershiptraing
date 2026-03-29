@@ -46,18 +46,21 @@ class Material(models.Model):
 
 
 class Enrollment(models.Model):
-    student = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='enrollments'
-    )
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ['student', 'course']   # ✅ ADD THIS
+    resume = models.FileField(upload_to='resumes/', null=True, blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Pending'),
+            ('approved', 'Approved'),
+            ('rejected', 'Rejected')
+        ],
+        default='pending'
+    )
 
     def __str__(self):
-        return f"{self.student.username} - {self.course.title}"
+        return f"{self.student.username} - {self.course.title} ({self.status})"
 
 
 class TrainerApplication(models.Model):

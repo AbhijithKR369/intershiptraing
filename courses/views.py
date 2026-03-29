@@ -9,6 +9,7 @@ from .models import TrainerApplication
 from django.contrib import messages
 from .models import Question, StudentAnswer
 from .models import QuizResult
+from internships.models import Application
 
 
 @login_required
@@ -149,21 +150,41 @@ def enroll_course(request, id):
 
     course = Course.objects.get(id=id)
 
-    # ✅ Prevent duplicate
+    # ✅ Check internship approval with this company
+    has_approved_internship = Application.objects.filter(
+        student=request.user,
+        internship__company=course.company,
+        status='approved'
+    ).exists()
+
+    # ✅ If NOT approved → require resume
+    if not has_approved_internship:
+
+        if request.method == 'POST':
+            resume = request.FILES.get('resume')
+
+            Enrollment.objects.create(
+                student=request.user,
+                course=course,
+                resume=resume,
+                status='pending'
+            )
+
+            return HttpResponse("Request sent. Wait for approval")
+
+        return render(request, 'upload_resume.html', {'course': course})
+
+    # ✅ Already approved → direct enrollment request
     if Enrollment.objects.filter(student=request.user, course=course).exists():
-        return HttpResponse("Already enrolled")
-
-    total_students = Enrollment.objects.filter(course=course).count()
-
-    if total_students >= course.max_students:
-        return HttpResponse("Course is full")
+        return HttpResponse("Already requested")
 
     Enrollment.objects.create(
         student=request.user,
-        course=course
+        course=course,
+        status='pending'
     )
 
-    return redirect('student_courses')   # ✅ better flow
+    return HttpResponse("Enrollment request sent")
 
 
 @login_required
@@ -236,6 +257,34 @@ def approve_trainer(request, id):
     app.save()
 
     return redirect('view_trainer_requests')
+
+
+@login_required
+def approve_enrollment(request, id):
+
+    enroll = Enrollment.objects.get(id=id)
+
+    if enroll.course.company != request.user:
+        return HttpResponse("Not allowed")
+
+    enroll.status = 'approved'
+    enroll.save()
+
+    return redirect('company_dashboard')
+
+
+@login_required
+def reject_enrollment(request, id):
+
+    enroll = Enrollment.objects.get(id=id)
+
+    if enroll.course.company != request.user:
+        return HttpResponse("Not allowed")
+
+    enroll.status = 'rejected'
+    enroll.save()
+
+    return redirect('company_dashboard')
 
 
 @login_required
@@ -454,4 +503,23 @@ def submit_quiz(request, course_id):
     return render(request, 'result.html', {
         'score': score,
         'total': total
+    })
+
+
+@login_required
+def view_results(request, course_id):
+
+    course = Course.objects.get(id=course_id)
+
+    # ✅ Only company or trainer
+    if request.user != course.company and request.user != course.trainer:
+        return HttpResponse("Not allowed")
+
+    results = QuizResult.objects.filter(
+        batch__course=course
+    ).select_related('student', 'batch')
+
+    return render(request, 'result.html', {
+        'course': course,
+        'results': results
     })

@@ -50,6 +50,11 @@ urlpatterns = [
         views.submit_quiz,
         name='submit_quiz'
     ),
+    path('enroll/approve/<int:id>/', views.approve_enrollment,
+         name='approve_enrollment'),
+    path('enroll/reject/<int:id>/', views.reject_enrollment,
+         name='reject_enrollment'),
+    path('results/<int:course_id>/', views.view_results, name='view_results'),
     path('quiz/<int:course_id>/', views.take_quiz, name='take_quiz'),
     path('student-courses/', views.student_courses, name='student_courses'),
 

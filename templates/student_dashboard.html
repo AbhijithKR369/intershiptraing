@@ -50,4 +50,15 @@
 {% empty %}
     <p>No enrolled courses</p>
 {% endfor %}
+<h3>Quiz History</h3>
+
+{% for result in results %}
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <strong>{{ result.batch.course.title }}</strong><br>
+        {{ result.batch.title }}<br>
+        Score: {{ result.score }}/{{ result.total }}
+    </div>
+{% empty %}
+    <p>No quiz attempts yet</p>
+{% endfor %}
 <br><a href="{% url 'logout' %}">Logout</a>

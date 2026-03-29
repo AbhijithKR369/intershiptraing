@@ -97,44 +97,47 @@ def is_trainer(user):
 @login_required
 def student_dashboard(request):
 
-    enrollments = Enrollment.objects.filter(student=request.user)
+    enrollments = Enrollment.objects.filter(
+        student=request.user,
+        status='approved'
+    )
 
-    results = QuizResult.objects.filter(student=request.user)
-
-    # ✅ Map latest batch + attempt status
-    course_quiz_status = []
-
-    for enroll in enrollments:
-        course = enroll.course
-        batch = course.batches.order_by('-id').first()
-
-        attempted = False
-        if batch:
-            attempted = QuizResult.objects.filter(
-                student=request.user,
-                batch=batch
-            ).exists()
-
-        course_quiz_status.append({
-            'course': course,
-            'batch': batch,
-            'attempted': attempted
-        })
+    # ✅ IMPORTANT FIX (use select_related for batch & course)
+    results = QuizResult.objects.filter(
+        student=request.user
+    ).select_related('batch', 'batch__course')
 
     return render(request, 'student_dashboard.html', {
         'enrollments': enrollments,
-        'results': results,
-        'course_quiz_status': course_quiz_status
+        'results': results
     })
 
 
 @login_required
 @user_passes_test(is_company)
 def company_dashboard(request):
-    return render(request, 'company_dashboard.html')
+
+    enroll_requests = Enrollment.objects.filter(
+        course__company=request.user,
+        status='pending'
+    ).select_related('student', 'student__profile', 'course')
+
+    return render(request, 'company_dashboard.html', {
+        'enroll_requests': enroll_requests
+    })
 
 
 @login_required
 @user_passes_test(is_trainer)
 def trainer_dashboard(request):
-    return render(request, 'trainer_dashboard.html')
+
+    courses = request.user.trainer_courses.all()
+
+    results = QuizResult.objects.filter(
+        batch__course__in=courses
+    ).select_related('student', 'batch', 'batch__course')
+
+    return render(request, 'trainer_dashboard.html', {
+        'courses': courses,
+        'results': results
+    })
