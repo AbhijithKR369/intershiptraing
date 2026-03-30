@@ -1,0 +1,14 @@
+{% load custom_filters %}
+
+<h2>{{ batch.title }} - Review</h2>
+
+{% for q in questions %}
+<div style="margin-bottom:15px; padding:10px; border:1px solid #ccc;">
+
+    <strong>{{ q.question_text }}</strong><br><br>
+
+    Your Answer: {{ answers|get_item:q.id }}<br>
+    Correct Answer: Option {{ q.correct_option }}
+
+</div>
+{% endfor %}

@@ -10,6 +10,8 @@ from django.contrib import messages
 from .models import Question, StudentAnswer
 from .models import QuizResult
 from internships.models import Application
+from certificates.models import Certificate
+from certificates.utils import generate_certificate
 
 
 @login_required
@@ -22,7 +24,11 @@ def student_courses(request):
         student=request.user
     ).select_related('course')
 
-    # Prepare structured data
+    # ✅ ADDED HERE
+    certificates = Certificate.objects.filter(
+        student=request.user
+    )
+
     course_data = []
 
     for enroll in enrollments:
@@ -35,7 +41,8 @@ def student_courses(request):
         })
 
     return render(request, 'student_courses.html', {
-        'course_data': course_data
+        'course_data': course_data,
+        'certificates': certificates   # ✅ ADDED HERE
     })
 
 
@@ -371,9 +378,17 @@ def add_question(request, course_id):
 
         # ✅ Create NEW batch if button clicked
         if 'new_batch' in request.POST:
+
+            is_final = 'is_final' in request.POST
+
+            # ✅ ADD THIS CHECK HERE
+            if is_final and request.user.profile.role != 'company':
+                return HttpResponse("Only company can create final quiz")
+
             batch = QuizBatch.objects.create(
                 course=course,
-                title=f"Quiz {course.batches.count() + 1}"
+                title=f"Quiz {course.batches.count() + 1}",
+                is_final=is_final
             )
 
         # ✅ If no batch exists, create first one
@@ -407,45 +422,54 @@ def add_question(request, course_id):
 
 
 @login_required
-def take_quiz(request, course_id):
+def take_quiz(request, batch_id):
 
-    if request.user.profile.role != 'student':
-        return HttpResponse("Only students allowed")
+    batch = QuizBatch.objects.get(id=batch_id)
+    course = batch.course
 
-    course = Course.objects.get(id=course_id)
-
-    # Ensure enrolled
+    # enrollment check
     if not Enrollment.objects.filter(
-        student=request.user,
-        course=course
+        student=request.user, course=course
     ).exists():
         return HttpResponse("Enroll first")
 
-    # ✅ Get latest batch (FIXED)
-    batch = QuizBatch.objects.filter(course=course).order_by('-id').first()
+    # ✅ Final quiz lock
+    if batch.is_final:
 
-    if not batch:
-        return HttpResponse("Quiz not available")
+        previous_batches = QuizBatch.objects.filter(
+            course=course,
+            is_final=False
+        )
+
+        attempted_count = QuizResult.objects.filter(
+            student=request.user,
+            batch__in=previous_batches
+        ).count()
+
+        if attempted_count < previous_batches.count():
+            return HttpResponse("Complete all previous quizzes first")
+
+    # prevent reattempt
+    if QuizResult.objects.filter(student=request.user, batch=batch).exists():
+        return redirect('review_quiz', batch_id=batch.id)
 
     questions = batch.questions.all()
 
-    if not questions.exists():
-        return HttpResponse("No questions added yet")
-
     return render(request, 'quiz.html', {
-        'course': course,
         'questions': questions,
-        'batch': batch
+        'batch': batch,
+        'course': course
     })
 
 
 @login_required
-def submit_quiz(request, course_id):
+def submit_quiz(request, batch_id):
 
     if request.user.profile.role != 'student':
         return HttpResponse("Only students allowed")
 
-    course = Course.objects.get(id=course_id)
+    batch = QuizBatch.objects.get(id=batch_id)
+    course = batch.course
 
     # Ensure enrolled
     if not Enrollment.objects.filter(
@@ -454,15 +478,9 @@ def submit_quiz(request, course_id):
     ).exists():
         return HttpResponse("Enroll first")
 
-    # ✅ FIXED: get latest batch
-    batch = QuizBatch.objects.filter(course=course).order_by('-id').first()
-
-    if not batch:
-        return HttpResponse("Quiz not available")
-
     questions = batch.questions.all()
 
-    # ✅ Prevent re-submission PER BATCH (correct)
+    # Prevent reattempt
     if QuizResult.objects.filter(
         student=request.user,
         batch=batch
@@ -490,7 +508,7 @@ def submit_quiz(request, course_id):
 
     total = questions.count()
 
-    # ✅ Save result per batch
+    # Save result
     QuizResult.objects.update_or_create(
         student=request.user,
         batch=batch,
@@ -500,9 +518,82 @@ def submit_quiz(request, course_id):
         }
     )
 
+    # Certificate (final only)
+    if batch.is_final and score >= (total / 2):
+
+        cert_exists = Certificate.objects.filter(
+            student=request.user,
+            course=course
+        ).exists()
+
+        if not cert_exists:
+
+            filename = f"cert_{request.user.id}_{course.id}.pdf"
+
+            generate_certificate(
+                student_name=request.user.username,
+                course_name=course.title,
+                filename=filename
+            )
+
+            Certificate.objects.create(
+                student=request.user,
+                course=course,
+                file=filename
+            )
+
+    # Get all results
+    results = QuizResult.objects.filter(
+        student=request.user,
+        batch__course=course
+    ).select_related('batch')
+
     return render(request, 'result.html', {
         'score': score,
-        'total': total
+        'total': total,
+        'course': course,
+        'results': results
+    })
+
+
+# ✅ ONLY for final quiz
+    if batch.is_final:
+
+        if score >= (total / 2):  # pass condition
+
+            cert_exists = Certificate.objects.filter(
+                student=request.user,
+                course=course
+            ).exists()
+
+            if not cert_exists:
+
+                filename = f"cert_{request.user.id}_{course.id}.pdf"
+
+                generate_certificate(
+                    student_name=request.user.username,
+                    course_name=course.title,
+                    filename=filename
+                )
+
+                Certificate.objects.create(
+                    student=request.user,
+                    course=course,
+                    file=filename
+                )
+
+    # ✅ Get all previous results
+    results = QuizResult.objects.filter(
+        student=request.user,
+        batch__course=course
+    ).select_related('batch')
+
+    # ✅ Return result page
+    return render(request, 'result.html', {
+        'score': score,
+        'total': total,
+        'course': course,
+        'results': results
     })
 
 
@@ -522,4 +613,43 @@ def view_results(request, course_id):
     return render(request, 'result.html', {
         'course': course,
         'results': results
+    })
+
+
+@login_required
+def course_quizzes(request, course_id):
+
+    course = Course.objects.get(id=course_id)
+
+    batches = QuizBatch.objects.filter(course=course).order_by('id')
+
+    attempted_batches = QuizResult.objects.filter(
+        student=request.user,
+        batch__course=course
+    ).values_list('batch_id', flat=True)
+
+    return render(request, 'quiz_batches.html', {
+        'course': course,
+        'batches': batches,
+        'attempted_batches': list(attempted_batches)
+    })
+
+
+@login_required
+def review_quiz(request, batch_id):
+
+    batch = QuizBatch.objects.get(id=batch_id)
+    questions = batch.questions.all()
+
+    answers = StudentAnswer.objects.filter(
+        student=request.user,
+        question__batch=batch
+    )
+
+    answer_map = {a.question_id: a.selected_option for a in answers}
+
+    return render(request, 'review.html', {
+        'questions': questions,
+        'answers': answer_map,
+        'batch': batch
     })

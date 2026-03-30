@@ -99,6 +99,7 @@ class QuizBatch(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE,
                                related_name='batches')
     title = models.CharField(max_length=100)  # e.g. "Quiz 1", "Week 1 Test"
+    is_final = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
@@ -117,17 +118,16 @@ class Question(models.Model):
     batch = models.ForeignKey(
         QuizBatch,
         on_delete=models.CASCADE,
-        related_name='questions'
+        related_name="questions"
     )
+    question_text = models.TextField()
 
-    question_text = models.CharField(max_length=255)
+    option1 = models.CharField(max_length=255)
+    option2 = models.CharField(max_length=255)
+    option3 = models.CharField(max_length=255)
+    option4 = models.CharField(max_length=255)
 
-    option1 = models.CharField(max_length=100)
-    option2 = models.CharField(max_length=100)
-    option3 = models.CharField(max_length=100)
-    option4 = models.CharField(max_length=100)
-
-    correct_option = models.IntegerField()
+    correct_option = models.IntegerField()  # 1,2,3,4
 
     def __str__(self):
         return self.question_text

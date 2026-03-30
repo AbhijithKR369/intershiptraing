@@ -96,3 +96,28 @@ def reject_application(request, id):
     app.save()
 
     return redirect('view_applications')
+
+
+@login_required
+def complete_internship(request, id):
+
+    app = Application.objects.get(id=id, student=request.user)
+
+    if app.status != 'approved':
+        return HttpResponse("Not allowed")
+
+    app.completed = True
+    app.save()
+
+    return HttpResponse("Internship completed")
+
+
+@login_required
+def download_certificate(request, id):
+
+    app = Application.objects.get(id=id, student=request.user)
+
+    if not app.certificate:
+        return HttpResponse("No certificate uploaded")
+
+    return redirect(app.certificate.url)

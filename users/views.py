@@ -4,10 +4,32 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from courses.models import Enrollment, QuizResult
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
 
 
-def dashboard(request):
-    return HttpResponse("Login Successful! Welcome to Dashboard")
+def login_view(request):
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+
+            # 🔁 Redirect based on role
+            if user.profile.role == 'student':
+                return redirect('student_dashboard')
+            elif user.profile.role == 'company':
+                return redirect('company_dashboard')
+            elif user.profile.role == 'trainer':
+                return redirect('trainer_dashboard')
+
+        else:
+            messages.error(request, "Invalid credentials")
+
+    return render(request, 'login.html')
 
 
 def register(request):
@@ -102,14 +124,36 @@ def student_dashboard(request):
         status='approved'
     )
 
-    # ✅ IMPORTANT FIX (use select_related for batch & course)
     results = QuizResult.objects.filter(
         student=request.user
     ).select_related('batch', 'batch__course')
 
+    # ✅ NEW LOGIC (FINAL QUIZ TRACKING)
+    course_quiz_status = []
+
+    for enroll in enrollments:
+        course = enroll.course
+
+        # ✅ get FINAL quiz only
+        batch = course.batches.filter(is_final=True).order_by('-id').first()
+
+        attempted = False
+        if batch:
+            attempted = QuizResult.objects.filter(
+                student=request.user,
+                batch=batch
+            ).exists()
+
+        course_quiz_status.append({
+            'course': course,
+            'batch': batch,
+            'attempted': attempted
+        })
+
     return render(request, 'student_dashboard.html', {
         'enrollments': enrollments,
-        'results': results
+        'results': results,
+        'course_quiz_status': course_quiz_status   # ✅ IMPORTANT
     })
 
 
@@ -141,3 +185,19 @@ def trainer_dashboard(request):
         'courses': courses,
         'results': results
     })
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+def dashboard(request):
+    user = request.user
+
+    if user.profile.role == 'student':
+        return redirect('student_dashboard')
+    elif user.profile.role == 'company':
+        return redirect('company_dashboard')
+    elif user.profile.role == 'trainer':
+        return redirect('trainer_dashboard')

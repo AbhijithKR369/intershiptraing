@@ -25,30 +25,20 @@
 <hr>
 
 <!-- 🔹 Quiz Section -->
-<h3>Quiz</h3>
+<h3>My Quizzes</h3>
 
 {% for item in course_quiz_status %}
     <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
         
         <strong>{{ item.course.title }}</strong><br>
 
-        {% if item.batch %}
-
-            {% if item.attempted %}
-                <span style="color: green;">✅ Attempted</span>
-            {% else %}
-                <a href="{% url 'take_quiz' item.course.id %}">
-                    Take Quiz
-                </a>
-            {% endif %}
-
-        {% else %}
-            <span style="color: gray;">No quiz available</span>
-        {% endif %}
+        <a href="{% url 'course_quizzes' item.course.id %}">
+            View Quizzes
+        </a>
 
     </div>
 {% empty %}
-    <p>No enrolled courses</p>
+    <p>No courses</p>
 {% endfor %}
 <h3>Quiz History</h3>
 
@@ -60,5 +50,17 @@
     </div>
 {% empty %}
     <p>No quiz attempts yet</p>
+{% endfor %}
+<h3>Internship Certificates</h3>
+
+{% for app in request.user.application_set.all %}
+    {% if app.completed and app.certificate %}
+        <div>
+            {{ app.internship.title }}<br>
+            <a href="{% url 'download_certificate' app.id %}">
+                Download Certificate
+            </a>
+        </div>
+    {% endif %}
 {% endfor %}
 <br><a href="{% url 'logout' %}">Logout</a>

@@ -1,0 +1,31 @@
+<h2>{{ course.title }} - Quizzes</h2>
+
+{% for b in batches %}
+<div style="border:1px solid #ccc; padding:15px; margin-bottom:10px;">
+
+    <strong>{{ b.title }}</strong>
+
+    {% if b.is_final %}
+        <span style="color:red;">(Final)</span>
+    {% endif %}
+
+    <br><br>
+
+    {% if b.id in attempted_batches %}
+        <a href="{% url 'review_quiz' b.id %}">Review</a>
+    {% else %}
+        <a href="{% url 'take_quiz' b.id %}">Attempt Quiz</a>
+    {% endif %}
+
+</div>
+{% endfor %}
+<h3>Course Certificates</h3>
+
+{% for cert in certificates %}
+    <div>
+        {{ cert.course.title }}<br>
+        <a href="/certificate/{{ cert.id }}/download/">Download Certificate</a>
+    </div>
+{% empty %}
+    <p>No course certificates yet</p>
+{% endfor %}

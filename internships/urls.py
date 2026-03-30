@@ -10,4 +10,6 @@ urlpatterns = [
          name='approve_application'),
     path('reject/<int:id>/', views.reject_application,
          name='reject_application'),
+    path('certificate/<int:id>/', views.download_certificate,
+         name='download_certificate'),
 ]

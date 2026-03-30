@@ -15,6 +15,12 @@ class Internship(models.Model):
 class Application(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     internship = models.ForeignKey(Internship, on_delete=models.CASCADE)
+    completed = models.BooleanField(default=False)
+    certificate = models.FileField(
+        upload_to='internship_certificates/',
+        null=True,
+        blank=True
+    )
 
     STATUS_CHOICES = (
         ('pending', 'Pending'),

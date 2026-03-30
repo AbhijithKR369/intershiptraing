@@ -1,16 +1,49 @@
-<form method="POST" action="{% url 'submit_quiz' course.id %}">
+<h2>{{ course.title }} - Quiz</h2>
+
+<form method="POST" action="/courses/submit/{{ batch.id }}/">
     {% csrf_token %}
 
     {% for q in questions %}
-        <p>{{ q.question_text }}</p>
+        <div style="margin-bottom:20px; padding:15px; border:1px solid #ccc; border-radius:8px;">
+            
+            <p><strong>Q{{ forloop.counter }}. {{ q.question_text }}</strong></p>
 
-        <input type="radio" name="{{ q.id }}" value="1"> {{ q.option1 }}<br>
-        <input type="radio" name="{{ q.id }}" value="2"> {{ q.option2 }}<br>
-        <input type="radio" name="{{ q.id }}" value="3"> {{ q.option3 }}<br>
-        <input type="radio" name="{{ q.id }}" value="4"> {{ q.option4 }}<br>
+            <label>
+                <input type="radio" name="{{ q.id }}" value="1">
+                {{ q.option1 }}
+            </label><br>
 
-        <hr>
+            <label>
+                <input type="radio" name="{{ q.id }}" value="2">
+                {{ q.option2 }}
+            </label><br>
+
+            <label>
+                <input type="radio" name="{{ q.id }}" value="3">
+                {{ q.option3 }}
+            </label><br>
+
+            <label>
+                <input type="radio" name="{{ q.id }}" value="4">
+                {{ q.option4 }}
+            </label>
+
+        </div>
     {% endfor %}
 
     <button type="submit">Submit Quiz</button>
 </form>
+<h3>Existing Questions</h3>
+
+{% for q in batch.questions.all %}
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <strong>{{ forloop.counter }}. {{ q.question_text }}</strong><br>
+        1. {{ q.option1 }}<br>
+        2. {{ q.option2 }}<br>
+        3. {{ q.option3 }}<br>
+        4. {{ q.option4 }}<br>
+        <strong>Correct:</strong> Option {{ q.correct_option }}
+    </div>
+{% empty %}
+    <p>No questions added yet</p>
+{% endfor %}

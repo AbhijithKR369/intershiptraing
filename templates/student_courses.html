@@ -53,3 +53,15 @@
 {% empty %}
     <p>You are not enrolled in any courses</p>
 {% endfor %}
+<hr>
+
+<h3>🎓 Your Certificates</h3>
+
+{% for cert in certificates %}
+    <div>
+        {{ cert.course.title }}
+        <a href="/certificate/{{ cert.id }}/download/">Download</a>
+    </div>
+{% empty %}
+    <p>No certificates yet</p>
+{% endfor %}

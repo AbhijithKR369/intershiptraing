@@ -1,11 +1,16 @@
 <h2>Quiz Results - {{ course.title }}</h2>
 
+<h3>Latest Result</h3>
+<p><strong>Score:</strong> {{ score }} / {{ total }}</p>
+
+<hr>
+
+<h3>Your Attempts</h3>
+
 {% for r in results %}
-    <div>
-        {{ r.student.username }} |
-        {{ r.batch.title }} |
-        {{ r.score }}/{{ r.total }}
-    </div>
+    <p>
+        Batch {{ r.batch.id }} → {{ r.score }}/{{ r.total }}
+    </p>
 {% empty %}
-    <p>No results yet</p>
+    <p>No previous attempts</p>
 {% endfor %}
