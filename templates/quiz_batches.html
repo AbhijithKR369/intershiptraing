@@ -22,9 +22,12 @@
 <h3>Course Certificates</h3>
 
 {% for cert in certificates %}
-    <div>
-        {{ cert.course.title }}<br>
-        <a href="/certificate/{{ cert.id }}/download/">Download Certificate</a>
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <strong>{{ cert.course.title }}</strong><br>
+
+        <a href="{% url 'download_certificate' cert.id %}">
+            Download Certificate
+        </a>
     </div>
 {% empty %}
     <p>No course certificates yet</p>

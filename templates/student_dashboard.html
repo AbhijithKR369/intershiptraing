@@ -27,18 +27,16 @@
 <!-- 🔹 Quiz Section -->
 <h3>My Quizzes</h3>
 
-{% for item in course_quiz_status %}
+{% for course in courses %}
     <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-        
-        <strong>{{ item.course.title }}</strong><br>
+        <strong>{{ course.title }}</strong><br>
 
-        <a href="{% url 'course_quizzes' item.course.id %}">
+        <a href="{% url 'course_quizzes' course.id %}">
             View Quizzes
         </a>
-
     </div>
 {% empty %}
-    <p>No courses</p>
+    <p>No enrolled courses</p>
 {% endfor %}
 <h3>Quiz History</h3>
 

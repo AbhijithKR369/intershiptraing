@@ -122,38 +122,19 @@ def student_dashboard(request):
     enrollments = Enrollment.objects.filter(
         student=request.user,
         status='approved'
-    )
+    ).select_related('course')
 
     results = QuizResult.objects.filter(
         student=request.user
     ).select_related('batch', 'batch__course')
 
-    # ✅ NEW LOGIC (FINAL QUIZ TRACKING)
-    course_quiz_status = []
-
-    for enroll in enrollments:
-        course = enroll.course
-
-        # ✅ get FINAL quiz only
-        batch = course.batches.filter(is_final=True).order_by('-id').first()
-
-        attempted = False
-        if batch:
-            attempted = QuizResult.objects.filter(
-                student=request.user,
-                batch=batch
-            ).exists()
-
-        course_quiz_status.append({
-            'course': course,
-            'batch': batch,
-            'attempted': attempted
-        })
+    # ✅ Only enrolled courses
+    courses = [enroll.course for enroll in enrollments]
 
     return render(request, 'student_dashboard.html', {
         'enrollments': enrollments,
-        'results': results,
-        'course_quiz_status': course_quiz_status   # ✅ IMPORTANT
+        'courses': courses,
+        'results': results
     })
 
 

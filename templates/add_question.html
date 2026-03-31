@@ -1,14 +1,53 @@
 <h2>Add Question</h2>
 
+<!-- 🔹 Course + Batch Info -->
+<p><strong>Course:</strong> {{ course.title }}</p>
+
+{% if batch %}
+    <p><strong>Batch:</strong> {{ batch.title }}</p>
+
+    {% if batch.is_final %}
+        <p style="color:red;"><strong>Final Quiz</strong></p>
+    {% else %}
+        <p style="color:green;">Regular Quiz</p>
+    {% endif %}
+
+    <p><strong>Total Questions:</strong> {{ count }}</p>
+{% else %}
+    <p>No batch created yet</p>
+{% endif %}
+
+<hr>
+
+<!-- 🔹 Create New Batch -->
+<h3>Create New Batch</h3>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <button name="new_batch" value="normal">
+        Create Normal Quiz
+    </button>
+
+    {% if request.user.profile.role == 'company' %}
+        <button name="new_batch" value="final">
+            Create FINAL Quiz
+        </button>
+    {% endif %}
+</form>
+
+<!-- 🔹 Add Question -->
+<h3>Add Question to {{ batch.title }}</h3>
+
 <form method="POST">
     {% csrf_token %}
 
     <input type="text" name="question" placeholder="Enter question" required><br><br>
 
-    <input type="text" name="opt1" placeholder="Option 1"><br>
-    <input type="text" name="opt2" placeholder="Option 2"><br>
-    <input type="text" name="opt3" placeholder="Option 3"><br>
-    <input type="text" name="opt4" placeholder="Option 4"><br><br>
+    <input type="text" name="opt1" placeholder="Option 1" required><br>
+    <input type="text" name="opt2" placeholder="Option 2" required><br>
+    <input type="text" name="opt3" placeholder="Option 3" required><br>
+    <input type="text" name="opt4" placeholder="Option 4" required><br><br>
 
     <label>Correct Option:</label>
     <select name="correct">
@@ -19,53 +58,26 @@
     </select><br><br>
 
     <button type="submit">Add Question</button>
-    <h2>Add Question</h2>
+</form>
 
-<p><strong>Course:</strong> {{ course.title }}</p>
-<p><strong>Batch:</strong> {{ batch.title }}</p>
-
-{% if batch.is_final %}
-    <p style="color:red;">Final Quiz</p>
-{% else %}
-    <p style="color:green;">Regular Quiz</p>
-{% endif %}
-
-<p>Total Questions: {{ count }}</p>
 <hr>
 
-</form>
-<h3>Create New Batch</h3>
-
-<form method="POST">
-    {% csrf_token %}
-
-    <button name="new_batch" value="1">Create New Quiz Batch</button>
-
-    <br><br>
-
-    {% if request.user.profile.role == 'company' %}
-        <label>
-            <input type="checkbox" name="is_final">
-            Mark as Final Quiz
-        </label>
-    {% endif %}
-
-</form>
-<hr>
-
-<h3>Existing Questions</h3>
+<!-- 🔹 Existing Questions -->
+<h3>Questions in {{ batch.title }}</h3>
 
 {% for q in batch.questions.all %}
 <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-    <strong>{{ forloop.counter }}. {{ q.question_text }}</strong><br>
+
+    <strong>{{ forloop.counter }}. {{ q.question_text }}</strong><br><br>
 
     1. {{ q.option1 }}<br>
     2. {{ q.option2 }}<br>
     3. {{ q.option3 }}<br>
     4. {{ q.option4 }}<br>
 
-    <strong>Correct:</strong> {{ q.correct_option }}
+    <strong>Correct:</strong> Option {{ q.correct_option }}
+
 </div>
 {% empty %}
-<p>No questions yet</p>
+<p>No questions added yet</p>
 {% endfor %}

@@ -376,40 +376,53 @@ def add_question(request, course_id):
 
     if request.method == "POST":
 
-        # ✅ Create NEW batch if button clicked
+        # ✅ Create new batch
         if 'new_batch' in request.POST:
 
-            is_final = 'is_final' in request.POST
+            batch_type = request.POST.get('new_batch')  # 👈 key change
 
-            # ✅ ADD THIS CHECK HERE
-            if is_final and request.user.profile.role != 'company':
-                return HttpResponse("Only company can create final quiz")
+            existing_final = QuizBatch.objects.filter(
+                course=course,
+                is_final=True
+            ).exists()
+
+            is_final = False
+
+            # ✅ Handle FINAL quiz creation properly
+            if batch_type == 'final':
+
+                if request.user.profile.role != 'company':
+                    return HttpResponse("Only company can create final quiz")
+
+                if existing_final:
+                    return HttpResponse("Final quiz already exists")
+
+                is_final = True
+
+            quiz_count = QuizBatch.objects.filter(course=course).count() + 1
 
             batch = QuizBatch.objects.create(
                 course=course,
-                title=f"Quiz {course.batches.count() + 1}",
+                title=f"Quiz {quiz_count}",
                 is_final=is_final
             )
 
-        # ✅ If no batch exists, create first one
-        if not batch:
-            batch = QuizBatch.objects.create(
-                course=course,
-                title="Quiz 1"
+            message = f"New batch created: {batch.title}"
+
+        # ✅ Add question (ONLY if question exists)
+        elif 'question' in request.POST:
+
+            Question.objects.create(
+                batch=batch,
+                question_text=request.POST.get('question'),
+                option1=request.POST.get('opt1'),
+                option2=request.POST.get('opt2'),
+                option3=request.POST.get('opt3'),
+                option4=request.POST.get('opt4'),
+                correct_option=request.POST.get('correct')
             )
 
-        # ✅ Add question to selected batch
-        Question.objects.create(
-            batch=batch,
-            question_text=request.POST['question'],
-            option1=request.POST['opt1'],
-            option2=request.POST['opt2'],
-            option3=request.POST['opt3'],
-            option4=request.POST['opt4'],
-            correct_option=request.POST['correct']
-        )
-
-        message = f"Question added to {batch.title}"
+            message = f"Question added to {batch.title}"
 
     questions = batch.questions.all() if batch else []
 
@@ -528,18 +541,18 @@ def submit_quiz(request, batch_id):
 
         if not cert_exists:
 
-            filename = f"cert_{request.user.id}_{course.id}.pdf"
-
-            generate_certificate(
+            file_path = generate_certificate(
                 student_name=request.user.username,
                 course_name=course.title,
-                filename=filename
+                score=score,
+                total=total,
+                company_name=course.company.username
             )
 
-            Certificate.objects.create(
+            Certificate.objects.get_or_create(
                 student=request.user,
                 course=course,
-                file=filename
+                defaults={'file': file_path}
             )
 
     # Get all results
@@ -548,47 +561,6 @@ def submit_quiz(request, batch_id):
         batch__course=course
     ).select_related('batch')
 
-    return render(request, 'result.html', {
-        'score': score,
-        'total': total,
-        'course': course,
-        'results': results
-    })
-
-
-# ✅ ONLY for final quiz
-    if batch.is_final:
-
-        if score >= (total / 2):  # pass condition
-
-            cert_exists = Certificate.objects.filter(
-                student=request.user,
-                course=course
-            ).exists()
-
-            if not cert_exists:
-
-                filename = f"cert_{request.user.id}_{course.id}.pdf"
-
-                generate_certificate(
-                    student_name=request.user.username,
-                    course_name=course.title,
-                    filename=filename
-                )
-
-                Certificate.objects.create(
-                    student=request.user,
-                    course=course,
-                    file=filename
-                )
-
-    # ✅ Get all previous results
-    results = QuizResult.objects.filter(
-        student=request.user,
-        batch__course=course
-    ).select_related('batch')
-
-    # ✅ Return result page
     return render(request, 'result.html', {
         'score': score,
         'total': total,
@@ -628,10 +600,16 @@ def course_quizzes(request, course_id):
         batch__course=course
     ).values_list('batch_id', flat=True)
 
+    certificates = Certificate.objects.filter(
+        student=request.user,
+        course=course
+    )
+
     return render(request, 'quiz_batches.html', {
         'course': course,
         'batches': batches,
-        'attempted_batches': list(attempted_batches)
+        'attempted_batches': list(attempted_batches),
+        'certificates': certificates
     })
 
 
