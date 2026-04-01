@@ -22,13 +22,19 @@
 <h3>Course Certificates</h3>
 
 {% for cert in certificates %}
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-        <strong>{{ cert.course.title }}</strong><br>
+<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+    
+    <strong>{{ cert.course.title }}</strong><br>
+    {% if cert.is_manual %}
+        Issued by: {{ cert.course.company.username }}
+    {% endif %}
+    <br>
 
-        <a href="{% url 'download_certificate' cert.id %}">
-            Download Certificate
-        </a>
-    </div>
+    <a href="{% url 'download_certificate' cert.id %}">
+        Download Certificate
+    </a>
+
+</div>
 {% empty %}
-    <p>No course certificates yet</p>
+<p>No course certificates yet</p>
 {% endfor %}

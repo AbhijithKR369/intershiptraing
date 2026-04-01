@@ -33,7 +33,8 @@ class Application(models.Model):
         choices=STATUS_CHOICES,
         default='pending'
     )
-
+    roll_number = models.IntegerField(null=True, blank=True)
+    joined_date = models.DateTimeField(auto_now_add=True)
     resume = models.FileField(upload_to='resumes/', null=True, blank=True)
 
     def __str__(self):

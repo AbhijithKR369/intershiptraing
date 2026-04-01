@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from courses.models import Enrollment, QuizResult
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from certificates.models import Certificate
 
 
 def login_view(request):
@@ -131,10 +132,26 @@ def student_dashboard(request):
     # ✅ Only enrolled courses
     courses = [enroll.course for enroll in enrollments]
 
+    # ✅ Course certificates (auto generated)
+    course_certs = Certificate.objects.filter(
+        student=request.user,
+        course__isnull=False
+    ).select_related('course')
+
+    # ✅ Internship certificates (company uploaded)
+    internship_certs = Certificate.objects.filter(
+        student=request.user,
+        internship__isnull=False
+    ).select_related(
+        'internship__company__profile'
+    )
+
     return render(request, 'student_dashboard.html', {
         'enrollments': enrollments,
         'courses': courses,
-        'results': results
+        'results': results,
+        'course_certs': course_certs,            # ✅ ADD
+        'internship_certs': internship_certs     # ✅ ADD
     })
 
 

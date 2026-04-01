@@ -12,6 +12,119 @@ from .models import QuizResult
 from internships.models import Application
 from certificates.models import Certificate
 from certificates.utils import generate_certificate
+from django.db.models import Q
+
+
+@login_required
+def manage_certificates(request):
+
+    if request.user.profile.role != 'company':
+        return HttpResponse("Not allowed")
+
+    # 🔎 Filters
+    search = request.GET.get('q')
+    course_id = request.GET.get('course')
+    internship_id = request.GET.get('internship')
+
+    # 📚 Course enrollments
+    enrollments = Enrollment.objects.filter(
+        course__company=request.user,
+        status='approved'
+    ).select_related('student', 'course').order_by('joined_date')
+
+    # 💼 Internship applications
+    applications = Application.objects.filter(
+        internship__company=request.user,
+        status='approved'
+    ).select_related('student', 'internship').order_by('joined_date')
+
+    # 🔍 Search
+    if search:
+        enrollments = enrollments.filter(
+            Q(student__username__icontains=search) |
+            Q(roll_number__icontains=search)
+        )
+        applications = applications.filter(
+            Q(student__username__icontains=search) |
+            Q(roll_number__icontains=search)
+        )
+
+    # 📚 Filter by course
+    if course_id:
+        enrollments = enrollments.filter(course_id=course_id)
+
+    # 💼 Filter by internship
+    if internship_id:
+        applications = applications.filter(internship_id=internship_id)
+
+    # 📤 Upload / Replace handling
+    if request.method == "POST":
+        file = request.FILES.get('certificate')
+
+        enroll_id = request.POST.get('enroll_id')
+        app_id = request.POST.get('app_id')
+
+        # 📚 Course certificate
+        if enroll_id and file:
+            enroll = Enrollment.objects.get(id=enroll_id)
+
+            Certificate.objects.update_or_create(
+                student=enroll.student,
+                course=enroll.course,
+                defaults={
+                    'file': file,
+                    'is_manual': True
+                }
+            )
+
+        # 💼 Internship certificate
+        if app_id and file:
+            app = Application.objects.get(id=app_id)
+
+            Certificate.objects.update_or_create(
+                student=app.student,
+                internship=app.internship,
+                defaults={
+                    'file': file,
+                    'is_manual': True
+                }
+            )
+
+    # 🧠 Build certificate map (NO duplicates in UI)
+    cert_map = {}
+
+    # Course certificates
+    for e in enrollments:
+        cert = Certificate.objects.filter(
+            student=e.student,
+            course=e.course
+        ).first()
+        cert_map[e.id] = cert
+
+    # Internship certificates
+    for a in applications:
+        cert = Certificate.objects.filter(
+            student=a.student,
+            internship=a.internship
+        ).first()
+        cert_map[a.id] = cert
+
+    # Dropdown data
+    courses = Enrollment.objects.filter(
+        course__company=request.user
+    ).values('course__id', 'course__title').distinct()
+
+    internships = Application.objects.filter(
+        internship__company=request.user
+    ).values('internship__id', 'internship__title').distinct()
+
+    return render(request, 'manage_certificates.html', {
+        'enrollments': enrollments,
+        'applications': applications,
+        'courses': courses,
+        'internships': internships,
+        'cert_map': cert_map   # ✅ IMPORTANT
+    })
 
 
 @login_required
@@ -274,7 +387,17 @@ def approve_enrollment(request, id):
     if enroll.course.company != request.user:
         return HttpResponse("Not allowed")
 
+    # ✅ Set status
     enroll.status = 'approved'
+
+    # ✅ Assign roll number (per course)
+    count = Enrollment.objects.filter(
+        course=enroll.course,
+        status='approved'
+    ).count()
+
+    enroll.roll_number = count + 1
+
     enroll.save()
 
     return redirect('company_dashboard')
@@ -552,7 +675,10 @@ def submit_quiz(request, batch_id):
             Certificate.objects.get_or_create(
                 student=request.user,
                 course=course,
-                defaults={'file': file_path}
+                defaults={
+                    'file': file_path,
+                    'is_manual': False   # ✅ AUTO
+                }
             )
 
     # Get all results

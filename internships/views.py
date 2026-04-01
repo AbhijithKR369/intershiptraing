@@ -74,12 +74,23 @@ def view_applications(request):
 
 @login_required
 def approve_application(request, id):
+
     app = Application.objects.get(id=id)
 
     if app.internship.company != request.user:
         return HttpResponse("Unauthorized")
 
+    # ✅ Approve
     app.status = 'approved'
+
+    # ✅ Assign roll number (per internship)
+    count = Application.objects.filter(
+        internship=app.internship,
+        status='approved'
+    ).count()
+
+    app.roll_number = count + 1
+
     app.save()
 
     return redirect('view_applications')

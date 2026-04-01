@@ -49,16 +49,39 @@
 {% empty %}
     <p>No quiz attempts yet</p>
 {% endfor %}
+
 <h3>Internship Certificates</h3>
 
-{% for app in request.user.application_set.all %}
-    {% if app.completed and app.certificate %}
-        <div>
-            {{ app.internship.title }}<br>
-            <a href="{% url 'download_certificate' app.id %}">
-                Download Certificate
-            </a>
-        </div>
+{% for cert in internship_certs %}
+
+<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+    
+    <strong>{{ cert.internship.title }}</strong><br><br>
+
+    <b>Company:</b> 
+    {{ cert.internship.company.profile.company_name|default:cert.internship.company.username }}<br>
+
+    <b>Email:</b> 
+    {{ cert.internship.company.profile.email|default:cert.internship.company.email }}<br>
+
+    {% if cert.internship.company.profile.location %}
+        <b>Location:</b> {{ cert.internship.company.profile.location }}<br>
     {% endif %}
+
+    {% if cert.internship.company.profile.phone %}
+        <b>Phone:</b> {{ cert.internship.company.profile.phone }}<br>
+    {% endif %}
+
+    <br>
+
+    <a href="{% url 'download_certificate' cert.id %}">
+        Download Certificate
+    </a>
+
+</div>
+
+{% empty %}
+<p>No internship certificates yet</p>
 {% endfor %}
+<hr>
 <br><a href="{% url 'logout' %}">Logout</a>

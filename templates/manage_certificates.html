@@ -1,0 +1,129 @@
+{% load custom_filters %}
+<h2>Company Certificate Dashboard</h2>
+
+<!-- 🔍 Filters -->
+<form method="GET">
+    <input type="text" name="q" placeholder="Search name / roll no">
+
+    <select name="course">
+        <option value="">All Courses</option>
+        {% for c in courses %}
+            <option value="{{ c.course__id }}">{{ c.course__title }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="internship">
+        <option value="">All Internships</option>
+        {% for i in internships %}
+            <option value="{{ i.internship__id }}">{{ i.internship__title }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+<hr>
+
+<!-- 📚 COURSE STUDENTS -->
+<h3>Course Students</h3>
+
+<table border="1">
+<tr>
+    <th>Roll No</th>
+    <th>Name</th>
+    <th>Course</th>
+    <th>Joined</th>
+    <th>Upload Certificate</th>
+</tr>
+
+{% for e in enrollments %}
+<tr>
+    <td>{{ e.roll_number }}</td>
+    <td>{{ e.student.username }}</td>
+    <td>{{ e.course.title }}</td>
+    <td>{{ e.joined_date }}</td>
+    <td>
+        {% with cert=cert_map|get_item:e.id %}
+        
+            {% if cert %}
+                <span style="color:green;">Uploaded ✅</span><br>
+
+                <a href="{% url 'download_certificate' cert.id %}">
+                    Download
+                </a><br><br>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="certificate" required>
+                    <input type="hidden" name="enroll_id" value="{{ e.id }}">
+                    <button>Replace</button>
+                </form>
+
+            {% else %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="certificate" required>
+                    <input type="hidden" name="enroll_id" value="{{ e.id }}">
+                    <button>Upload</button>
+                </form>
+            {% endif %}
+
+        {% endwith %}
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+<hr>
+
+<!-- 💼 INTERNSHIP STUDENTS -->
+{% if applications %}
+<h3>Internship Students</h3>
+
+<table border="1">
+<tr>
+    <th>Roll No</th>
+    <th>Name</th>
+    <th>Internship</th>
+    <th>Joined</th>
+    <th>Upload Certificate</th>
+</tr>
+
+{% for a in applications %}
+<tr>
+    <td>{{ a.roll_number }}</td>
+    <td>{{ a.student.username }}</td>
+    <td>{{ a.internship.title }}</td>
+    <td>{{ a.joined_date }}</td>
+    <td>
+        {% with cert=cert_map|get_item:a.id %}
+        
+            {% if cert %}
+                <span style="color:green;">Uploaded ✅</span><br>
+
+                <a href="{% url 'download_certificate' cert.id %}">
+                    Download
+                </a><br><br>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="certificate" required>
+                    <input type="hidden" name="app_id" value="{{ a.id }}">
+                    <button>Replace</button>
+                </form>
+
+            {% else %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="certificate" required>
+                    <input type="hidden" name="app_id" value="{{ a.id }}">
+                    <button>Upload</button>
+                </form>
+            {% endif %}
+
+        {% endwith %}
+    </td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}

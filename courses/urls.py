@@ -59,5 +59,10 @@ urlpatterns = [
          name='reject_enrollment'),
     path('results/<int:course_id>/', views.view_results, name='view_results'),
     path('student-courses/', views.student_courses, name='student_courses'),
+    path(
+        'manage-certificates/',
+        views.manage_certificates,
+        name='manage_certificates'
+    ),
 
 ]

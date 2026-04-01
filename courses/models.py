@@ -49,6 +49,8 @@ class Enrollment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     resume = models.FileField(upload_to='resumes/', null=True, blank=True)
+    roll_number = models.IntegerField(null=True, blank=True)
+    joined_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=20,
         choices=[
