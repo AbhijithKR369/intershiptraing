@@ -1,16 +1,68 @@
-<h2>Quiz Results - {{ course.title }}</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results | {{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/result.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<h3>Latest Result</h3>
-<p><strong>Score:</strong> {{ score }} / {{ total }}</p>
+<div class="main-wrapper">
+    <div class="result-card">
+        <header class="result-header">
+            <div class="header-content">
+                <h1>Quiz Completion</h1>
+                <p>{{ course.title }}</p>
+            </div>
+            <a href="{% url 'quiz_batches' course.id %}" class="close-btn">×</a>
+        </header>
 
-<hr>
+        <section class="score-summary">
+            <div class="score-circle">
+                <div class="score-inner">
+                    <span class="current-score">{{ score }}</span>
+                    <span class="total-possible">/ {{ total }}</span>
+                </div>
+            </div>
+            <div class="feedback-text">
+                <h2>Great Job!</h2>
+                <p>You have successfully completed the latest quiz module.</p>
+            </div>
+        </section>
 
-<h3>Your Attempts</h3>
+        <div class="divider"><span>Attempt History</span></div>
 
-{% for r in results %}
-    <p>
-        Batch {{ r.batch.id }} → {{ r.score }}/{{ r.total }}
-    </p>
-{% empty %}
-    <p>No previous attempts</p>
-{% endfor %}
+        <section class="history-section">
+            <div class="history-list">
+                {% for r in results %}
+                <div class="history-item">
+                    <div class="batch-info">
+                        <span class="batch-icon">📊</span>
+                        <div class="batch-text">
+                            <span class="batch-label">Quiz Batch</span>
+                            <span class="batch-id">#{{ r.batch.id }}</span>
+                        </div>
+                    </div>
+                    <div class="score-pill">
+                        <strong>{{ r.score }}</strong> / {{ r.total }}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <p>No previous attempts recorded for this course.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <footer class="result-footer">
+            <a href="{% url 'student_dashboard' %}" class="primary-btn">Go to Dashboard</a>
+        </header>
+    </div>
+</div>
+
+</body>
+</html>

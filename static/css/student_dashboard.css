@@ -1,0 +1,112 @@
+:root {
+    --primary: #6366f1;
+    --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    --bg: #f8fafc;
+    --sidebar: #0f172a;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    margin: 0;
+    color: var(--text);
+}
+
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: var(--sidebar);
+    color: white;
+    padding: 2rem;
+    position: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo { font-size: 1.5rem; font-weight: 800; margin-bottom: 3rem; background: var(--primary-grad); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 0.5rem; height: 100%; }
+
+.nav-item {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
+
+.nav-spacer { flex-grow: 1; }
+
+.nav-logout { color: #f87171; text-decoration: none; font-weight: 700; padding: 1rem; border: 1px solid #f87171; border-radius: 10px; text-align: center; }
+
+/* Main Content */
+.main-content { margin-left: 260px; flex-grow: 1; padding: 3rem; }
+
+.content-header h1 { font-size: 2rem; font-weight: 800; margin: 0; }
+.content-header p { color: var(--muted); margin: 0.5rem 0 2rem; }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+
+.stat-card { background: var(--card); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+
+.gradient-card { background: var(--primary-grad); border: none; }
+.gradient-card .stat-label, .gradient-card .stat-value { color: white; }
+
+.stat-label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+
+.stat-value { font-size: 2rem; font-weight: 800; }
+
+/* Dashboard Grid */
+.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+.card-section { background: var(--card); padding: 2rem; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 2rem; }
+
+.card-section h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 1.5rem 0; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+
+/* List Items & Badges */
+.list-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; }
+
+.status-badge { font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+.status-badge.approved { background: #dcfce7; color: #166534; }
+.status-badge.pending { background: #fef9c3; color: #854d0e; }
+
+.quiz-item { display: flex; justify-content: space-between; padding: 1rem; background: #f8fafc; border-radius: 12px; margin-bottom: 10px; }
+
+.quiz-link { font-size: 0.85rem; text-decoration: none; color: var(--primary); font-weight: 700; }
+
+/* Certificates */
+.certificate-card { background: #f8fafc; padding: 1.2rem; border-radius: 16px; margin-bottom: 1rem; border: 1px dashed #cbd5e1; }
+
+.cert-header { display: flex; gap: 15px; align-items: center; margin-bottom: 1rem; }
+.cert-info strong { display: block; font-size: 0.95rem; }
+.cert-info small { color: var(--muted); }
+
+.download-link { font-size: 0.85rem; color: var(--primary); font-weight: 700; text-decoration: none; }
+
+.history-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+.history-meta small { display: block; color: var(--muted); }
+.history-score { font-weight: 800; color: var(--primary); }
+
+.empty-msg { color: var(--muted); font-size: 0.9rem; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .sidebar { width: 80px; padding: 1rem; }
+    .sidebar-logo, .nav-item { display: none; }
+    .main-content { margin-left: 80px; }
+    .dashboard-grid { grid-template-columns: 1fr; }
+}

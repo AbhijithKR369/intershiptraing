@@ -1,48 +1,96 @@
-<h2>{{ course.title }} - Quiz</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz | {{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/quiz.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<form method="POST" action="/courses/submit/{{ batch.id }}/">
-    {% csrf_token %}
-
-    {% for q in questions %}
-        <div style="margin-bottom:20px; padding:15px; border:1px solid #ccc; border-radius:8px;">
-            
-            <p><strong>Q{{ forloop.counter }}. {{ q.question_text }}</strong></p>
-
-            <label>
-                <input type="radio" name="{{ q.id }}" value="1">
-                {{ q.option1 }}
-            </label><br>
-
-            <label>
-                <input type="radio" name="{{ q.id }}" value="2">
-                {{ q.option2 }}
-            </label><br>
-
-            <label>
-                <input type="radio" name="{{ q.id }}" value="3">
-                {{ q.option3 }}
-            </label><br>
-
-            <label>
-                <input type="radio" name="{{ q.id }}" value="4">
-                {{ q.option4 }}
-            </label>
-
+<div class="quiz-container">
+    <header class="quiz-header">
+        <div class="header-main">
+            <h1>{{ course.title }}</h1>
+            <span class="batch-tag">{{ batch.title }}</span>
         </div>
-    {% endfor %}
+        <div class="quiz-meta">
+            <span class="q-count">Total Questions: <strong>{{ questions|length }}</strong></span>
+        </div>
+    </header>
 
-    <button type="submit">Submit Quiz</button>
-</form>
-<h3>Existing Questions</h3>
+    <form method="POST" action="/courses/submit/{{ batch.id }}/" class="quiz-form">
+        {% csrf_token %}
 
-{% for q in batch.questions.all %}
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-        <strong>{{ forloop.counter }}. {{ q.question_text }}</strong><br>
-        1. {{ q.option1 }}<br>
-        2. {{ q.option2 }}<br>
-        3. {{ q.option3 }}<br>
-        4. {{ q.option4 }}<br>
+        {% for q in questions %}
+        <div class="question-card">
+            <div class="q-title">
+                <span class="q-index">{{ forloop.counter }}</span>
+                <h3>{{ q.question_text }}</h3>
+            </div>
+
+            <div class="options-container">
+                <label class="option-label">
+                    <input type="radio" name="{{ q.id }}" value="1" required>
+                    <div class="option-content">
+                        <span class="opt-prefix">A</span>
+                        <span class="opt-text">{{ q.option1 }}</span>
+                    </div>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="{{ q.id }}" value="2">
+                    <div class="option-content">
+                        <span class="opt-prefix">B</span>
+                        <span class="opt-text">{{ q.option2 }}</span>
+                    </div>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="{{ q.id }}" value="3">
+                    <div class="option-content">
+                        <span class="opt-prefix">C</span>
+                        <span class="opt-text">{{ q.option3 }}</span>
+                    </div>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="{{ q.id }}" value="4">
+                    <div class="option-content">
+                        <span class="opt-prefix">D</span>
+                        <span class="opt-text">{{ q.option4 }}</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <button type="submit" class="submit-quiz-btn">Submit Your Answers</button>
+        </div>
+    </form>
+
+    {% if user.is_staff %}
+    <div class="existing-questions">
+        <h3>Existing Questions Preview</h3>
+        {% for q in batch.questions.all %}
+            <div class="ref-card">
+                <p><strong>{{ forloop.counter }}. {{ q.question_text }}</strong></p>
+                <div class="ref-grid">
+                    <span>1. {{ q.option1 }}</span>
+                    <span>2. {{ q.option2 }}</span>
+                    <span>3. {{ q.option3 }}</span>
+                    <span>4. {{ q.option4 }}</span>
+                </div>
+            </div>
+        {% empty %}
+            <p class="empty-msg">No questions added yet</p>
+        {% endfor %}
     </div>
-{% empty %}
-    <p>No questions added yet</p>
-{% endfor %}
+    {% endif %}
+</div>
+
+</body>
+</html>

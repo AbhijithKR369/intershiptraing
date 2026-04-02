@@ -1,23 +1,69 @@
-<h2>Add Material for {{ course.title }}</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Material | {{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/add_material.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<!-- ✅ Show messages -->
-{% if messages %}
-    {% for message in messages %}
-        <p style="color:red;">{{ message }}</p>
-    {% endfor %}
-{% endif %}
+<div class="main-wrapper">
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <div class="alert-toast">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+    <div class="register-card material-card">
+        <header>
+            <h1>Add Course Material</h1>
+            <p>Uploading to: <strong>{{ course.title }}</strong></p>
+        </header>
 
-    <label>Title:</label><br>
-    <input type="text" name="title" required><br><br>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <div class="input-group">
+                    <label>Resource Title</label>
+                    <input type="text" name="title" placeholder="e.g. Week 1 Lecture Notes" required>
+                </div>
 
-    <label>Upload File (PDF/Image only):</label><br>
-    <input type="file" name="file"><br><br>
+                <div class="upload-options">
+                    <div class="input-group">
+                        <label>Upload Document</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" name="file" id="file-field">
+                            <span class="file-hint">Supported: PDF, JPG, PNG</span>
+                        </div>
+                    </div>
 
-    <label>OR Add Link:</label><br>
-    <input type="url" name="link" placeholder="https://example.com"><br><br>
+                    <div class="or-separator">
+                        <span>OR</span>
+                    </div>
 
-    <button type="submit">Upload</button>
-</form>
+                    <div class="input-group">
+                        <label>External Resource Link</label>
+                        <input type="url" name="link" placeholder="https://youtube.com/..." class="url-input">
+                    </div>
+                </div>
+
+                <button type="submit" class="register-btn">Upload Resource</button>
+            </div>
+        </form>
+
+        <div class="divider"></div>
+        
+        <div class="auth-footer">
+            <p><a href="/view_courses/">← Return to Course View</a></p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,39 +1,71 @@
-<h2>Available Courses</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Catalog | Learning Portal</title>
+    <link rel="stylesheet" href="{% static 'css/view_courses.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-{% for c in courses %}
+<div class="page-wrapper">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Available Courses</h1>
+            <p>Explore high-impact modules taught by industry experts.</p>
+        </div>
+        <a href="{% url 'student_dashboard' %}" class="back-link">← My Dashboard</a>
+    </header>
 
-    <div style="margin-bottom: 20px;">
+    <div class="course-grid">
+        {% for c in courses %}
+        <div class="course-card">
+            <div class="card-header">
+                <div class="company-badge">{{ c.company.profile.company_name }}</div>
+                <h3>{{ c.title }}</h3>
+            </div>
 
-        <h3>{{ c.title }}</h3>
-        <p>{{ c.description }}</p>
+            <div class="card-body">
+                <p class="description">{{ c.description|truncatewords:20 }}</p>
+                
+                <div class="instructor-info">
+                    {% if c.trainer %}
+                        <span class="instructor">👨‍🏫 {{ c.trainer.username }}</span>
+                    {% else %}
+                        <span class="instructor-company">🏢 Managed by Company</span>
+                    {% endif %}
+                </div>
 
-        <p><b>Company:</b> {{ c.company.profile.company_name }}</p>
+                <div class="capacity-wrapper">
+                    <div class="capacity-meta">
+                        <label>Availability</label>
+                        <span>{{ c.enrollment_set.count }} / {{ c.max_students }} Seats</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: {% widthratio c.enrollment_set.count c.max_students 100 %}%"></div>
+                    </div>
+                </div>
+            </div>
 
-        {% if c.trainer %}
-            <p><b>Trainer:</b> {{ c.trainer.username }}</p>
-        {% else %}
-            <p style="color:red;">Trainer not assigned (Company will handle)</p>
-        {% endif %}
-
-        <!-- ✅ Capacity Display -->
-        <p>
-            <b>Students:</b> 
-            {{ c.enrollment_set.count }} / {{ c.max_students }}
-        </p>
-
-        <!-- ✅ Enrollment Logic -->
-        {% if c.id in enrolled_ids %}
-            <p style="color: green;"><b>Enrolled</b></p>
-
-        {% elif c.enrollment_set.count >= c.max_students %}
-            <p style="color: red;"><b>Course Full</b></p>
-
-        {% else %}
-            <a href="{% url 'enroll_course' c.id %}">Enroll</a>
-        {% endif %}
-
+            <div class="card-footer">
+                {% if c.id in enrolled_ids %}
+                    <div class="status-btn enrolled">
+                        <span>Already Enrolled ✅</span>
+                    </div>
+                {% elif c.enrollment_set.count >= c.max_students %}
+                    <div class="status-btn full">
+                        <span>Course Full ❌</span>
+                    </div>
+                {% else %}
+                    <a href="{% url 'enroll_course' c.id %}" class="enroll-btn">Enroll Now</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
     </div>
+</div>
 
-    <hr>
-
-{% endfor %}
+</body>
+</html>

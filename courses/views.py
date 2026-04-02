@@ -15,6 +15,15 @@ from certificates.utils import generate_certificate
 from django.db.models import Q
 
 
+def quiz_batches(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    batches = QuizBatch.objects.filter(course=course)
+
+    return render(request, 'quiz_batches.html', {
+        'course': course,
+        'batches': batches
+    })
+
 @login_required
 def manage_certificates(request):
 

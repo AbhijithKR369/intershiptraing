@@ -1,67 +1,104 @@
-<h2>My Courses</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Learning Journey</title>
+    <link rel="stylesheet" href="{% static 'css/student_courses.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-{% for item in course_data %}
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:15px;">
+<div class="dashboard-wrapper">
+    <main class="content-area">
+        <header class="page-header">
+            <h1>My Courses</h1>
+            <p>Access your enrolled materials and live sessions.</p>
+        </header>
 
-        <h3>{{ item.course.title }}</h3>
-        <p>{{ item.course.description }}</p>
-        <p><b>Company:</b> {{ item.course.company.profile.company_name }}</p>
-        <p>
-            <b>Trainer:</b>
-            {% if item.course.trainer %}
-                {{ item.course.trainer.username }}
-            {% else %}
-                <span style="color: orange;">Handled by Company</span>
-            {% endif %}
-        </p>
+        {% for item in course_data %}
+        <section class="course-section">
+            <div class="course-card">
+                <div class="course-info">
+                    <div class="course-header-row">
+                        <h2>{{ item.course.title }}</h2>
+                        <span class="company-badge">{{ item.course.company.profile.company_name }}</span>
+                    </div>
+                    <p class="description">{{ item.course.description }}</p>
+                    
+                    <div class="instructor-tag">
+                        <span>Instructor:</span>
+                        <strong>
+                            {% if item.course.trainer %}
+                                {{ item.course.trainer.username }}
+                            {% else %}
+                                <span class="handled-by">Platform Verified</span>
+                            {% endif %}
+                        </strong>
+                    </div>
+                </div>
 
-        <h4>Materials:</h4>
+                <div class="materials-container">
+                    <h3>Course Materials</h3>
+                    <div class="material-grid">
+                        {% for mat in item.materials %}
+                        <div class="material-item">
+                            <div class="mat-info">
+                                <strong>{{ mat.title }}</strong>
+                                {% if mat.class_time %}
+                                    <span class="time-tag">🕒 {{ mat.class_time }}</span>
+                                {% endif %}
+                            </div>
 
-        {% for mat in item.materials %}
-            <div style="margin-left:10px;">
+                            <div class="mat-actions">
+                                {% if mat.file %}
+                                    <a href="{{ mat.file.url }}" class="btn-file">📄 Download PDF</a>
+                                {% endif %}
 
-                <strong>{{ mat.title }}</strong><br>
+                                {% if mat.link %}
+                                    <a href="{{ mat.link }}" target="_blank" class="btn-link">🔗 Resource Link</a>
+                                {% endif %}
 
-                {% if mat.file %}
-                    <a href="{{ mat.file.url }}">Download File</a><br>
-                {% endif %}
-
-                {% if mat.link %}
-                    <a href="{{ mat.link }}" target="_blank">Open Link</a><br>
-                {% endif %}
-
-                {% if mat.class_link %}
-                    <p>
-                        <b>Live Class:</b>
-                        <a href="{{ mat.class_link }}" target="_blank">Join Now</a>
-                    </p>
-                {% endif %}
-
-                {% if mat.class_time %}
-                    <small>Class Time: {{ mat.class_time }}</small><br>
-                {% endif %}
-
-                <hr>
+                                {% if mat.class_link %}
+                                    <a href="{{ mat.class_link }}" target="_blank" class="btn-live">🎥 Join Live Class</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="empty-text">No materials have been uploaded yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-
+        </section>
         {% empty %}
-            <p>No materials yet</p>
+        <div class="empty-dashboard">
+            <p>You haven't enrolled in any courses yet. Start your journey today!</p>
+            <a href="/view_courses/" class="explore-btn">Browse Courses</a>
+        </div>
         {% endfor %}
+    </main>
 
-    </div>
+    <aside class="sidebar-certificates">
+        <div class="sidebar-card">
+            <h3>🎓 Achievements</h3>
+            <div class="certificate-list">
+                {% for cert in certificates %}
+                <div class="cert-item">
+                    <div class="cert-icon">📜</div>
+                    <div class="cert-details">
+                        <span class="cert-title">{{ cert.course.title }}</span>
+                        <a href="/certificate/{{ cert.id }}/download/" class="cert-download">Download</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="empty-text">Complete a course to unlock your first certificate!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </aside>
+</div>
 
-{% empty %}
-    <p>You are not enrolled in any courses</p>
-{% endfor %}
-<hr>
-
-<h3>🎓 Your Certificates</h3>
-
-{% for cert in certificates %}
-    <div>
-        {{ cert.course.title }}
-        <a href="/certificate/{{ cert.id }}/download/">Download</a>
-    </div>
-{% empty %}
-    <p>No certificates yet</p>
-{% endfor %}
+</body>
+</html>

@@ -1,30 +1,92 @@
-<h2>Applications</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Applications | Hiring Portal</title>
+    <link rel="stylesheet" href="{% static 'css/view_applications.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-{% for app in apps %}
-    <h3>{{ app.student.username }}</h3>
+<div class="dashboard-wrapper">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Internship Applications</h1>
+            <p>Review candidate profiles and manage recruitment statuses.</p>
+        </div>
+        <a href="{% url 'company_dashboard' %}" class="back-link">← Dashboard</a>
+    </header>
 
-    <p><b>Full Name:</b> {{ app.student.profile.full_name }}</p>
-    <p><b>Email:</b> {{ app.student.profile.email }}</p>
-    <p><b>Phone:</b> {{ app.student.profile.phone }}</p>
+    <div class="applications-container">
+        {% for app in apps %}
+        <div class="application-card {% if app.status == 'pending' %}status-pending{% endif %}">
+            
+            <div class="card-header">
+                <div class="profile-main">
+                    <div class="avatar">{{ app.student.username|slice:":1"|upper }}</div>
+                    <div class="name-meta">
+                        <h3>{{ app.student.profile.full_name|default:app.student.username }}</h3>
+                        <span class="username">@{{ app.student.username }}</span>
+                    </div>
+                </div>
+                <div class="badge-area">
+                    <span class="status-badge {{ app.status }}">{{ app.status|title }}</span>
+                </div>
+            </div>
 
-    <p><b>College:</b> {{ app.student.profile.college_name }}</p>
-    <p><b>Department:</b> {{ app.student.profile.department }}</p>
+            <div class="card-body">
+                <div class="info-section">
+                    <label>Education & Academic Details</label>
+                    <div class="grid-details">
+                        <div class="detail-item">
+                            <strong>College:</strong> <span>{{ app.student.profile.college_name|default:"Not Provided" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Department:</strong> <span>{{ app.student.profile.department|default:"N/A" }}</span>
+                        </div>
+                    </div>
+                </div>
 
-    <p><b>Applied for:</b> {{ app.internship.title }}</p>
+                <div class="info-section">
+                    <label>Application Contact</label>
+                    <div class="grid-details">
+                        <div class="detail-item">
+                            <strong>Email:</strong> <span>{{ app.student.profile.email }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Phone:</strong> <span>{{ app.student.profile.phone|default:"N/A" }}</span>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Resume -->
-    <p><b>Resume:</b> 
-        <a href="{{ app.resume.url }}" target="_blank">View Resume</a>
-    </p>
+                <div class="internship-target">
+                    <strong>Applied for:</strong> 
+                    <span class="target-title">{{ app.internship.title }}</span>
+                </div>
+            </div>
 
-    <!--  Status -->
-    <p><b>Status:</b> {{ app.status }}</p>
+            <div class="card-footer">
+                <a href="{{ app.resume.url }}" target="_blank" class="resume-btn">
+                    <span class="icon">📄</span> View Full Resume
+                </a>
 
-    <!-- Approve / Reject -->
-    {% if app.status == 'pending' %}
-        <a href="{% url 'approve_application' app.id %}">Approve</a>
-        <a href="{% url 'reject_application' app.id %}">Reject</a>
-    {% endif %}
+                {% if app.status == 'pending' %}
+                <div class="action-group">
+                    <a href="{% url 'approve_application' app.id %}" class="btn-approve">Approve</a>
+                    <a href="{% url 'reject_application' app.id %}" class="btn-reject">Reject</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <p>No applications have been submitted yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
-    <hr>
-{% endfor %}
+</body>
+</html>

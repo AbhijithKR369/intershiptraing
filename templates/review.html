@@ -1,14 +1,68 @@
+{% load static %}
 {% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Quiz | {{ batch.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/review.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<h2>{{ batch.title }} - Review</h2>
+<div class="review-wrapper">
+    <header class="review-header">
+        <div class="header-nav">
+            <a href="{% url 'quiz_batches' batch.course.id %}" class="back-link">← Back to Quizzes</a>
+        </div>
+        <div class="header-main">
+            <h1>Review: {{ batch.title }}</h1>
+            <p>Go through your answers to understand your performance.</p>
+        </div>
+    </header>
 
-{% for q in questions %}
-<div style="margin-bottom:15px; padding:10px; border:1px solid #ccc;">
+    <div class="question-flow">
+        {% for q in questions %}
+        {% with user_ans=answers|get_item:q.id %}
+        <div class="review-card {% if user_ans == q.correct_option %}correct-border{% else %}wrong-border{% endif %}">
+            <div class="q-meta">
+                <span class="q-number">Question {{ forloop.counter }}</span>
+                {% if user_ans == q.correct_option %}
+                    <span class="badge success">Correct</span>
+                {% else %}
+                    <span class="badge danger">Incorrect</span>
+                {% endif %}
+            </div>
 
-    <strong>{{ q.question_text }}</strong><br><br>
+            <h3 class="q-text">{{ q.question_text }}</h3>
 
-    Your Answer: {{ answers|get_item:q.id }}<br>
-    Correct Answer: Option {{ q.correct_option }}
+            <div class="answer-comparison">
+                <div class="answer-box {% if user_ans == q.correct_option %}ans-correct{% else %}ans-wrong{% endif %}">
+                    <label>Your Choice</label>
+                    <p>
+                        {% if user_ans == '1' %}{{ q.option1 }}{% elif user_ans == '2' %}{{ q.option2 }}{% elif user_ans == '3' %}{{ q.option3 }}{% elif user_ans == '4' %}{{ q.option4 }}{% else %}No Answer Selected{% endif %}
+                    </p>
+                </div>
 
+                {% if user_ans != q.correct_option %}
+                <div class="answer-box ans-actual">
+                    <label>Correct Answer</label>
+                    <p>
+                        {% if q.correct_option == '1' %}{{ q.option1 }}{% elif q.correct_option == '2' %}{{ q.option2 }}{% elif q.correct_option == '3' %}{{ q.option3 }}{% elif q.correct_option == '4' %}{{ q.option4 }}{% endif %}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+    <footer class="review-footer">
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="scroll-top">Back to Top</button>
+    </footer>
 </div>
-{% endfor %}
+
+</body>
+</html>

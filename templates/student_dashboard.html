@@ -1,87 +1,122 @@
-<h2>Student Dashboard</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Learning Portal</title>
+    <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<!-- 🔹 Internship -->
-<a href="{% url 'view_internships' %}">View Internships</a><br><br>
+<div class="dashboard-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-text">VERIDA</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{% url 'view_internships' %}" class="nav-item">Explore Internships</a>
+            <a href="{% url 'view_courses' %}" class="nav-item">Course Catalog</a>
+            <a href="{% url 'student_courses' %}" class="nav-item">My Learning</a>
+            <div class="nav-spacer"></div>
+            <a href="{% url 'logout' %}" class="nav-logout">Logout</a>
+        </nav>
+    </aside>
 
-<h3>My Applications</h3>
+    <main class="main-content">
+        <header class="content-header">
+            <div class="welcome-text">
+                <h1>Welcome Back, {{ request.user.username }}!</h1>
+                <p>Track your progress and upcoming opportunities.</p>
+            </div>
+        </header>
 
-{% for app in request.user.application_set.all %}
-<p>
-    {{ app.internship.title }} - 
-    <b>{{ app.status|title }}</b>
-</p>
-{% empty %}
-<p>No applications yet</p>
-{% endfor %}
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Enrolled Courses</span>
+                <span class="stat-value">{{ courses.count }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Applications</span>
+                <span class="stat-value">{{ request.user.application_set.count }}</span>
+            </div>
+            <div class="stat-card gradient-card">
+                <span class="stat-label">Certificates Earned</span>
+                <span class="stat-value">{{ internship_certs.count }}</span>
+            </div>
+        </section>
 
-<hr>
+        <div class="dashboard-grid">
+            <div class="grid-column">
+                <section class="card-section">
+                    <h3>My Internship Applications</h3>
+                    <div class="list-container">
+                        {% for app in request.user.application_set.all %}
+                        <div class="list-item">
+                            <span class="item-title">{{ app.internship.title }}</span>
+                            <span class="status-badge {{ app.status }}">{{ app.status|title }}</span>
+                        </div>
+                        {% empty %}
+                        <p class="empty-msg">No applications yet. <a href="{% url 'view_internships' %}">Browse now</a></p>
+                        {% endfor %}
+                    </div>
+                </section>
 
-<!-- 🔹 Courses -->
-<h3>My Courses</h3>
+                <section class="card-section">
+                    <h3>Course Quizzes</h3>
+                    <div class="quiz-grid">
+                        {% for course in courses %}
+                        <div class="quiz-item">
+                            <span class="quiz-course">{{ course.title }}</span>
+                            <a href="{% url 'course_quizzes' course.id %}" class="quiz-link">View Quizzes →</a>
+                        </div>
+                        {% empty %}
+                        <p class="empty-msg">Enroll in a course to take quizzes.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
 
-<a href="{% url 'view_courses' %}">View Courses</a><br>
-<a href="{% url 'student_courses' %}">My Enrolled Courses</a>
+            <div class="grid-column">
+                <section class="card-section">
+                    <h3>Internship Certificates</h3>
+                    {% for cert in internship_certs %}
+                    <div class="certificate-card">
+                        <div class="cert-header">
+                            <span class="cert-icon">📜</span>
+                            <div class="cert-info">
+                                <strong>{{ cert.internship.title }}</strong>
+                                <small>{{ cert.internship.company.profile.company_name|default:cert.internship.company.username }}</small>
+                            </div>
+                        </div>
+                        <a href="{% url 'download_certificate' cert.id %}" class="download-link">Download Certificate</a>
+                    </div>
+                    {% empty %}
+                    <p class="empty-msg">No internship certificates yet.</p>
+                    {% endfor %}
+                </section>
 
-<hr>
-
-<!-- 🔹 Quiz Section -->
-<h3>My Quizzes</h3>
-
-{% for course in courses %}
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-        <strong>{{ course.title }}</strong><br>
-
-        <a href="{% url 'course_quizzes' course.id %}">
-            View Quizzes
-        </a>
-    </div>
-{% empty %}
-    <p>No enrolled courses</p>
-{% endfor %}
-<h3>Quiz History</h3>
-
-{% for result in results %}
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-        <strong>{{ result.batch.course.title }}</strong><br>
-        {{ result.batch.title }}<br>
-        Score: {{ result.score }}/{{ result.total }}
-    </div>
-{% empty %}
-    <p>No quiz attempts yet</p>
-{% endfor %}
-
-<h3>Internship Certificates</h3>
-
-{% for cert in internship_certs %}
-
-<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-    
-    <strong>{{ cert.internship.title }}</strong><br><br>
-
-    <b>Company:</b> 
-    {{ cert.internship.company.profile.company_name|default:cert.internship.company.username }}<br>
-
-    <b>Email:</b> 
-    {{ cert.internship.company.profile.email|default:cert.internship.company.email }}<br>
-
-    {% if cert.internship.company.profile.location %}
-        <b>Location:</b> {{ cert.internship.company.profile.location }}<br>
-    {% endif %}
-
-    {% if cert.internship.company.profile.phone %}
-        <b>Phone:</b> {{ cert.internship.company.profile.phone }}<br>
-    {% endif %}
-
-    <br>
-
-    <a href="{% url 'download_certificate' cert.id %}">
-        Download Certificate
-    </a>
-
+                <section class="card-section">
+                    <h3>Recent Quiz Activity</h3>
+                    <div class="history-list">
+                        {% for result in results %}
+                        <div class="history-row">
+                            <div class="history-meta">
+                                <strong>{{ result.batch.title }}</strong>
+                                <small>{{ result.batch.course.title }}</small>
+                            </div>
+                            <div class="history-score">{{ result.score }}/{{ result.total }}</div>
+                        </div>
+                        {% empty %}
+                        <p class="empty-msg">No attempts yet.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
 </div>
 
-{% empty %}
-<p>No internship certificates yet</p>
-{% endfor %}
-<hr>
-<br><a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>

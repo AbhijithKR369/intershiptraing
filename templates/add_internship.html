@@ -1,10 +1,53 @@
-<h2>Add Internship</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Internship | Hiring Portal</title>
+    <link rel="stylesheet" href="{% static 'css/add_internship.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<form method="POST">
-    {% csrf_token %}
-    Title: <input type="text" name="title"><br><br>
-    Description: <textarea name="description"></textarea><br><br>
-    Location: <input type="text" name="location"><br><br>
+<div class="main-wrapper">
+    <div class="register-card internship-card">
+        <header>
+            <h1>Post an Internship</h1>
+            <p>Find the best talent by providing clear internship details.</p>
+        </header>
 
-    <button type="submit">Add</button>
-</form>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Internship Title</label>
+                        <input type="text" name="title" placeholder="e.g. Frontend Developer Intern" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Office Location</label>
+                        <input type="text" name="location" placeholder="e.g. Remote / New York, NY" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Internship Description</label>
+                    <textarea name="description" rows="6" placeholder="Describe the roles, responsibilities, and perks..." required></textarea>
+                </div>
+
+                <button type="submit" class="register-btn">Post Internship</button>
+            </div>
+        </form>
+
+        <div class="divider"></div>
+        
+        <div class="auth-footer">
+            <p><a href="/company_dashboard/">← Back to Hiring Dashboard</a></p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,9 +1,78 @@
-<h3>Upload Resume for {{ course.title }}</h3>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resume | {{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/upload_resume.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+<div class="main-wrapper">
+    <div class="register-card upload-card">
+        <header>
+            <div class="icon-circle">📄</div>
+            <h1>Submit Resume</h1>
+            <p>Applying for: <strong>{{ course.title }}</strong></p>
+        </header>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            
+            <div class="dropzone-area">
+                <input type="file" name="resume" id="resume-input" required hidden onchange="showFileName()">
+                <label for="resume-input" class="dropzone-label" id="dropzone-ui">
+                    <div class="upload-text">
+                        <span class="main-text">Click to browse your files</span>
+                        <span class="sub-text">Supported format: PDF (Max 5MB)</span>
+                    </div>
+                </label>
+            </div>
+
+            <div id="file-info" class="file-info" style="display: none;">
+                <span id="file-name"></span>
+                <button type="button" class="remove-btn" onclick="resetUpload()">✕</button>
+            </div>
+
+            <button type="submit" class="register-btn">Submit Application</button>
+        </form>
+
+        <div class="divider"></div>
+        
+        <div class="auth-footer">
+            <p><a href="{% url 'view_courses' %}">← Cancel and Go Back</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function showFileName() {
+    const input = document.getElementById('resume-input');
+    const info = document.getElementById('file-info');
+    const nameDisplay = document.getElementById('file-name');
+    const dropzone = document.getElementById('dropzone-ui');
+
+    if (input.files.length > 0) {
+        nameDisplay.innerText = "Selected: " + input.files[0].name;
+        info.style.display = "flex";
+        dropzone.classList.add('active');
+        dropzone.querySelector('.main-text').innerText = "File Ready!";
+    }
+}
+
+function resetUpload() {
+    const input = document.getElementById('resume-input');
+    const info = document.getElementById('file-info');
+    const dropzone = document.getElementById('dropzone-ui');
     
-    <input type="file" name="resume" required><br><br>
+    input.value = "";
+    info.style.display = "none";
+    dropzone.classList.remove('active');
+    dropzone.querySelector('.main-text').innerText = "Click to browse your files";
+}
+</script>
 
-    <button type="submit">Submit</button>
-</form>
+</body>
+</html>

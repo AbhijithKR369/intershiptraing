@@ -1,83 +1,121 @@
-<h2>Add Question</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Management | {{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/add_question.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<!-- 🔹 Course + Batch Info -->
-<p><strong>Course:</strong> {{ course.title }}</p>
+<div class="dashboard-wrapper">
+    <div class="control-panel">
+        <div class="register-card info-card">
+            <header>
+                <h1>Quiz Management</h1>
+                <p>Course: <strong>{{ course.title }}</strong></p>
+            </header>
 
-{% if batch %}
-    <p><strong>Batch:</strong> {{ batch.title }}</p>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="label">Current Batch</span>
+                    <span class="value">{{ batch.title|default:"None" }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Type</span>
+                    {% if batch.is_final %}
+                        <span class="value status-final">Final Quiz</span>
+                    {% else %}
+                        <span class="value status-regular">Regular</span>
+                    {% endif %}
+                </div>
+                <div class="stat-item">
+                    <span class="label">Total Qs</span>
+                    <span class="value">{{ count }}</span>
+                </div>
+            </div>
 
-    {% if batch.is_final %}
-        <p style="color:red;"><strong>Final Quiz</strong></p>
-    {% else %}
-        <p style="color:green;">Regular Quiz</p>
-    {% endif %}
+            <div class="divider"></div>
 
-    <p><strong>Total Questions:</strong> {{ count }}</p>
-{% else %}
-    <p>No batch created yet</p>
-{% endif %}
+            <h3>Create New Batch</h3>
+            <form method="POST" class="batch-actions">
+                {% csrf_token %}
+                <button name="new_batch" value="normal" class="btn-secondary">New Regular Quiz</button>
+                {% if request.user.profile.role == 'company' %}
+                    <button name="new_batch" value="final" class="btn-final">New FINAL Quiz</button>
+                {% endif %}
+            </form>
+        </div>
 
-<hr>
+        <div class="register-card form-card">
+            <h3>Add Question to {{ batch.title }}</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label>Question Text</label>
+                    <input type="text" name="question" placeholder="e.g. What is the complexity of Binary Search?" required>
+                </div>
 
-<!-- 🔹 Create New Batch -->
-<h3>Create New Batch</h3>
+                <div class="options-grid">
+                    <div class="input-group">
+                        <label>Option 1</label>
+                        <input type="text" name="opt1" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Option 2</label>
+                        <input type="text" name="opt2" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Option 3</label>
+                        <input type="text" name="opt3" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Option 4</label>
+                        <input type="text" name="opt4" required>
+                    </div>
+                </div>
 
-<form method="POST">
-    {% csrf_token %}
+                <div class="input-group">
+                    <label>Correct Answer</label>
+                    <select name="correct">
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                        <option value="3">Option 3</option>
+                        <option value="4">Option 4</option>
+                    </select>
+                </div>
 
-    <button name="new_batch" value="normal">
-        Create Normal Quiz
-    </button>
+                <button type="submit" class="register-btn">Add to Batch</button>
+            </form>
+        </div>
+    </div>
 
-    {% if request.user.profile.role == 'company' %}
-        <button name="new_batch" value="final">
-            Create FINAL Quiz
-        </button>
-    {% endif %}
-</form>
-
-<!-- 🔹 Add Question -->
-<h3>Add Question to {{ batch.title }}</h3>
-
-<form method="POST">
-    {% csrf_token %}
-
-    <input type="text" name="question" placeholder="Enter question" required><br><br>
-
-    <input type="text" name="opt1" placeholder="Option 1" required><br>
-    <input type="text" name="opt2" placeholder="Option 2" required><br>
-    <input type="text" name="opt3" placeholder="Option 3" required><br>
-    <input type="text" name="opt4" placeholder="Option 4" required><br><br>
-
-    <label>Correct Option:</label>
-    <select name="correct">
-        <option value="1">Option 1</option>
-        <option value="2">Option 2</option>
-        <option value="3">Option 3</option>
-        <option value="4">Option 4</option>
-    </select><br><br>
-
-    <button type="submit">Add Question</button>
-</form>
-
-<hr>
-
-<!-- 🔹 Existing Questions -->
-<h3>Questions in {{ batch.title }}</h3>
-
-{% for q in batch.questions.all %}
-<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-
-    <strong>{{ forloop.counter }}. {{ q.question_text }}</strong><br><br>
-
-    1. {{ q.option1 }}<br>
-    2. {{ q.option2 }}<br>
-    3. {{ q.option3 }}<br>
-    4. {{ q.option4 }}<br>
-
-    <strong>Correct:</strong> Option {{ q.correct_option }}
-
+    <div class="preview-panel">
+        <h3>Questions Preview</h3>
+        <div class="question-list">
+            {% for q in batch.questions.all %}
+            <div class="question-item">
+                <div class="q-header">
+                    <span class="q-number">#{{ forloop.counter }}</span>
+                    <p>{{ q.question_text }}</p>
+                </div>
+                <div class="q-options">
+                    <div class="opt {% if q.correct_option == '1' %}correct{% endif %}">1. {{ q.option1 }}</div>
+                    <div class="opt {% if q.correct_option == '2' %}correct{% endif %}">2. {{ q.option2 }}</div>
+                    <div class="opt {% if q.correct_option == '3' %}correct{% endif %}">3. {{ q.option3 }}</div>
+                    <div class="opt {% if q.correct_option == '4' %}correct{% endif %}">4. {{ q.option4 }}</div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <p>No questions added to this batch yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
-{% empty %}
-<p>No questions added yet</p>
-{% endfor %}
+
+</body>
+</html>

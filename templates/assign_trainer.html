@@ -1,53 +1,98 @@
-<h2>Assign Trainer to {{ course.title }}</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Trainer | {{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/assign_trainer.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<form method="POST">
-    {% csrf_token %}
+<div class="main-wrapper">
+    <div class="register-card assign-card">
+        <header>
+            <h1>Assign Trainer</h1>
+            <p>Course: <span class="highlight">{{ course.title }}</span></p>
+        </header>
 
-    <select name="trainer" id="trainerSelect" onchange="showDetails()">
-        <option value="">Select Trainer</option>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <div class="input-group">
+                    <label>Select Approved Trainer</label>
+                    <select name="trainer" id="trainerSelect" onchange="showDetails()" required>
+                        <option value="">Choose a professional...</option>
+                        {% for app in approved_apps %}
+                            <option 
+                                value="{{ app.trainer.id }}"
+                                data-email="{{ app.trainer.profile.email }}"
+                                data-qualification="{{ app.trainer.profile.qualification }}"
+                                data-place="{{ app.trainer.profile.place }}"
+                            >
+                                {{ app.trainer.username }}
+                            </option>
+                        {% empty %}
+                            <option disabled>No available trainers found</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        {% for app in approved_apps %}
-            <option 
-                value="{{ app.trainer.id }}"
-                data-email="{{ app.trainer.profile.email }}"
-                data-qualification="{{ app.trainer.profile.qualification }}"
-                data-place="{{ app.trainer.profile.place }}"
-            >
-                {{ app.trainer.username }}
-            </option>
-        {% empty %}
-            <option disabled>No available trainers</option>
-        {% endfor %}
-    </select>
+                <div id="trainerDetails" class="trainer-info-box">
+                    <div class="info-header">
+                        <h4>Trainer Profile</h4>
+                    </div>
+                    <div class="info-body">
+                        <div class="detail-row">
+                            <span class="detail-label">Email Address</span>
+                            <span class="detail-value" id="email"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Qualifications</span>
+                            <span class="detail-value" id="qualification"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Primary Location</span>
+                            <span class="detail-value" id="place"></span>
+                        </div>
+                    </div>
+                </div>
 
-    <br><br>
+                <button type="submit" class="register-btn">Confirm Assignment</button>
+            </div>
+        </form>
 
-    <!-- ✅ Trainer Details Box -->
-    <div id="trainerDetails" style="border:1px solid #ccc; padding:10px; display:none;">
-        <h4>Trainer Details</h4>
-        <p><b>Email:</b> <span id="email"></span></p>
-        <p><b>Qualification:</b> <span id="qualification"></span></p>
-        <p><b>Place:</b> <span id="place"></span></p>
+        <div class="divider"></div>
+        
+        <div class="auth-footer">
+            <p><a href="/company_dashboard/">← Back to Dashboard</a></p>
+        </div>
     </div>
-
-    <br>
-    <button type="submit">Assign Trainer</button>
-</form>
+</div>
 
 <script>
 function showDetails() {
     var select = document.getElementById("trainerSelect");
     var selected = select.options[select.selectedIndex];
+    var detailsBox = document.getElementById("trainerDetails");
 
-    if (selected.value === "") {
-        document.getElementById("trainerDetails").style.display = "none";
+    if (!selected.value) {
+        detailsBox.classList.remove("active");
+        setTimeout(() => { detailsBox.style.display = "none"; }, 300);
         return;
     }
 
-    document.getElementById("trainerDetails").style.display = "block";
+    detailsBox.style.display = "block";
+    // Small timeout to trigger CSS transition
+    setTimeout(() => { detailsBox.classList.add("active"); }, 10);
 
     document.getElementById("email").innerText = selected.getAttribute("data-email");
     document.getElementById("qualification").innerText = selected.getAttribute("data-qualification");
     document.getElementById("place").innerText = selected.getAttribute("data-place");
 }
 </script>
+
+</body>
+</html>

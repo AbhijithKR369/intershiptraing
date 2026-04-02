@@ -1,32 +1,90 @@
-<h2>Apply to Companies</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner with Companies | Trainer Portal</title>
+    <link rel="stylesheet" href="{% static 'css/trainer_apply_list.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-{% for c in companies %}
+<div class="page-wrapper">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Partner with Companies</h1>
+            <p>Apply to become a verified trainer for top-tier industry organizations.</p>
+        </div>
+        <a href="{% url 'trainer_dashboard' %}" class="back-link">← Dashboard</a>
+    </header>
 
-    <h3>{{ c.profile.company_name }}</h3>
+    <div class="company-grid">
+        {% for c in companies %}
+        <div class="company-card">
+            <div class="card-top">
+                <div class="company-logo">{{ c.profile.company_name|slice:":1"|upper }}</div>
+                <div class="company-meta">
+                    <h3>{{ c.profile.company_name }}</h3>
+                    <span class="domain-tag">{{ c.profile.domain|title }}</span>
+                </div>
+            </div>
 
-    <p><b>Email:</b> {{ c.profile.email }}</p>
-    <p><b>Location:</b> {{ c.profile.location }}</p>
-    <p><b>Domain:</b> {{ c.profile.domain }}</p>
+            <div class="card-details">
+                <div class="detail-item">
+                    <span class="label">Location</span>
+                    <span class="value">{{ c.profile.location|default:"Global / Remote" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Contact</span>
+                    <span class="value">{{ c.profile.email }}</span>
+                </div>
+            </div>
 
-    <!-- Courses Offered -->
-    <p><b>Courses Offered:</b></p>
-    {% for course in c.company_courses.all %}
-        <p>- {{ course.title }}</p>
-    {% empty %}
-        <p>No courses available</p>
-    {% endfor %}
+            <div class="course-section">
+                <label>Available Courses</label>
+                <div class="course-tags">
+                    {% for course in c.company_courses.all %}
+                        <span class="course-tag">{{ course.title }}</span>
+                    {% empty %}
+                        <p class="empty-text">No active courses seeking trainers.</p>
+                    {% endfor %}
+                </div>
+            </div>
 
-    <!-- Apply Section -->
-    {% if c.id in applied_ids %}
-        <p style="color: green;"><b>Applied</b></p>
-    {% else %}
-        <form method="POST" action="{% url 'apply_company' c.id %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            Upload Resume: <input type="file" name="resume" required><br><br>
-            <button type="submit">Apply</button>
-        </form>
-    {% endif %}
+            <div class="action-section">
+                {% if c.id in applied_ids %}
+                    <div class="applied-badge">
+                        <span class="icon">✅</span>
+                        <span>Application Submitted</span>
+                    </div>
+                {% else %}
+                    <form method="POST" action="{% url 'apply_company' c.id %}" enctype="multipart/form-data" class="apply-form">
+                        {% csrf_token %}
+                        <div class="file-upload">
+                            <input type="file" name="resume" id="file_{{ c.id }}" required class="hidden-input" onchange="updateFileName(this, 'label_{{ c.id }}')">
+                            <label for="file_{{ c.id }}" class="file-label" id="label_{{ c.id }}">
+                                <span>📄 Click to upload Resume</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="apply-btn">Apply as Trainer</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
-    <hr>
+<script>
+function updateFileName(input, labelId) {
+    const fileName = input.files[0].name;
+    const label = document.getElementById(labelId);
+    label.innerHTML = `<span>✔️ ${fileName}</span>`;
+    label.style.borderColor = "#10b981";
+    label.style.color = "#10b981";
+}
+</script>
 
-{% endfor %}
+</body>
+</html>

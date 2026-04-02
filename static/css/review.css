@@ -1,0 +1,145 @@
+:root {
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    --bg-light: #f8fafc;
+    --white: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --border: #e2e8f0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    margin: 0;
+    color: var(--text-main);
+}
+
+.review-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.review-header {
+    margin-bottom: 3rem;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #6366f1;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.header-main h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 15px 0 5px 0;
+    letter-spacing: -1px;
+}
+
+.header-main p { color: var(--text-muted); }
+
+/* Review Card Styling */
+.question-flow { display: flex; flex-direction: column; gap: 2rem; }
+
+.review-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.correct-border { border-left: 6px solid var(--success); }
+.wrong-border { border-left: 6px solid var(--danger); }
+
+.q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.q-number {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+}
+
+.badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.badge.success { background: #ecfdf5; color: var(--success); }
+.badge.danger { background: #fef2f2; color: var(--danger); }
+
+.q-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.4;
+}
+
+/* Comparison Boxes */
+.answer-comparison {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.answer-box {
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+}
+
+.answer-box label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    color: #94a3b8;
+}
+
+.answer-box p {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.ans-correct { background-color: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+.ans-wrong { background-color: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.ans-actual { background-color: #f8fafc; border-color: var(--border); color: var(--text-main); }
+
+/* Footer */
+.review-footer {
+    text-align: center;
+    margin-top: 4rem;
+}
+
+.scroll-top {
+    background: transparent;
+    border: none;
+    color: #6366f1;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Responsiveness */
+@media (max-width: 600px) {
+    .review-card { padding: 1.5rem; }
+    .q-text { font-size: 1.1rem; }
+}

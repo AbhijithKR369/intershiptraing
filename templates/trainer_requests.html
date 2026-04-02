@@ -1,26 +1,74 @@
-<h2>Trainer Applications</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainer Applications | Management Hub</title>
+    <link rel="stylesheet" href="{% static 'css/trainer_requests.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-{% for app in apps %}
+<div class="dashboard-wrapper">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Trainer Applications</h1>
+            <p>Review and verify professionals applying to join your organization.</p>
+        </div>
+        <a href="{% url 'company_dashboard' %}" class="back-link">← Back to Dashboard</a>
+    </header>
 
-    <h3>{{ app.trainer.username }}</h3>
+    <div class="request-container">
+        {% for app in apps %}
+        <div class="request-card {% if app.status == 'pending' %}status-pending{% endif %}">
+            <div class="card-left">
+                <div class="user-avatar">
+                    {{ app.trainer.username|slice:":1"|upper }}
+                </div>
+                <div class="user-info">
+                    <h3>{{ app.trainer.username }}</h3>
+                    <span class="status-pill {{ app.status }}">{{ app.status|title }}</span>
+                </div>
+            </div>
 
-    <p><b>Email:</b> {{ app.trainer.profile.email }}</p>
-    <p><b>Qualification:</b> {{ app.trainer.profile.qualification }}</p>
-    <p><b>Place:</b> {{ app.trainer.profile.place }}</p>
+            <div class="card-mid">
+                <div class="info-row">
+                    <span class="label">Qualification:</span>
+                    <span class="value">{{ app.trainer.profile.qualification|default:"Not Specified" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Location:</span>
+                    <span class="value">{{ app.trainer.profile.place|default:"Remote" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Email:</span>
+                    <span class="value">{{ app.trainer.profile.email }}</span>
+                </div>
+            </div>
 
-    <!-- Resume -->
-    <p>
-        <b>Resume:</b>
-        <a href="{{ app.resume.url }}" target="_blank">View Resume</a>
-    </p>
+            <div class="card-right">
+                <div class="resume-wrapper">
+                    <a href="{{ app.resume.url }}" target="_blank" class="btn-resume">
+                        <span>📄 View Resume</span>
+                    </a>
+                </div>
 
-    <p><b>Status:</b> {{ app.status }}</p>
+                {% if app.status == 'pending' %}
+                <div class="decision-btns">
+                    <a href="{% url 'approve_trainer' app.id %}" class="btn-approve">Approve</a>
+                    <a href="{% url 'reject_trainer' app.id %}" class="btn-reject">Reject</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <p>No trainer applications found at this time.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
-    {% if app.status == 'pending' %}
-        <a href="{% url 'approve_trainer' app.id %}">Approve</a>
-        <a href="{% url 'reject_trainer' app.id %}">Reject</a>
-    {% endif %}
-
-    <hr>
-
-{% endfor %}
+</body>
+</html>

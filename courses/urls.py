@@ -64,5 +64,10 @@ urlpatterns = [
         views.manage_certificates,
         name='manage_certificates'
     ),
+    path(
+        'quiz-batches/<int:course_id>/',
+        views.quiz_batches,
+        name='quiz_batches'
+    ),
 
 ]

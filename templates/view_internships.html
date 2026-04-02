@@ -1,23 +1,78 @@
-<h2>Available Internships</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Internships | Career Portal</title>
+    <link rel="stylesheet" href="{% static 'css/view_internships.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-{% for i in internships %}
-    <h3>{{ i.title }}</h3>
-    <p>{{ i.description }}</p>
-    <p>Location: {{ i.location }}</p>
+<div class="page-wrapper">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Available Internships</h1>
+            <p>Kickstart your career by applying to top-tier organizations.</p>
+        </div>
+        <a href="{% url 'student_dashboard' %}" class="back-link">← My Dashboard</a>
+    </header>
 
-    <!-- Company Details -->
-    <p><b>Company:</b> {{ i.company.profile.company_name }}</p>
-    <p><b>Email:</b> {{ i.company.profile.email }}</p>
+    <div class="internship-grid">
+        {% for i in internships %}
+        <div class="job-card">
+            <div class="card-header">
+                <div class="title-area">
+                    <h3>{{ i.title }}</h3>
+                    <span class="location-tag">📍 {{ i.location }}</span>
+                </div>
+                <div class="company-logo">{{ i.company.profile.company_name|slice:":1"|upper }}</div>
+            </div>
 
-    {% if i.id in applied_ids %}
-        <p style="color: green;"><b>Applied</b></p>
-    {% else %}
-        <form method="POST" action="{% url 'apply_internship' i.id %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            Upload Resume: <input type="file" name="resume" required><br><br>
-            <button type="submit">Apply</button>
-        </form>
-    {% endif %}
+            <div class="card-body">
+                <p class="description">{{ i.description|truncatewords:25 }}</p>
+                
+                <div class="company-info-box">
+                    <label>Hiring Organization</label>
+                    <div class="company-meta">
+                        <strong>{{ i.company.profile.company_name }}</strong>
+                        <span>{{ i.company.profile.email }}</span>
+                    </div>
+                </div>
+            </div>
 
-    <hr>
-{% endfor %}
+            <div class="card-footer">
+                {% if i.id in applied_ids %}
+                    <div class="applied-status">
+                        <span class="check-icon">✓</span>
+                        <strong>Application Submitted</strong>
+                    </div>
+                {% else %}
+                    <form method="POST" action="{% url 'apply_internship' i.id %}" enctype="multipart/form-data" class="apply-form">
+                        {% csrf_token %}
+                        <div class="file-group">
+                            <label for="resume_{{ i.id }}" class="custom-file-upload">
+                                📄 Upload Resume
+                            </label>
+                            <input type="file" name="resume" id="resume_{{ i.id }}" required onchange="showSelectedFile(this, 'file_name_{{ i.id }}')">
+                            <span id="file_name_{{ i.id }}" class="file-name-hint">No file chosen</span>
+                        </div>
+                        <button type="submit" class="apply-btn">Submit Application</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function showSelectedFile(input, spanId) {
+    const fileName = input.files[0].name;
+    document.getElementById(spanId).textContent = fileName;
+}
+</script>
+
+</body>
+</html>

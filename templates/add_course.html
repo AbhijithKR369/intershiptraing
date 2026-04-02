@@ -1,9 +1,47 @@
-<h2>Add Course</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Course | Instructor Portal</title>
+    <link rel="stylesheet" href="{% static 'css/add_course.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
 
-<form method="POST">
-    {% csrf_token %}
-    Title: <input type="text" name="title"><br><br>
-    Description: <textarea name="description"></textarea><br><br>
+<div class="main-wrapper">
+    <div class="register-card add-course-card">
+        <header>
+            <h1>Add New Course</h1>
+            <p>Fill in the details to publish a new learning module.</p>
+        </header>
 
-    <button type="submit">Add</button>
-</form>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-section">
+                <div class="input-group">
+                    <label>Course Title</label>
+                    <input type="text" name="title" placeholder="e.g. Advanced Python Mastery" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="5" placeholder="Describe the course objectives and what students will learn..." required></textarea>
+                </div>
+
+                <button type="submit" class="register-btn">Publish Course</button>
+            </div>
+        </form>
+
+        <div class="divider"></div>
+        
+        <div class="auth-footer">
+            <p><a href="/trainer_dashboard/">← Back to Dashboard</a></p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
