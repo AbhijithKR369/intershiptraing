@@ -42,6 +42,7 @@
         <div class="divider"></div>
         
         <div class="auth-footer">
+
             {% if request.user.profile.role == 'company' %}
                 <a href="{% url 'company_dashboard' %}" class="back-link">← Company Dashboard</a>
             {% elif request.user.profile.role == 'trainer' %}
@@ -49,6 +50,7 @@
             {% else %}
                 <a href="/" class="back-link">← Back to Home</a>
             {% endif %}
+
         </div>
     </div>
 </div>

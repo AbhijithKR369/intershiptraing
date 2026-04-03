@@ -142,7 +142,14 @@
             </div>
             {% endfor %}
         </div>
-    </main>
+    </div>
+    <div class="back-link">
+        {% if request.user.profile.role == 'company' %}
+            <a href="{% url 'company_dashboard' %}">← Back to Company Dashboard</a>
+        {% elif request.user.profile.role == 'trainer' %}
+            <a href="{% url 'trainer_dashboard' %}">← Back to Trainer Dashboard</a>
+        {% endif %}
+    </div>
 </div>
 
 </body>

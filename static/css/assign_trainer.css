@@ -39,6 +39,30 @@ body {
 .header-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
 .header-section h1 { font-size: 1.8rem; font-weight: 800; margin: 0; }
 .highlight { color: var(--primary); font-weight: 700; }
+header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.highlight {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
 
 /* Form Elements */
 .input-group { margin-bottom: 1.5rem; }
