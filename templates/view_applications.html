@@ -8,81 +8,88 @@
     <link rel="stylesheet" href="{% static 'css/view_applications.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-smooth">
 
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper fade-in">
     <header class="page-header">
         <div class="header-content">
-            <h1>Internship Applications</h1>
-            <p>Review candidate profiles and manage recruitment statuses.</p>
+            <span class="context-pill">Recruitment Hub</span>
+            <h1>Candidate Applications</h1>
+            <p>Review candidate profiles and manage recruitment statuses for your internships.</p>
         </div>
-        <a href="{% url 'company_dashboard' %}" class="back-link">← Dashboard</a>
+        <a href="{% url 'company_dashboard' %}" class="back-link-v2">← Dashboard Hub</a>
     </header>
 
     <div class="applications-container">
         {% for app in apps %}
-        <div class="application-card {% if app.status == 'pending' %}status-pending{% endif %}">
+        <div class="application-card slide-up {% if app.status == 'pending' %}is-new{% endif %}" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
             
-            <div class="card-header">
+            <div class="card-header-v2">
                 <div class="profile-main">
-                    <div class="avatar">{{ app.student.username|slice:":1"|upper }}</div>
+                    <div class="avatar-v2">{{ app.student.username|slice:":1"|upper }}</div>
                     <div class="name-meta">
                         <h3>{{ app.student.profile.full_name|default:app.student.username }}</h3>
-                        <span class="username">@{{ app.student.username }}</span>
+                        <span class="user-handle">@{{ app.student.username }}</span>
                     </div>
                 </div>
                 <div class="badge-area">
-                    <span class="status-badge {{ app.status }}">{{ app.status|title }}</span>
+                    <span class="status-pill-v2 {{ app.status }}">{{ app.status|title }}</span>
                 </div>
             </div>
 
-            <div class="card-body">
-                <div class="info-section">
+            <div class="card-body-v2">
+                <div class="info-cluster">
                     <label>Education & Academic Details</label>
-                    <div class="grid-details">
-                        <div class="detail-item">
-                            <strong>College:</strong> <span>{{ app.student.profile.college_name|default:"Not Provided" }}</span>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Institution</span>
+                            <span class="value">{{ app.student.profile.college_name|default:"Not Provided" }}</span>
                         </div>
-                        <div class="detail-item">
-                            <strong>Department:</strong> <span>{{ app.student.profile.department|default:"N/A" }}</span>
+                        <div class="info-item">
+                            <span class="label">Department</span>
+                            <span class="value">{{ app.student.profile.department|default:"N/A" }}</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="info-section">
+                <div class="info-cluster">
                     <label>Application Contact</label>
-                    <div class="grid-details">
-                        <div class="detail-item">
-                            <strong>Email:</strong> <span>{{ app.student.profile.email }}</span>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Email</span>
+                            <span class="value text-primary">{{ app.student.profile.email }}</span>
                         </div>
-                        <div class="detail-item">
-                            <strong>Phone:</strong> <span>{{ app.student.profile.phone|default:"N/A" }}</span>
+                        <div class="info-item">
+                            <span class="label">Phone</span>
+                            <span class="value">{{ app.student.profile.phone|default:"N/A" }}</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="internship-target">
-                    <strong>Applied for:</strong> 
+                <div class="target-box">
+                    <span class="target-label">Applied for Position</span>
                     <span class="target-title">{{ app.internship.title }}</span>
                 </div>
             </div>
 
-            <div class="card-footer">
-                <a href="{{ app.resume.url }}" target="_blank" class="resume-btn">
-                    <span class="icon">📄</span> View Full Resume
+            <div class="card-actions-v2">
+                <a href="{{ app.resume.url }}" target="_blank" class="btn-resume-v2">
+                    <span class="icon">📄</span> Open Resume
                 </a>
 
                 {% if app.status == 'pending' %}
-                <div class="action-group">
-                    <a href="{% url 'approve_application' app.id %}" class="btn-approve">Approve</a>
-                    <a href="{% url 'reject_application' app.id %}" class="btn-reject">Reject</a>
+                <div class="decision-cluster">
+                    <a href="{% url 'approve_application' app.id %}" class="btn-approve-v2">Verify & Accept</a>
+                    <a href="{% url 'reject_application' app.id %}" class="btn-reject-v2">Reject</a>
                 </div>
                 {% endif %}
             </div>
         </div>
         {% empty %}
-        <div class="empty-state">
-            <p>No applications have been submitted yet.</p>
+        <div class="empty-state-v2">
+            <div class="empty-icon">📁</div>
+            <h3>No Active Applications</h3>
+            <p>Your internship posts haven't received applications yet.</p>
         </div>
         {% endfor %}
     </div>

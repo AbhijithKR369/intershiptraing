@@ -69,5 +69,5 @@ urlpatterns = [
         views.quiz_batches,
         name='quiz_batches'
     ),
-
+    path('view/', views.view_courses, name='view_courses'),
 ]

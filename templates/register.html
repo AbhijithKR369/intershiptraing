@@ -4,35 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Your Account</title>
+    <title>Create Your Account | Join the Platform</title>
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-gradient">
 
-<div class="main-wrapper">
-    <div class="register-card">
-        <header>
-            <h1>Join the Platform</h1>
-            <p>Enter your details to create an account</p>
+<div class="main-wrapper fade-in">
+    <div class="register-card-v2">
+        <header class="reg-header">
+            <div class="brand-badge">Step 1: Account Details</div>
+            <h1>Create Your Account</h1>
+            <p>Join our ecosystem of students, trainers, and companies.</p>
         </header>
 
-        <form method="POST" onsubmit="return validateForm()">
+        <form method="POST" onsubmit="return validateForm()" class="modern-form">
             {% csrf_token %}
 
-            <section class="form-section">
-                <div class="input-row">
+            <div class="form-step">
+                <div class="step-title">Account Security</div>
+                <div class="input-grid">
                     <div class="input-group">
                         <label>Username</label>
                         <input type="text" name="username" required placeholder="johndoe">
                     </div>
                     <div class="input-group">
                         <label>Email Address</label>
-                        <input type="email" name="email" placeholder="john@example.com">
+                        <input type="email" name="email" placeholder="john@example.com" required>
                     </div>
-                </div>
-
-                <div class="input-row">
                     <div class="input-group">
                         <label>Password</label>
                         <input type="password" id="password" name="password" required placeholder="••••••••">
@@ -42,89 +41,93 @@
                         <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <hr class="divider">
+            <div class="line-divider"></div>
 
-            <section class="form-section">
-                <div class="input-row">
+            <div class="form-step">
+                <div class="step-title">Profile Information</div>
+                <div class="input-grid">
                     <div class="input-group">
                         <label>Full Name</label>
-                        <input type="text" name="full_name" placeholder="Johnathan Doe">
+                        <input type="text" name="full_name" placeholder="Johnathan Doe" required>
                     </div>
                     <div class="input-group">
                         <label>Phone Number</label>
                         <input type="text" name="phone" placeholder="+1 234 567 890">
                     </div>
-                </div>
-
-                <div class="input-row">
                     <div class="input-group">
                         <label>Select Role</label>
-                        <select name="role" id="role" onchange="showFields()" required>
-                            <option value="">Choose your path...</option>
-                            <option value="student">Student</option>
-                            <option value="company">Company</option>
-                            <option value="trainer">Trainer</option>
-                        </select>
+                        <div class="select-wrapper">
+                            <select name="role" id="role" onchange="showFields()" required>
+                                <option value="">Choose your path...</option>
+                                <option value="student">Student</option>
+                                <option value="company">Company</option>
+                                <option value="trainer">Trainer</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label>Domain</label>
-                        <select name="domain">
-                            <option value="it">Information Technology</option>
-                            <option value="cloud">Cloud Computing</option>
-                            <option value="management">Management</option>
-                            <option value="ai">Artificial Intelligence</option>
-                            <option value="data">Data Science</option>
-                        </select>
+                        <label>Professional Domain</label>
+                        <div class="select-wrapper">
+                            <select name="domain">
+                                <option value="it">Information Technology</option>
+                                <option value="cloud">Cloud Computing</option>
+                                <option value="management">Management</option>
+                                <option value="ai">Artificial Intelligence</option>
+                                <option value="data">Data Science</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <div id="student_fields" class="dynamic-container" style="display:none;">
-                <div class="input-row">
+            <div id="student_fields" class="dynamic-container">
+                <div class="input-grid">
                     <div class="input-group">
                         <label>College</label>
-                        <input type="text" name="college">
+                        <input type="text" name="college" placeholder="University Name">
                     </div>
                     <div class="input-group">
                         <label>Department</label>
-                        <input type="text" name="department">
+                        <input type="text" name="department" placeholder="e.g. Computer Science">
                     </div>
                 </div>
             </div>
 
-            <div id="company_fields" class="dynamic-container" style="display:none;">
-                <div class="input-row">
+            <div id="company_fields" class="dynamic-container">
+                <div class="input-grid">
                     <div class="input-group">
                         <label>Company Name</label>
-                        <input type="text" name="company_name">
+                        <input type="text" name="company_name" placeholder="Tech Corp">
                     </div>
                     <div class="input-group">
-                        <label>Location</label>
-                        <input type="text" name="location">
+                        <label>Headquarters Location</label>
+                        <input type="text" name="location" placeholder="San Francisco, CA">
                     </div>
                 </div>
             </div>
 
-            <div id="trainer_fields" class="dynamic-container" style="display:none;">
-                <div class="input-row">
+            <div id="trainer_fields" class="dynamic-container">
+                <div class="input-grid">
                     <div class="input-group">
-                        <label>Qualification</label>
-                        <input type="text" name="qualification">
+                        <label>Primary Qualification</label>
+                        <input type="text" name="qualification" placeholder="PhD, Senior Dev, etc.">
                     </div>
                     <div class="input-group">
-                        <label>Place</label>
-                        <input type="text" name="place">
+                        <label>Place of Practice</label>
+                        <input type="text" name="place" placeholder="New York, NY">
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="register-btn">Create Account</button>
-            <div class="divider"></div>
+            <button type="submit" class="register-main-btn">
+                <span>Create My Account</span>
+                <div class="btn-shine"></div>
+            </button>
 
-            <div class="auth-footer">
-                <p>Already have an account? <a href="/login/">Login here</a></p>
+            <div class="form-footer">
+                <p>Already a member? <a href="/login/">Log in here</a></p>
             </div>
         </form>
     </div>
@@ -136,12 +139,16 @@ function showFields() {
     const sections = ["student_fields", "company_fields", "trainer_fields"];
     
     sections.forEach(id => {
-        document.getElementById(id).style.display = "none";
+        let el = document.getElementById(id);
+        el.style.display = "none";
+        el.classList.remove("slide-in-active");
     });
 
     if (role) {
         let activeDiv = document.getElementById(role + "_fields");
         activeDiv.style.display = "block";
+        // Force reflow for animation
+        setTimeout(() => { activeDiv.classList.add("slide-in-active"); }, 10);
     }
 }
 

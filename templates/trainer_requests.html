@@ -8,63 +8,68 @@
     <link rel="stylesheet" href="{% static 'css/trainer_requests.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-subtle">
 
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper fade-in">
     <header class="page-header">
         <div class="header-content">
+            <span class="context-badge">HR & Verification</span>
             <h1>Trainer Applications</h1>
             <p>Review and verify professionals applying to join your organization.</p>
         </div>
-        <a href="{% url 'company_dashboard' %}" class="back-link">← Back to Dashboard</a>
+        <a href="{% url 'company_dashboard' %}" class="back-link-pill">← Dashboard Hub</a>
     </header>
 
-    <div class="request-container">
+    <div class="request-grid">
         {% for app in apps %}
-        <div class="request-card {% if app.status == 'pending' %}status-pending{% endif %}">
-            <div class="card-left">
-                <div class="user-avatar">
+        <div class="request-card slide-up {% if app.status == 'pending' %}is-active{% endif %}" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+            
+            <div class="card-part profile-block">
+                <div class="user-avatar-v2">
                     {{ app.trainer.username|slice:":1"|upper }}
                 </div>
-                <div class="user-info">
+                <div class="user-meta">
                     <h3>{{ app.trainer.username }}</h3>
-                    <span class="status-pill {{ app.status }}">{{ app.status|title }}</span>
+                    <span class="status-indicator {{ app.status }}">{{ app.status|title }}</span>
                 </div>
             </div>
 
-            <div class="card-mid">
-                <div class="info-row">
-                    <span class="label">Qualification:</span>
-                    <span class="value">{{ app.trainer.profile.qualification|default:"Not Specified" }}</span>
+            <div class="card-part details-block">
+                <div class="data-entry">
+                    <label>Qualification</label>
+                    <p>{{ app.trainer.profile.qualification|default:"Not Specified" }}</p>
                 </div>
-                <div class="info-row">
-                    <span class="label">Location:</span>
-                    <span class="value">{{ app.trainer.profile.place|default:"Remote" }}</span>
+                <div class="data-entry">
+                    <label>Primary Location</label>
+                    <p>{{ app.trainer.profile.place|default:"Remote / Global" }}</p>
                 </div>
-                <div class="info-row">
-                    <span class="label">Email:</span>
-                    <span class="value">{{ app.trainer.profile.email }}</span>
+                <div class="data-entry">
+                    <label>Email Address</label>
+                    <p class="email-text">{{ app.trainer.profile.email }}</p>
                 </div>
             </div>
 
-            <div class="card-right">
-                <div class="resume-wrapper">
-                    <a href="{{ app.resume.url }}" target="_blank" class="btn-resume">
-                        <span>📄 View Resume</span>
+            <div class="card-part action-block">
+                <div class="doc-preview">
+                    <a href="{{ app.resume.url }}" target="_blank" class="resume-button">
+                        <span class="icon">📄</span>
+                        <span>Review Resume</span>
                     </a>
                 </div>
 
                 {% if app.status == 'pending' %}
-                <div class="decision-btns">
-                    <a href="{% url 'approve_trainer' app.id %}" class="btn-approve">Approve</a>
-                    <a href="{% url 'reject_trainer' app.id %}" class="btn-reject">Reject</a>
+                <div class="decision-group">
+                    <a href="{% url 'approve_trainer' app.id %}" class="btn-action approve">Verify</a>
+                    <a href="{% url 'reject_trainer' app.id %}" class="btn-action reject">Decline</a>
                 </div>
                 {% endif %}
             </div>
         </div>
         {% empty %}
-        <div class="empty-state">
-            <p>No trainer applications found at this time.</p>
+        <div class="empty-placeholder">
+            <div class="empty-illustration">📂</div>
+            <h3>All caught up!</h3>
+            <p>There are no pending trainer applications at the moment.</p>
         </div>
         {% endfor %}
     </div>

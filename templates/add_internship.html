@@ -8,19 +8,20 @@
     <link rel="stylesheet" href="{% static 'css/add_internship.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="entry-anim">
 
 <div class="main-wrapper">
-    <div class="register-card internship-card">
-        <header>
+    <div class="internship-card slide-up">
+        <header class="header-section">
+            <div class="badge">Hiring</div>
             <h1>Post an Internship</h1>
             <p>Find the best talent by providing clear internship details.</p>
         </header>
 
-        <form method="POST">
+        <form method="POST" class="form-container">
             {% csrf_token %}
             
-            <div class="form-section">
+            <div class="form-content">
                 <div class="input-row">
                     <div class="input-group">
                         <label>Internship Title</label>
@@ -37,14 +38,19 @@
                     <textarea name="description" rows="6" placeholder="Describe the roles, responsibilities, and perks..." required></textarea>
                 </div>
 
-                <button type="submit" class="register-btn">Post Internship</button>
+                <button type="submit" class="submit-btn">
+                    <span>Publish Opportunity</span>
+                    <i class="btn-overlay"></i>
+                </button>
             </div>
         </form>
 
         <div class="divider"></div>
         
-        <div class="auth-footer">
-            <p><a href="/company_dashboard/">← Back to Hiring Dashboard</a></p>
+        <div class="footer-section">
+            <a href="{% url 'company_dashboard' %}" class="back-link">
+                ← Back to Dashboard
+            </a>
         </div>
     </div>
 </div>

@@ -8,45 +8,60 @@
     <link rel="stylesheet" href="{% static 'css/quiz_batches.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="dashboard-bg">
 
-<div class="main-container">
+<div class="main-container fade-in">
     <header class="course-header">
-        <a href="{% url 'student_dashboard' %}" class="back-nav">← Back to Dashboard</a>
-        <h1>{{ course.title }}</h1>
-        <p>Complete your quizzes to unlock your professional certificate.</p>
+        <div class="header-left">
+            <a href="{% url 'student_dashboard' %}" class="back-nav">← Back to Dashboard</a>
+            <h1>{{ course.title }}</h1>
+            <p>Master the curriculum and claim your professional credentials.</p>
+        </div>
+        <div class="header-stats">
+            <div class="stat-pill">
+                <span class="pill-label">Progress</span>
+                <span class="pill-value">{{ attempted_batches|length }}/{{ batches|length }} Done</span>
+            </div>
+        </div>
     </header>
 
     <div class="content-grid">
         <section class="quiz-section">
             <div class="section-title">
-                <h3>Available Quizzes</h3>
-                <span class="badge">{{ batches|length }} Total</span>
+                <h3>Learning Path</h3>
+                <span class="count-badge">{{ batches|length }} Modules</span>
             </div>
 
             <div class="quiz-list">
                 {% for b in batches %}
-                <div class="quiz-card {% if b.is_final %}final-border{% endif %}">
-                    <div class="quiz-info">
-                        <div class="quiz-icon">
-                            {% if b.id in attempted_batches %}✅{% else %}📝{% endif %}
+                <div class="quiz-card-v2 {% if b.is_final %}is-final{% endif %} {% if b.id in attempted_batches %}is-completed{% endif %}">
+                    <div class="card-indicator"></div>
+                    <div class="quiz-content">
+                        <div class="quiz-meta">
+                            <div class="status-icon">
+                                {% if b.id in attempted_batches %}
+                                    <span class="check-mark">✓</span>
+                                {% else %}
+                                    <span class="dot-mark"></span>
+                                {% endif %}
+                            </div>
+                            <div class="quiz-details">
+                                <h4>{{ b.title }}</h4>
+                                {% if b.is_final %}
+                                    <span class="type-tag final">Final Milestone</span>
+                                {% else %}
+                                    <span class="type-tag">Module Quiz</span>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div>
-                            <h4>{{ b.title }}</h4>
-                            {% if b.is_final %}
-                                <span class="tag-final">Final Examination</span>
+                        
+                        <div class="quiz-actions">
+                            {% if b.id in attempted_batches %}
+                                <a href="{% url 'review_quiz' b.id %}" class="btn-review">View Results</a>
                             {% else %}
-                                <span class="tag-regular">Practice Module</span>
+                                <a href="{% url 'take_quiz' b.id %}" class="btn-primary-quiz">Start Attempt</a>
                             {% endif %}
                         </div>
-                    </div>
-
-                    <div class="quiz-actions">
-                        {% if b.id in attempted_batches %}
-                            <a href="{% url 'review_quiz' b.id %}" class="btn-review">Review Score</a>
-                        {% else %}
-                            <a href="{% url 'take_quiz' b.id %}" class="btn-attempt">Start Quiz</a>
-                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -55,27 +70,36 @@
 
         <aside class="cert-section">
             <div class="section-title">
-                <h3>Certificates</h3>
+                <h3>Credentials</h3>
             </div>
 
-            <div class="cert-list">
+            <div class="cert-display">
                 {% for cert in certificates %}
-                <div class="cert-card">
-                    <div class="cert-ribbon"></div>
-                    <div class="cert-body">
-                        <div class="cert-icon">📜</div>
-                        <h5>{{ cert.course.title }}</h5>
+                <div class="award-card bounce-in">
+                    <div class="award-header">
+                        <div class="seal">
+                            <span class="seal-icon">🎓</span>
+                        </div>
+                    </div>
+                    <div class="award-body">
+                        <h5>Certificate of Completion</h5>
+                        <p class="award-course">{{ cert.course.title }}</p>
+                        <div class="award-divider"></div>
                         {% if cert.is_manual %}
-                            <p class="issued-by">Verified by {{ cert.course.company.username }}</p>
+                            <p class="issuer">Issued by <strong>{{ cert.course.company.profile.company_name|default:cert.course.company.username }}</strong></p>
                         {% endif %}
-                        <a href="{% url 'download_certificate' cert.id %}" class="btn-download">
-                            <span>Download PDF</span>
+                    </div>
+                    <div class="award-footer">
+                        <a href="{% url 'download_certificate' cert.id %}" class="btn-download-cert">
+                            Download PDF
                         </a>
                     </div>
                 </div>
                 {% empty %}
-                <div class="empty-cert">
-                    <p>Complete all final quizzes to earn your certificate.</p>
+                <div class="lock-state">
+                    <div class="lock-icon">🔒</div>
+                    <h4>Certificates Locked</h4>
+                    <p>Complete all modules and the final exam to unlock your official certification.</p>
                 </div>
                 {% endfor %}
             </div>

@@ -8,11 +8,12 @@
     <link rel="stylesheet" href="{% static 'css/trainer_apply_list.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-smooth">
 
-<div class="page-wrapper">
+<div class="page-wrapper fade-in">
     <header class="page-header">
         <div class="header-content">
+            <span class="context-pill">Trainer Marketplace</span>
             <h1>Partner with Companies</h1>
             <p>Apply to become a verified trainer for top-tier industry organizations.</p>
         </div>
@@ -21,53 +22,56 @@
 
     <div class="company-grid">
         {% for c in companies %}
-        <div class="company-card">
+        <div class="company-card slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
             <div class="card-top">
-                <div class="company-logo">{{ c.profile.company_name|slice:":1"|upper }}</div>
+                <div class="company-logo-v2">{{ c.profile.company_name|slice:":1"|upper }}</div>
                 <div class="company-meta">
                     <h3>{{ c.profile.company_name }}</h3>
-                    <span class="domain-tag">{{ c.profile.domain|title }}</span>
+                    <span class="domain-badge">{{ c.profile.domain|title }}</span>
                 </div>
             </div>
 
-            <div class="card-details">
-                <div class="detail-item">
-                    <span class="label">Location</span>
-                    <span class="value">{{ c.profile.location|default:"Global / Remote" }}</span>
+            <div class="card-details-v2">
+                <div class="detail-pill">
+                    <span class="p-label">Location</span>
+                    <span class="p-value">{{ c.profile.location|default:"Global / Remote" }}</span>
                 </div>
-                <div class="detail-item">
-                    <span class="label">Contact</span>
-                    <span class="value">{{ c.profile.email }}</span>
+                <div class="detail-pill">
+                    <span class="p-label">Contact</span>
+                    <span class="p-value">{{ c.profile.email }}</span>
                 </div>
             </div>
 
-            <div class="course-section">
-                <label>Available Courses</label>
-                <div class="course-tags">
+            <div class="course-exploration">
+                <label>Actively Hiring for Courses:</label>
+                <div class="course-tag-wrap">
                     {% for course in c.company_courses.all %}
-                        <span class="course-tag">{{ course.title }}</span>
+                        <span class="course-chip">{{ course.title }}</span>
                     {% empty %}
                         <p class="empty-text">No active courses seeking trainers.</p>
                     {% endfor %}
                 </div>
             </div>
 
-            <div class="action-section">
+            <div class="action-footer">
                 {% if c.id in applied_ids %}
-                    <div class="applied-badge">
-                        <span class="icon">✅</span>
-                        <span>Application Submitted</span>
+                    <div class="applied-success-box">
+                        <span class="check-circle">✓</span>
+                        <div class="success-text">
+                            <strong>Applied</strong>
+                            <span>Wait for company review</span>
+                        </div>
                     </div>
                 {% else %}
-                    <form method="POST" action="{% url 'apply_company' c.id %}" enctype="multipart/form-data" class="apply-form">
+                    <form method="POST" action="{% url 'apply_company' c.id %}" enctype="multipart/form-data" class="modern-apply-form">
                         {% csrf_token %}
-                        <div class="file-upload">
-                            <input type="file" name="resume" id="file_{{ c.id }}" required class="hidden-input" onchange="updateFileName(this, 'label_{{ c.id }}')">
-                            <label for="file_{{ c.id }}" class="file-label" id="label_{{ c.id }}">
-                                <span>📄 Click to upload Resume</span>
+                        <div class="file-drop-area">
+                            <input type="file" name="resume" id="file_{{ c.id }}" required class="real-file-input" onchange="updateFileName(this, 'label_{{ c.id }}')">
+                            <label for="file_{{ c.id }}" class="custom-file-btn" id="label_{{ c.id }}">
+                                📂 Upload Resume
                             </label>
                         </div>
-                        <button type="submit" class="apply-btn">Apply as Trainer</button>
+                        <button type="submit" class="apply-btn-v2">Submit Application</button>
                     </form>
                 {% endif %}
             </div>
@@ -80,9 +84,8 @@
 function updateFileName(input, labelId) {
     const fileName = input.files[0].name;
     const label = document.getElementById(labelId);
-    label.innerHTML = `<span>✔️ ${fileName}</span>`;
-    label.style.borderColor = "#10b981";
-    label.style.color = "#10b981";
+    label.innerHTML = `✔️ ${fileName}`;
+    label.classList.add("file-selected");
 }
 </script>
 

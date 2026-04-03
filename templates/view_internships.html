@@ -8,57 +8,67 @@
     <link rel="stylesheet" href="{% static 'css/view_internships.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-job-portal">
 
-<div class="page-wrapper">
+<div class="page-wrapper fade-in">
     <header class="page-header">
         <div class="header-content">
+            <span class="header-pill">Career Opportunities</span>
             <h1>Available Internships</h1>
             <p>Kickstart your career by applying to top-tier organizations.</p>
         </div>
-        <a href="{% url 'student_dashboard' %}" class="back-link">← My Dashboard</a>
+        <a href="{% url 'student_dashboard' %}" class="dashboard-back-btn">← My Dashboard</a>
     </header>
 
     <div class="internship-grid">
         {% for i in internships %}
-        <div class="job-card">
-            <div class="card-header">
-                <div class="title-area">
+        <div class="job-card-v2 slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+            <div class="card-top">
+                <div class="title-meta">
                     <h3>{{ i.title }}</h3>
-                    <span class="location-tag">📍 {{ i.location }}</span>
+                    <div class="tags-row">
+                        <span class="loc-tag">📍 {{ i.location }}</span>
+                        <span class="type-tag">Full-time</span>
+                    </div>
                 </div>
-                <div class="company-logo">{{ i.company.profile.company_name|slice:":1"|upper }}</div>
+                <div class="company-logo-square">{{ i.company.profile.company_name|slice:":1"|upper }}</div>
             </div>
 
-            <div class="card-body">
-                <p class="description">{{ i.description|truncatewords:25 }}</p>
+            <div class="card-body-v2">
+                <p class="job-description">{{ i.description|truncatewords:25 }}</p>
                 
-                <div class="company-info-box">
+                <div class="hiring-box">
                     <label>Hiring Organization</label>
-                    <div class="company-meta">
-                        <strong>{{ i.company.profile.company_name }}</strong>
-                        <span>{{ i.company.profile.email }}</span>
+                    <div class="hiring-meta">
+                        <div class="org-icon">🏛️</div>
+                        <div class="org-text">
+                            <strong>{{ i.company.profile.company_name }}</strong>
+                            <span>{{ i.company.profile.email }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card-footer">
+            <div class="card-footer-v2">
                 {% if i.id in applied_ids %}
-                    <div class="applied-status">
-                        <span class="check-icon">✓</span>
-                        <strong>Application Submitted</strong>
+                    <div class="applied-success-bar">
+                        <span class="check-circle">✓</span>
+                        <div class="applied-text">
+                            <strong>Application Submitted</strong>
+                            <span>Under Review</span>
+                        </div>
                     </div>
                 {% else %}
-                    <form method="POST" action="{% url 'apply_internship' i.id %}" enctype="multipart/form-data" class="apply-form">
+                    <form method="POST" action="{% url 'apply_internship' i.id %}" enctype="multipart/form-data" class="modern-apply-form">
                         {% csrf_token %}
-                        <div class="file-group">
-                            <label for="resume_{{ i.id }}" class="custom-file-upload">
-                                📄 Upload Resume
+                        <div class="file-action-group">
+                            <label for="resume_{{ i.id }}" class="upload-trigger" id="ui_{{ i.id }}">
+                                <span class="u-icon">📄</span> 
+                                <span class="u-text">Upload Resume</span>
                             </label>
-                            <input type="file" name="resume" id="resume_{{ i.id }}" required onchange="showSelectedFile(this, 'file_name_{{ i.id }}')">
-                            <span id="file_name_{{ i.id }}" class="file-name-hint">No file chosen</span>
+                            <input type="file" name="resume" id="resume_{{ i.id }}" required hidden onchange="showSelectedFile(this, 'ui_{{ i.id }}')">
                         </div>
-                        <button type="submit" class="apply-btn">Submit Application</button>
+                        <button type="submit" class="apply-action-btn">Submit Application</button>
                     </form>
                 {% endif %}
             </div>
@@ -68,9 +78,11 @@
 </div>
 
 <script>
-function showSelectedFile(input, spanId) {
+function showSelectedFile(input, labelId) {
     const fileName = input.files[0].name;
-    document.getElementById(spanId).textContent = fileName;
+    const label = document.getElementById(labelId);
+    label.innerHTML = `<span class="u-icon">✅</span> <span class="u-text">${fileName}</span>`;
+    label.classList.add('file-ready');
 }
 </script>
 

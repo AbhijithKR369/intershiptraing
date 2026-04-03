@@ -6,18 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Course | Instructor Portal</title>
     <link rel="stylesheet" href="{% static 'css/add_course.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="fade-in">
 
 <div class="main-wrapper">
-    <div class="register-card add-course-card">
-        <header>
+    <div class="add-course-card">
+        <header class="form-header">
+            <div class="icon-box">📚</div>
             <h1>Add New Course</h1>
             <p>Fill in the details to publish a new learning module.</p>
         </header>
 
-        <form method="POST">
+        <form method="POST" class="course-form">
             {% csrf_token %}
             
             <div class="form-section">
@@ -31,14 +32,23 @@
                     <textarea name="description" rows="5" placeholder="Describe the course objectives and what students will learn..." required></textarea>
                 </div>
 
-                <button type="submit" class="register-btn">Publish Course</button>
+                <button type="submit" class="publish-btn">
+                    <span>Publish Course</span>
+                    <div class="btn-shine"></div>
+                </button>
             </div>
         </form>
 
         <div class="divider"></div>
         
         <div class="auth-footer">
-            <p><a href="/trainer_dashboard/">← Back to Dashboard</a></p>
+            {% if request.user.profile.role == 'company' %}
+                <a href="{% url 'company_dashboard' %}" class="back-link">← Company Dashboard</a>
+            {% elif request.user.profile.role == 'trainer' %}
+                <a href="{% url 'trainer_dashboard' %}" class="back-link">← Trainer Dashboard</a>
+            {% else %}
+                <a href="/" class="back-link">← Back to Home</a>
+            {% endif %}
         </div>
     </div>
 </div>

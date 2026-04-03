@@ -1,152 +1,114 @@
 :root {
     --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text-main: #1e293b;
+    --bg-slate: #f8fafc;
+    --text-dark: #0f172a;
     --text-muted: #64748b;
+    --white: #ffffff;
+    --success: #10b981;
     --border: #e2e8f0;
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg);
+    background-color: var(--bg-slate);
     margin: 0;
-    color: var(--text-main);
+    color: var(--text-dark);
 }
 
-.page-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-}
+.page-wrapper { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
 
+/* Header */
 .page-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3rem;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
 }
 
-.page-header h1 { font-size: 2.2rem; font-weight: 800; margin: 0; letter-spacing: -1px; }
-.back-link { text-decoration: none; color: #6366f1; font-weight: 700; font-size: 0.9rem; }
+.header-pill { font-size: 0.7rem; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 1.5px; }
+.page-header h1 { font-size: 2.5rem; font-weight: 800; margin: 8px 0; letter-spacing: -1.5px; }
+.page-header p { color: var(--text-muted); font-size: 1.1rem; }
 
-/* Grid Layout */
-.internship-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 2rem;
+.dashboard-back-btn {
+    text-decoration: none; font-weight: 700; color: var(--text-dark);
+    padding: 12px 24px; border-radius: 50px; background: white;
+    border: 1px solid var(--border); transition: 0.3s;
+}
+.dashboard-back-btn:hover { border-color: #6366f1; color: #6366f1; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+
+/* Internship Grid */
+.internship-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2rem; }
+
+.job-card-v2 {
+    background: white; border-radius: 30px; border: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow: hidden;
+    transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.job-card-v2:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -12px rgba(0,0,0,0.08); }
+
+.card-top { padding: 2rem; display: flex; justify-content: space-between; align-items: flex-start; }
+.title-meta h3 { margin: 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; }
+.tags-row { display: flex; gap: 8px; margin-top: 10px; }
+.loc-tag, .type-tag { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); background: #f1f5f9; padding: 4px 10px; border-radius: 50px; }
+
+.company-logo-square {
+    width: 48px; height: 48px; background: #0f172a; color: white;
+    border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.4rem; flex-shrink: 0;
 }
 
-/* Card Styling */
-.job-card {
-    background: var(--card);
-    border-radius: 24px;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+.card-body-v2 { padding: 0 2rem 2rem; flex-grow: 1; }
+.job-description { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; }
+
+.hiring-box { background: #f8fafc; padding: 1.2rem; border-radius: 20px; border: 1px solid #f1f5f9; }
+.hiring-box label { display: block; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 10px; }
+.hiring-meta { display: flex; align-items: center; gap: 12px; }
+.org-icon { font-size: 1.2rem; }
+.org-text strong { display: block; font-size: 0.9rem; }
+.org-text span { font-size: 0.75rem; color: var(--text-muted); }
+
+/* Footer Actions */
+.card-footer-v2 { padding: 2rem; border-top: 1px solid #f1f5f9; background: #fcfcfd; }
+
+.modern-apply-form { display: flex; flex-direction: column; gap: 12px; }
+.upload-trigger {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: white; border: 2px dashed #cbd5e1; padding: 12px;
+    border-radius: 14px; cursor: pointer; transition: 0.3s;
 }
+.upload-trigger:hover { border-color: #6366f1; background: #f5f3ff; }
+.upload-trigger.file-ready { border-color: var(--success); background: #f0fdf4; color: var(--success); border-style: solid; }
 
-.job-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
+.u-icon { font-size: 1rem; }
+.u-text { font-size: 0.85rem; font-weight: 700; }
 
-/* Card Header */
-.card-header {
-    padding: 2rem 2rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-.title-area h3 { margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--text-main); }
-.location-tag { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-top: 5px; }
-
-.company-logo {
-    width: 45px; height: 45px;
-    background: var(--primary-grad);
-    color: white; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 1.2rem;
-}
-
-/* Card Body */
-.card-body { padding: 0 2rem 2rem; flex-grow: 1; }
-.description { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
-
-.company-info-box {
-    background: #f8fafc;
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 1px solid #f1f5f9;
-}
-
-.company-info-box label { display: block; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; }
-.company-meta strong { display: block; font-size: 0.9rem; }
-.company-meta span { font-size: 0.8rem; color: var(--text-muted); }
-
-/* Card Footer */
-.card-footer {
-    padding: 1.5rem 2rem;
-    background: #fcfcfd;
-    border-top: 1px solid var(--border);
-    border-radius: 0 0 24px 24px;
-}
-
-/* Form Styling */
-.apply-form { display: flex; flex-direction: column; gap: 12px; }
-
-.custom-file-upload {
-    display: block;
-    background: #ffffff;
-    border: 1px solid var(--border);
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.custom-file-upload:hover { background: #f1f5f9; }
-
-input[type="file"] { display: none; }
-
-.file-name-hint { display: block; font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 4px; }
-
-.apply-btn {
-    background: var(--primary-grad);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
+.apply-action-btn {
+    width: 100%; background: var(--text-dark); color: white; border: none;
+    padding: 14px; border-radius: 14px; font-weight: 800; cursor: pointer;
     transition: 0.3s;
 }
+.apply-action-btn:hover { background: #6366f1; transform: translateY(-2px); }
 
-.apply-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
-
-/* Applied Status */
-.applied-status {
-    background: #ecfdf5;
-    color: #065f46;
-    padding: 12px;
-    border-radius: 12px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border: 1px solid #bbf7d0;
+/* Applied State */
+.applied-success-bar {
+    display: flex; align-items: center; gap: 15px; padding: 12px;
+    background: #ecfdf5; border-radius: 16px; color: #065f46;
 }
+.check-circle { 
+    width: 32px; height: 32px; background: var(--success); color: white;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900;
+}
+.applied-text strong { display: block; font-size: 0.85rem; }
+.applied-text span { font-size: 0.7rem; opacity: 0.8; }
 
-.check-icon { font-weight: 800; font-size: 1.2rem; }
+/* Animations */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.slide-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+.fade-in { animation: fadeInUp 0.8s ease-out; }
 
-/* Responsive */
 @media (max-width: 600px) {
+    .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
     .internship-grid { grid-template-columns: 1fr; }
 }

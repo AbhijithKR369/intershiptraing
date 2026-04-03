@@ -1,153 +1,142 @@
 :root {
-    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
     --bg-dark: #0f172a;
-    --card-bg: rgba(255, 255, 255, 0.98);
     --text-main: #1e293b;
-    --text-accent: #4f46e5;
-    --border-color: #e2e8f0;
-    --input-focus: #6366f1;
+    --text-muted: #64748b;
+    --border-soft: #e2e8f0;
+    --white: #ffffff;
 }
 
-* {
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseShine {
+    0% { left: -100%; }
+    100% { left: 100%; }
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    background: radial-gradient(circle at top left, #1e293b, #0f172a);
-    background-attachment: fixed;
+    background: radial-gradient(circle at top right, #1e293b, #0f172a);
     margin: 0;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
     padding: 20px;
+    color: var(--text-main);
 }
 
-.main-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
+.fade-in { animation: fadeInUp 0.6s ease-out; }
+
+.main-wrapper { width: 100%; display: flex; justify-content: center; }
 
 .add-course-card {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
     width: 100%;
-    max-width: 600px; /* Symmetrical for content-heavy forms */
-    padding: 3.5rem;
-    border-radius: 24px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    padding: 3rem;
+    border-radius: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-}
+.form-header { text-align: center; margin-bottom: 2.5rem; }
 
-header h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    background: var(--primary-gradient);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0;
-}
-
-header p {
-    color: #64748b;
-    margin-top: 8px;
-}
-
-.form-section {
+.icon-box {
+    font-size: 2rem;
+    background: #f1f5f9;
+    width: 64px;
+    height: 64px;
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    margin: 0 auto 1rem;
 }
 
-.input-group {
-    display: flex;
-    flex-direction: column;
-}
+.form-header h1 { font-size: 1.75rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+.form-header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 8px; }
 
-label {
+/* Inputs */
+.input-group { margin-bottom: 1.5rem; }
+.input-group label {
+    display: block;
     font-size: 0.85rem;
     font-weight: 700;
-    color: var(--text-main);
     margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--text-main);
 }
 
-input, textarea {
+.input-group input, 
+.input-group textarea {
     width: 100%;
-    padding: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: all 0.3s ease;
-    background-color: #f8fafc;
-}
-
-input:focus, textarea:focus {
-    outline: none;
-    border-color: var(--input-focus);
-    background-color: #ffffff;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-}
-
-textarea {
-    resize: vertical; /* Allows user to expand but keeps symmetry */
-    min-height: 120px;
-}
-
-.register-btn {
-    width: 100%;
-    background: var(--primary-gradient);
-    color: white;
-    padding: 1.1rem;
-    border: none;
+    padding: 12px 16px;
+    border: 2px solid var(--border-soft);
     border-radius: 14px;
-    font-size: 1.1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+.input-group input:focus, 
+.input-group textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+/* Animated Button */
+.publish-btn {
+    position: relative;
+    width: 100%;
+    background: var(--primary-grad);
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
-    transition: all 0.3s ease;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.register-btn:hover {
+.publish-btn:hover {
     transform: translateY(-2px);
-    filter: brightness(1.1);
-    box-shadow: 0 15px 20px -5px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
 }
 
-.divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--border-color), transparent);
-    margin: 2rem 0;
+.publish-btn:active { transform: translateY(0); }
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: pulseShine 3s infinite;
 }
 
-.auth-footer a {
-    color: var(--text-accent);
+.divider { height: 1px; background: #f1f5f9; margin: 2rem 0; }
+
+.auth-footer { text-align: center; }
+.back-link {
     text-decoration: none;
+    color: var(--text-muted);
     font-weight: 600;
+    font-size: 0.9rem;
+    transition: color 0.3s;
 }
 
-/* RESPONSIVE DESIGN */
-@media (max-width: 640px) {
-    .add-course-card {
-        padding: 2rem 1.5rem;
-    }
-    header h1 {
-        font-size: 1.8rem;
-    }
-}
+.back-link:hover { color: #6366f1; }
 
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Responsive Grid Fix */
+@media (max-width: 480px) {
+    .add-course-card { padding: 2rem 1.5rem; }
 }

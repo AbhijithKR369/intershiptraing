@@ -8,46 +8,58 @@
     <link rel="stylesheet" href="{% static 'css/result.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-dark-radial">
 
-<div class="main-wrapper">
-    <div class="result-card">
+<div class="main-wrapper fade-in">
+    <div class="result-card-v2 scale-up">
         <header class="result-header">
             <div class="header-content">
-                <h1>Quiz Completion</h1>
-                <p>{{ course.title }}</p>
+                <span class="status-pill">Course Completed</span>
+                <h1>Quiz Summary</h1>
+                <p class="course-name">{{ course.title }}</p>
             </div>
-            <a href="{% url 'quiz_batches' course.id %}" class="close-btn">×</a>
+            <a href="{% url 'quiz_batches' course.id %}" class="close-btn" title="Close">×</a>
         </header>
 
-        <section class="score-summary">
-            <div class="score-circle">
-                <div class="score-inner">
-                    <span class="current-score">{{ score }}</span>
-                    <span class="total-possible">/ {{ total }}</span>
+        <section class="score-hero">
+            <div class="score-ring">
+                <div class="score-content">
+                    <span class="big-score">{{ score }}</span>
+                    <span class="total-out-of">/ {{ total }}</span>
                 </div>
+                <svg class="ring-svg">
+                    <circle cx="80" cy="80" r="70"></circle>
+                </svg>
             </div>
-            <div class="feedback-text">
+            
+            <div class="feedback-area">
                 <h2>Great Job!</h2>
-                <p>You have successfully completed the latest quiz module.</p>
+                <p>You have successfully completed the latest quiz module with a solid performance.</p>
             </div>
         </section>
 
-        <div class="divider"><span>Attempt History</span></div>
+        <div class="history-divider">
+            <span class="divider-text">Attempt History</span>
+        </div>
 
-        <section class="history-section">
-            <div class="history-list">
+        <section class="history-container">
+            <div class="history-scroll">
                 {% for r in results %}
-                <div class="history-item">
-                    <div class="batch-info">
-                        <span class="batch-icon">📊</span>
-                        <div class="batch-text">
-                            <span class="batch-label">Quiz Batch</span>
-                            <span class="batch-id">#{{ r.batch.id }}</span>
+                <div class="history-item-v2 slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+                    <div class="item-left">
+                        <div class="batch-avatar">
+                            <span class="icon">📊</span>
+                        </div>
+                        <div class="batch-meta">
+                            <span class="label">Quiz Batch</span>
+                            <span class="id">#{{ r.batch.id }}</span>
                         </div>
                     </div>
-                    <div class="score-pill">
-                        <strong>{{ r.score }}</strong> / {{ r.total }}
+                    <div class="item-right">
+                        <div class="result-pill">
+                            <span class="p-score">{{ r.score }}</span>
+                            <span class="p-total">/ {{ r.total }}</span>
+                        </div>
                     </div>
                 </div>
                 {% empty %}
@@ -58,9 +70,15 @@
             </div>
         </section>
 
-        <footer class="result-footer">
-            <a href="{% url 'student_dashboard' %}" class="primary-btn">Go to Dashboard</a>
-        </header>
+        <footer class="result-footer-v2">
+            {% if request.user.profile.role == 'company' %}
+                <a href="{% url 'company_dashboard' %}" class="dashboard-btn">Back to Admin Panel</a>
+            {% elif request.user.profile.role == 'trainer' %}
+                <a href="{% url 'trainer_dashboard' %}" class="dashboard-btn">Back to Trainer Hub</a>
+            {% else %}
+                <a href="{% url 'student_dashboard' %}" class="dashboard-btn">Go to Dashboard</a>
+            {% endif %}
+        </footer>
     </div>
 </div>
 

@@ -1,145 +1,119 @@
 :root {
-    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-    --bg-light: #f8fafc;
+    --primary: #6366f1;
+    --success: #10b981;
+    --danger: #ef4444;
+    --info: #3b82f6;
+    --bg-page: #f8fafc;
     --white: #ffffff;
     --text-main: #1e293b;
     --text-muted: #64748b;
-    --success: #10b981;
-    --danger: #ef4444;
-    --border: #e2e8f0;
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg-light);
+    background-color: var(--bg-page);
     margin: 0;
     color: var(--text-main);
 }
 
-.review-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 20px;
-}
+.review-wrapper { max-width: 850px; margin: 0 auto; padding-bottom: 80px; }
 
+/* Header Styling */
 .review-header {
+    background: white;
+    padding: 3rem 20px;
+    border-bottom: 1px solid #e2e8f0;
     margin-bottom: 3rem;
 }
 
-.back-link {
+.header-container { max-width: 800px; margin: 0 auto; }
+.back-pill {
     text-decoration: none;
-    color: #6366f1;
+    background: #f1f5f9;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.85rem;
     font-weight: 700;
-    font-size: 0.9rem;
+    transition: 0.3s;
 }
+.back-pill:hover { background: var(--text-main); color: white; }
 
-.header-main h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    margin: 15px 0 5px 0;
-    letter-spacing: -1px;
-}
+.title-area { margin-top: 2rem; }
+.context-tag { font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+.title-area h1 { font-size: 2.2rem; font-weight: 800; margin: 8px 0; letter-spacing: -1px; }
+.title-area p { color: var(--text-muted); font-size: 1.1rem; }
 
-.header-main p { color: var(--text-muted); }
-
-/* Review Card Styling */
-.question-flow { display: flex; flex-direction: column; gap: 2rem; }
+/* Question Cards */
+.question-flow { display: flex; flex-direction: column; gap: 2rem; padding: 0 20px; }
 
 .review-card {
-    background: var(--white);
-    padding: 2rem;
+    background: white;
     border-radius: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-}
-
-.correct-border { border-left: 6px solid var(--success); }
-.wrong-border { border-left: 6px solid var(--danger); }
-
-.q-meta {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
 }
 
-.q-number {
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #94a3b8;
-    letter-spacing: 0.5px;
-}
+.card-side-indicator { width: 8px; flex-shrink: 0; }
+.review-card.is-correct .card-side-indicator { background: var(--success); }
+.review-card.is-wrong .card-side-indicator { background: var(--danger); }
 
-.badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-    text-transform: uppercase;
-}
+.card-content { padding: 2rem; flex-grow: 1; }
 
+.q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.q-index { font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+
+.badge { padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; }
 .badge.success { background: #ecfdf5; color: var(--success); }
 .badge.danger { background: #fef2f2; color: var(--danger); }
 
-.q-text {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0 0 1.5rem 0;
-    line-height: 1.4;
-}
+.q-text { font-size: 1.25rem; font-weight: 700; line-height: 1.5; margin: 0 0 2rem 0; }
 
-/* Comparison Boxes */
-.answer-comparison {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-}
+/* Comparison Grid */
+.comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-.answer-box {
-    padding: 1.25rem;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-}
+.ans-box label { display: block; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; color: var(--text-muted); }
 
-.answer-box label {
-    display: block;
-    font-size: 0.65rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-    color: #94a3b8;
-}
-
-.answer-box p {
-    margin: 0;
+.ans-pill {
+    padding: 14px 18px;
+    border-radius: 14px;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
-.ans-correct { background-color: #f0fdf4; border-color: #bbf7d0; color: #166534; }
-.ans-wrong { background-color: #fef2f2; border-color: #fecaca; color: #991b1b; }
-.ans-actual { background-color: #f8fafc; border-color: var(--border); color: var(--text-main); }
+.is-correct .user-choice .ans-pill { background: #f0fdf4; border: 1.5px solid #dcfce7; color: #166534; }
+.is-wrong .user-choice .ans-pill { background: #fef2f2; border: 1.5px solid #fee2e2; color: #991b1b; }
+.correct-key .ans-pill { background: #eff6ff; border: 1.5px solid #dbeafe; color: #1e40af; }
+
+.no-selection { font-style: italic; opacity: 0.6; }
 
 /* Footer */
-.review-footer {
-    text-align: center;
-    margin-top: 4rem;
-}
-
-.scroll-top {
-    background: transparent;
+.review-footer { margin-top: 5rem; text-align: center; }
+.scroll-btn {
+    background: var(--text-main);
+    color: white;
     border: none;
-    color: #6366f1;
+    padding: 14px 24px;
+    border-radius: 50px;
     font-weight: 700;
     cursor: pointer;
-    text-decoration: underline;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
 }
+.scroll-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); }
 
-/* Responsiveness */
+/* Animations */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.slide-up { animation: slideUp 0.6s ease-out forwards; }
+
 @media (max-width: 600px) {
-    .review-card { padding: 1.5rem; }
-    .q-text { font-size: 1.1rem; }
+    .comparison-grid { grid-template-columns: 1fr; }
+    .title-area h1 { font-size: 1.7rem; }
 }

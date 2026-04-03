@@ -8,17 +8,24 @@
     <link rel="stylesheet" href="{% static 'css/company_dashboard.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="fade-in">
 
 <div class="dashboard-container">
     <aside class="sidebar">
         <div class="sidebar-header">
+            <div class="logo-icon">🏢</div>
             <h2>Admin Panel</h2>
         </div>
         <nav class="menu">
-            <a href="{% url 'view_applications' %}" class="menu-item">Student Applications</a>
-            <a href="{% url 'view_trainer_requests' %}" class="menu-item">Trainer Requests</a>
-            <a href="{% url 'manage_certificates' %}" class="menu-item">Certificates</a>
+            <a href="{% url 'view_applications' %}" class="menu-item">
+                <span class="m-icon">👥</span> Student Applications
+            </a>
+            <a href="{% url 'view_trainer_requests' %}" class="menu-item">
+                <span class="m-icon">🎓</span> Trainer Requests
+            </a>
+            <a href="{% url 'manage_certificates' %}" class="menu-item">
+                <span class="m-icon">📜</span> Certificates
+            </a>
             <div class="spacer"></div>
             <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
         </nav>
@@ -26,9 +33,12 @@
 
     <main class="main-content">
         <header class="top-bar">
-            <h1>Company Dashboard</h1>
+            <div class="header-title">
+                <h1>Company Dashboard</h1>
+                <p>Welcome back, manage your talent and courses efficiently.</p>
+            </div>
             <div class="quick-actions">
-                <a href="{% url 'add_internship' %}" class="action-btn">Post Internship</a>
+                <a href="{% url 'add_internship' %}" class="action-btn outline">Post Internship</a>
                 <a href="{% url 'add_course' %}" class="action-btn gradient-btn">Add New Course</a>
             </div>
         </header>
@@ -36,72 +46,82 @@
         <section class="section">
             <div class="section-header">
                 <h3>Your Active Courses</h3>
+                <span class="count-tag">{{ request.user.company_courses.count }} Total</span>
             </div>
+            
             <div class="course-grid">
                 {% for course in request.user.company_courses.all %}
                 <div class="course-card">
-                    <div class="course-info">
+                    <div class="card-content">
                         <h4>{{ course.title }}</h4>
                         <div class="trainer-status">
                             {% if course.trainer %}
-                                <span class="tag trainer-tag">Trainer: {{ course.trainer.username }}</span>
+                                <span class="badge trainer">Trainer: {{ course.trainer.username }}</span>
                             {% else %}
-                                <span class="tag company-tag">Handled by Company</span>
+                                <span class="badge company">Internal Management</span>
                             {% endif %}
                         </div>
-                        <div class="student-count">
-                            <label>Enrollment</label>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 70%;"></div>
+                        
+                        <div class="enrollment-stats">
+                            <div class="stat-labels">
+                                <label>Enrollment</label>
+                                <span>{{ course.enrollment_set.count }} / {{ course.max_students }}</span>
                             </div>
-                            <span>{{ course.enrollment_set.count }} / {{ course.max_students }} Students</span>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: {% widthratio course.enrollment_set.count course.max_students 100 %}%"></div>
+                            </div>
                         </div>
                     </div>
+                    
                     <div class="course-actions">
-                        <a href="{% url 'assign_trainer' course.id %}">Assign Trainer</a>
-                        <a href="{% url 'add_material' course.id %}">Add Material</a>
-                        <a href="{% url 'add_question' course.id %}">Manage Quiz</a>
-                        <a href="{% url 'view_results' course.id %}">Results</a>
+                        <a href="{% url 'assign_trainer' course.id %}" class="a-btn">Assign</a>
+                        <a href="{% url 'add_material' course.id %}" class="a-btn">Material</a>
+                        <a href="{% url 'add_question' course.id %}" class="a-btn">Quiz</a>
+                        <a href="{% url 'view_results' course.id %}" class="a-btn highlight">Results</a>
                     </div>
                 </div>
                 {% empty %}
-                <p class="empty-msg">No courses created yet.</p>
+                <div class="empty-state">
+                    <p>You haven't created any courses yet.</p>
+                </div>
                 {% endfor %}
             </div>
         </section>
 
         <section class="section">
             <div class="section-header">
-                <h3>Enrollment Requests</h3>
+                <h3>Pending Enrollment Requests</h3>
             </div>
-            <div class="request-container">
+            <div class="request-list">
                 {% for e in enroll_requests %}
-                <div class="request-row">
-                    <div class="student-meta">
-                        <div class="avatar">{{ e.student.username|slice:":1"|upper }}</div>
-                        <div>
+                <div class="request-card">
+                    <div class="student-info">
+                        <div class="avatar-circle">{{ e.student.username|slice:":1"|upper }}</div>
+                        <div class="info-text">
                             <h5>{{ e.student.profile.full_name|default:e.student.username }}</h5>
-                            <span>{{ e.student.profile.email }}</span>
+                            <span class="sub">{{ e.student.profile.email }}</span>
                         </div>
                     </div>
-                    <div class="request-details">
-                        <p><strong>Course:</strong> {{ e.course.title }}</p>
-                        <p><strong>Domain:</strong> {{ e.student.profile.domain }}</p>
+                    
+                    <div class="meta-info">
+                        <div class="meta-item">
+                            <small>Applying for</small>
+                            <strong>{{ e.course.title }}</strong>
+                        </div>
                     </div>
-                    <div class="request-docs">
+
+                    <div class="action-row">
                         {% if e.resume %}
-                            <a href="{{ e.resume.url }}" target="_blank" class="resume-link">📄 View Resume</a>
-                        {% else %}
-                            <span class="no-resume">No Resume</span>
+                            <a href="{{ e.resume.url }}" target="_blank" class="doc-link">Resume 📄</a>
                         {% endif %}
-                    </div>
-                    <div class="request-actions">
-                        <a href="{% url 'approve_enrollment' e.id %}" class="approve">Approve</a>
-                        <a href="{% url 'reject_enrollment' e.id %}" class="reject">Reject</a>
+                        <div class="decision-btns">
+                            <a href="{% url 'approve_enrollment' e.id %}" class="btn-check approve">✔</a>
+                            <a href="{% url 'reject_enrollment' e.id %}" class="btn-check reject">✖</a>
+                        </div>
                     </div>
                 </div>
                 {% empty %}
-                <p class="empty-msg">No pending requests.</p>
+                <p class="empty-msg">No pending enrollment requests.</p>
                 {% endfor %}
             </div>
         </section>

@@ -16,13 +16,22 @@ from django.db.models import Q
 
 
 def quiz_batches(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
-    batches = QuizBatch.objects.filter(course=course)
+    course = Course.objects.get(id=course_id)
+
+    batches = QuizBatch.objects.filter(course=course, is_active=True)
+
+    # ✅ FIX: get attempted batches correctly
+    attempted_batches = QuizResult.objects.filter(
+        student=request.user,
+        batch__course=course
+    ).values_list('batch_id', flat=True)
 
     return render(request, 'quiz_batches.html', {
         'course': course,
-        'batches': batches
+        'batches': batches,
+        'attempted_batches': list(attempted_batches),  # important
     })
+
 
 @login_required
 def manage_certificates(request):

@@ -9,11 +9,12 @@
     <link rel="stylesheet" href="{% static 'css/manage_certificates.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="dashboard-bg">
 
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper scale-in">
     <header class="page-header">
         <div class="header-content">
+            <span class="badge-accent">Verification Center</span>
             <h1>Certificate Dashboard</h1>
             <p>Manage and issue credentials for courses and internships.</p>
         </div>
@@ -22,124 +23,147 @@
 
     <section class="filter-section">
         <form method="GET" class="filter-card">
-            <div class="filter-group search">
-                <input type="text" name="q" placeholder="Search by name or roll no..." value="{{ request.GET.q }}">
+            <div class="filter-grid">
+                <div class="filter-group search">
+                    <label>Search Student</label>
+                    <input type="text" name="q" placeholder="Name or Roll No..." value="{{ request.GET.q }}">
+                </div>
+                <div class="filter-group">
+                    <label>By Course</label>
+                    <select name="course">
+                        <option value="">All Courses</option>
+                        {% for c in courses %}
+                            <option value="{{ c.course__id }}" {% if request.GET.course == c.course__id|stringformat:"s" %}selected{% endif %}>
+                                {{ c.course__title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>By Internship</label>
+                    <select name="internship">
+                        <option value="">All Internships</option>
+                        {% for i in internships %}
+                            <option value="{{ i.internship__id }}" {% if request.GET.internship == i.internship__id|stringformat:"s" %}selected{% endif %}>
+                                {{ i.internship__title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="filter-btn">Apply Filters</button>
+                </div>
             </div>
-            <div class="filter-group">
-                <select name="course">
-                    <option value="">All Courses</option>
-                    {% for c in courses %}
-                        <option value="{{ c.course__id }}" {% if request.GET.course == c.course__id|stringformat:"s" %}selected{% endif %}>
-                            {{ c.course__title }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="filter-group">
-                <select name="internship">
-                    <option value="">All Internships</option>
-                    {% for i in internships %}
-                        <option value="{{ i.internship__id }}" {% if request.GET.internship == i.internship__id|stringformat:"s" %}selected{% endif %}>
-                            {{ i.internship__title }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button type="submit" class="filter-btn">Apply Filters</button>
         </form>
     </section>
 
-    <section class="table-container">
+    <section class="table-container slide-up">
         <div class="table-header">
-            <h3>Course Enrollments</h3>
+            <div class="title-stack">
+                <h3>Course Enrollments</h3>
+                <p>Manage digital credentials for active students</p>
+            </div>
             <span class="count-tag">{{ enrollments.count }} Students</span>
         </div>
-        <div class="custom-grid header-row">
-            <div>Roll No</div>
-            <div>Student Name</div>
-            <div>Course</div>
-            <div>Joined Date</div>
-            <div class="text-right">Action</div>
-        </div>
+        
+        <div class="table-responsive">
+            <div class="custom-grid header-row">
+                <div>Roll No</div>
+                <div>Student Name</div>
+                <div>Course</div>
+                <div>Joined Date</div>
+                <div class="text-right">Action</div>
+            </div>
 
-        {% for e in enrollments %}
-        <div class="custom-grid data-row">
-            <div class="roll-cell">#{{ e.roll_number }}</div>
-            <div class="name-cell">{{ e.student.username }}</div>
-            <div class="title-cell"><span>{{ e.course.title }}</span></div>
-            <div class="date-cell">{{ e.joined_date|date:"M d, Y" }}</div>
-            <div class="action-cell">
-                {% with cert=cert_map|get_item:e.id %}
-                    {% if cert %}
-                        <div class="status-badge success">Issued ✅</div>
-                        <div class="action-links">
-                            <a href="{% url 'download_certificate' cert.id %}" class="download-btn">Download</a>
-                            <form method="POST" enctype="multipart/form-data" class="mini-upload">
+            {% for e in enrollments %}
+            <div class="custom-grid data-row">
+                <div class="roll-cell">#{{ e.roll_number }}</div>
+                <div class="name-cell"><strong>{{ e.student.username }}</strong></div>
+                <div class="title-cell"><span class="pill-title">{{ e.course.title }}</span></div>
+                <div class="date-cell">{{ e.joined_date|date:"M d, Y" }}</div>
+                <div class="action-cell">
+                    {% with cert=cert_map|get_item:e.id %}
+                        {% if cert %}
+                            <div class="status-stack">
+                                <span class="status-text success">● Issued</span>
+                                <div class="action-links">
+                                    <a href="{% url 'download_certificate' cert.id %}" class="dl-icon" title="Download">💾</a>
+                                    <form method="POST" enctype="multipart/form-data" class="inline-form">
+                                        {% csrf_token %}
+                                        <input type="file" name="certificate" id="replace_{{e.id}}" required hidden onchange="this.form.submit()">
+                                        <label for="replace_{{e.id}}" class="replace-btn">Replace</label>
+                                        <input type="hidden" name="enroll_id" value="{{ e.id }}">
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <form method="POST" enctype="multipart/form-data" class="upload-area">
                                 {% csrf_token %}
-                                <input type="file" name="certificate" id="replace_{{e.id}}" required hidden onchange="this.form.submit()">
-                                <label for="replace_{{e.id}}">Replace</label>
+                                <input type="file" name="certificate" id="up_{{e.id}}" required hidden onchange="this.form.submit()">
+                                <label for="up_{{e.id}}" class="primary-upload-btn">Upload Certificate</label>
                                 <input type="hidden" name="enroll_id" value="{{ e.id }}">
                             </form>
-                        </div>
-                    {% else %}
-                        <form method="POST" enctype="multipart/form-data" class="upload-form">
-                            {% csrf_token %}
-                            <input type="file" name="certificate" id="up_{{e.id}}" required hidden onchange="this.form.submit()">
-                            <label for="up_{{e.id}}" class="primary-upload">Upload File</label>
-                            <input type="hidden" name="enroll_id" value="{{ e.id }}">
-                        </form>
-                    {% endif %}
-                {% endwith %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </section>
 
     {% if applications %}
-    <section class="table-container">
+    <section class="table-container slide-up" style="margin-top: 3rem;">
         <div class="table-header">
-            <h3>Internship Applications</h3>
-            <span class="count-tag">{{ applications.count }} Interns</span>
+            <div class="title-stack">
+                <h3>Internship Applications</h3>
+                <p>Verify and issue internship completion letters</p>
+            </div>
+            <span class="count-tag intern-count">{{ applications.count }} Interns</span>
         </div>
-        <div class="custom-grid header-row">
-            <div>Roll No</div>
-            <div>Name</div>
-            <div>Internship</div>
-            <div>Joined</div>
-            <div class="text-right">Action</div>
-        </div>
+        
+        <div class="table-responsive">
+            <div class="custom-grid header-row">
+                <div>Roll No</div>
+                <div>Name</div>
+                <div>Internship</div>
+                <div>Joined</div>
+                <div class="text-right">Action</div>
+            </div>
 
-        {% for a in applications %}
-        <div class="custom-grid data-row">
-            <div class="roll-cell">#{{ a.roll_number }}</div>
-            <div class="name-cell">{{ a.student.username }}</div>
-            <div class="title-cell"><span>{{ a.internship.title }}</span></div>
-            <div class="date-cell">{{ a.joined_date|date:"M d, Y" }}</div>
-            <div class="action-cell">
-                {% with cert=cert_map|get_item:a.id %}
-                    {% if cert %}
-                        <div class="status-badge success">Issued ✅</div>
-                        <div class="action-links">
-                            <a href="{% url 'download_certificate' cert.id %}" class="download-btn">Download</a>
-                            <form method="POST" enctype="multipart/form-data" class="mini-upload">
+            {% for a in applications %}
+            <div class="custom-grid data-row">
+                <div class="roll-cell">#{{ a.roll_number }}</div>
+                <div class="name-cell"><strong>{{ a.student.username }}</strong></div>
+                <div class="title-cell"><span class="pill-title intern">{{ a.internship.title }}</span></div>
+                <div class="date-cell">{{ a.joined_date|date:"M d, Y" }}</div>
+                <div class="action-cell">
+                    {% with cert=cert_map|get_item:a.id %}
+                        {% if cert %}
+                            <div class="status-stack">
+                                <span class="status-text success">● Issued</span>
+                                <div class="action-links">
+                                    <a href="{% url 'download_certificate' cert.id %}" class="dl-icon">💾</a>
+                                    <form method="POST" enctype="multipart/form-data" class="inline-form">
+                                        {% csrf_token %}
+                                        <input type="file" name="certificate" id="replace_app_{{a.id}}" required hidden onchange="this.form.submit()">
+                                        <label for="replace_app_{{a.id}}" class="replace-btn">Replace</label>
+                                        <input type="hidden" name="app_id" value="{{ a.id }}">
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <form method="POST" enctype="multipart/form-data">
                                 {% csrf_token %}
-                                <input type="file" name="certificate" id="replace_app_{{a.id}}" required hidden onchange="this.form.submit()">
-                                <label for="replace_app_{{a.id}}">Replace</label>
+                                <input type="file" name="certificate" id="up_app_{{a.id}}" required hidden onchange="this.form.submit()">
+                                <label for="up_app_{{a.id}}" class="primary-upload-btn">Upload Certificate</label>
                                 <input type="hidden" name="app_id" value="{{ a.id }}">
                             </form>
-                        </div>
-                    {% else %}
-                        <form method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="file" name="certificate" id="up_app_{{a.id}}" required hidden onchange="this.form.submit()">
-                            <label for="up_app_{{a.id}}" class="primary-upload">Upload File</label>
-                            <input type="hidden" name="app_id" value="{{ a.id }}">
-                        </form>
-                    {% endif %}
-                {% endwith %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </section>
     {% endif %}
 </div>

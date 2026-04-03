@@ -1,161 +1,113 @@
 :root {
-    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
     --bg-dark: #0f172a;
-    --card-bg: #ffffff;
     --text-main: #1e293b;
     --text-muted: #64748b;
     --border-color: #e2e8f0;
+    --white: #ffffff;
     --success: #10b981;
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    background: radial-gradient(circle at top left, #1e293b, #0f172a);
-    background-attachment: fixed;
+    background: radial-gradient(circle at bottom left, #1e293b, #0f172a);
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
-    padding: 20px;
-}
-
-.main-wrapper {
-    width: 100%;
     display: flex;
     justify-content: center;
-}
-
-.upload-card {
-    background: var(--card-bg);
-    width: 100%;
-    max-width: 480px;
-    padding: 3rem;
-    border-radius: 28px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-    text-align: center;
-}
-
-.icon-circle {
-    font-size: 2.5rem;
-    background: #f1f5f9;
-    width: 80px;
-    height: 80px;
-    display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    margin: 0 auto 1.5rem;
-}
-
-header h1 {
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin: 0;
+    padding: 20px;
     color: var(--text-main);
 }
 
-header p {
-    color: var(--text-muted);
-    margin-top: 8px;
-    font-size: 0.95rem;
+.fade-in { animation: fadeIn 0.8s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.upload-card-v2 {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 480px;
+    padding: 3rem 2.5rem;
+    border-radius: 35px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    text-align: center;
 }
+
+.upload-header { margin-bottom: 2.5rem; }
+.icon-pulse {
+    width: 70px; height: 70px; background: #f1f5f9; border-radius: 20px;
+    margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; position: relative;
+}
+.icon-pulse::after {
+    content: ""; position: absolute; width: 100%; height: 100%;
+    border: 2px solid #6366f1; border-radius: 20px;
+    animation: pulseBorder 2s infinite;
+}
+
+@keyframes pulseBorder {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+.upload-header h1 { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+.highlight { color: #6366f1; font-weight: 700; }
 
 /* Dropzone Styling */
-.dropzone-area {
-    margin: 2rem 0 1rem;
+.dropzone-v2 {
+    border: 2px dashed var(--border-color);
+    border-radius: 20px;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
 }
+.dropzone-v2:hover { border-color: #6366f1; background: #f1f5f9; }
+.dropzone-v2.is-ready { border-color: var(--success); background: #f0fdf4; }
 
 .dropzone-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed var(--border-color);
-    padding: 2.5rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: #f8fafc;
+    display: block; padding: 2.5rem 1.5rem; cursor: pointer;
 }
+.cloud-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; opacity: 0.6; }
+.main-text { display: block; font-weight: 700; font-size: 0.95rem; margin-bottom: 5px; }
+.sub-text { font-size: 0.75rem; color: var(--text-muted); }
 
-.dropzone-label:hover {
-    border-color: #6366f1;
-    background: #f5f3ff;
+/* File Info Box */
+.file-status-box {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #ffffff; border: 1px solid var(--border-color);
+    padding: 12px 16px; border-radius: 12px; margin-bottom: 1.5rem;
+    animation: slideUp 0.3s ease;
 }
+@keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-.dropzone-label.active {
-    border-color: var(--success);
-    background: #ecfdf5;
+.file-name-text { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+.reset-upload-btn {
+    background: #fee2e2; color: #ef4444; border: none; width: 24px; height: 24px;
+    border-radius: 50%; font-size: 0.7rem; cursor: pointer; transition: 0.2s;
 }
+.reset-upload-btn:hover { background: #ef4444; color: white; }
 
-.main-text {
-    display: block;
-    font-weight: 700;
-    font-size: 1rem;
-    color: #4f46e5;
+/* Submit Button */
+.submit-app-btn {
+    position: relative; width: 100%; background: var(--primary-grad);
+    color: white; padding: 1.1rem; border: none; border-radius: 16px;
+    font-size: 1rem; font-weight: 800; cursor: pointer; overflow: hidden;
+    transition: transform 0.2s;
 }
+.submit-app-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); }
 
-.sub-text {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 5px;
+.btn-shine-fx {
+    position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: btnShine 3s infinite;
 }
+@keyframes btnShine { 100% { left: 100%; } }
 
-/* File Info Pill */
-.file-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #1e293b;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-    font-size: 0.85rem;
-}
-
-.remove-btn {
-    background: none;
-    border: none;
-    color: #f87171;
-    cursor: pointer;
-    font-weight: 800;
-}
-
-.register-btn {
-    width: 100%;
-    background: var(--primary-gradient);
-    color: white;
-    padding: 1.1rem;
-    border: none;
-    border-radius: 16px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
-    transition: all 0.3s ease;
-}
-
-.register-btn:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
-}
-
-.divider {
-    height: 1px;
-    background: #f1f5f9;
-    margin: 2rem 0;
-}
-
-.auth-footer a {
-    color: #6366f1;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
+.divider-v2 { height: 1px; background: #f1f5f9; margin: 2rem 0; }
+.cancel-link { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
+.cancel-link:hover { color: #ef4444; }
 
 @media (max-width: 480px) {
-    .upload-card { padding: 2rem; }
+    .upload-card-v2 { padding: 2rem 1.5rem; }
 }

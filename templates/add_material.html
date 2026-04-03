@@ -8,59 +8,78 @@
     <link rel="stylesheet" href="{% static 'css/add_material.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-animate">
 
 <div class="main-wrapper">
     {% if messages %}
-        <div class="message-container">
+        <div class="toast-container">
             {% for message in messages %}
-                <div class="alert-toast">{{ message }}</div>
+                <div class="toast-alert slide-in">
+                    <span class="toast-icon">🔔</span>
+                    {{ message }}
+                </div>
             {% endfor %}
         </div>
     {% endif %}
 
-    <div class="register-card material-card">
-        <header>
+    <div class="material-card-v2 scale-up">
+        <header class="card-header">
+            <div class="upload-icon">📁</div>
             <h1>Add Course Material</h1>
-            <p>Uploading to: <strong>{{ course.title }}</strong></p>
+            <p>Publishing to: <strong>{{ course.title }}</strong></p>
         </header>
 
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" class="modern-form">
             {% csrf_token %}
             
-            <div class="form-section">
+            <div class="form-body">
                 <div class="input-group">
                     <label>Resource Title</label>
                     <input type="text" name="title" placeholder="e.g. Week 1 Lecture Notes" required>
                 </div>
 
-                <div class="upload-options">
-                    <div class="input-group">
+                <div class="upload-context">
+                    <div class="input-group file-group">
                         <label>Upload Document</label>
-                        <div class="file-input-wrapper">
+                        <div class="custom-file-zone">
                             <input type="file" name="file" id="file-field">
-                            <span class="file-hint">Supported: PDF, JPG, PNG</span>
+                            <div class="zone-content">
+                                <span class="primary-text">Click to browse files</span>
+                                <span class="file-hint">PDF, JPG, PNG (Max 10MB)</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="or-separator">
-                        <span>OR</span>
+                    <div class="separator-v2">
+                        <span class="line"></span>
+                        <span class="text">OR</span>
+                        <span class="line"></span>
                     </div>
 
                     <div class="input-group">
                         <label>External Resource Link</label>
-                        <input type="url" name="link" placeholder="https://youtube.com/..." class="url-input">
+                        <div class="url-wrapper">
+                            <span class="url-icon">🔗</span>
+                            <input type="url" name="link" placeholder="https://youtube.com/..." class="url-input">
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="register-btn">Upload Resource</button>
+                <button type="submit" class="submit-action-btn">
+                    <span>Upload Resource</span>
+                    <div class="btn-hover-fx"></div>
+                </button>
             </div>
         </form>
 
-        <div class="divider"></div>
-        
-        <div class="auth-footer">
-            <p><a href="/view_courses/">← Return to Course View</a></p>
+        <div class="footer-nav">
+            {% if request.user.profile.role == 'company' %}
+                <a href="{% url 'company_dashboard' %}" class="back-link">← Company Dashboard</a>
+            {% elif request.user.profile.role == 'trainer' %}
+                <a href="{% url 'trainer_dashboard' %}" class="back-link">← Trainer Dashboard</a>
+            {% else %}
+                <a href="/" class="back-link">← Back to Home</a>
+            {% endif %}
         </div>
     </div>
 </div>

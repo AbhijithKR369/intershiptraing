@@ -8,32 +8,40 @@
     <link rel="stylesheet" href="{% static 'css/trainer_dashboard.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="dashboard-bg">
 
 <div class="dashboard-container">
     <aside class="sidebar">
         <div class="sidebar-header">
+            <div class="logo-circle">T</div>
             <h2>Trainer Hub</h2>
         </div>
         <nav class="menu">
-            <a href="{% url 'trainer_apply_list' %}" class="menu-item">
-                <span class="icon">💼</span> Apply to Companies
+            <a href="{% url 'trainer_apply_list' %}" class="menu-item active">
+                <span class="icon">💼</span> 
+                <span class="nav-text">Partner with Companies</span>
             </a>
             <div class="spacer"></div>
-            <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            <a href="{% url 'logout' %}" class="logout-btn">
+                <span class="icon">🚪</span> Logout
+            </a>
         </nav>
     </aside>
 
-    <main class="main-content">
+    <main class="main-content fade-in">
         <header class="top-bar">
             <div class="welcome-section">
-                <h1>Instructor Dashboard</h1>
-                <p>Welcome back, <strong>{{ request.user.username }}</strong></p>
+                <span class="date-pill">Instructor Portal</span>
+                <h1>Welcome Back, {{ request.user.username }}!</h1>
+                <p>Manage your curriculum and track student performance.</p>
+            </div>
+            <div class="user-profile">
+                <div class="profile-initial">{{ request.user.username|slice:":1"|upper }}</div>
             </div>
         </header>
 
         <div class="dashboard-grid">
-            <section class="content-section">
+            <section class="content-section slide-up">
                 <div class="section-header">
                     <h3>Assigned Courses</h3>
                     <span class="count-tag">{{ request.user.trainer_courses.count }} Active</span>
@@ -41,45 +49,55 @@
                 
                 <div class="course-list">
                     {% for course in request.user.trainer_courses.all %}
-                    <div class="course-card">
-                        <div class="course-main">
+                    <div class="course-card-v2">
+                        <div class="course-info">
                             <h4>{{ course.title }}</h4>
-                            <p class="company-name">Organization: {{ course.company.profile.company_name }}</p>
+                            <div class="org-badge">
+                                <span class="badge-icon">🏛️</span>
+                                {{ course.company.profile.company_name }}
+                            </div>
                         </div>
-                        <div class="course-actions">
-                            <a href="{% url 'add_material' course.id %}" class="btn-action">Upload Material</a>
-                            <a href="{% url 'add_question' course.id %}" class="btn-action btn-outline">Manage Quiz</a>
+                        <div class="course-actions-v2">
+                            <a href="{% url 'add_material' course.id %}" class="btn-primary">Upload Content</a>
+                            <a href="{% url 'add_question' course.id %}" class="btn-secondary">Manage Quiz</a>
                         </div>
                     </div>
                     {% empty %}
-                    <div class="empty-state">
-                        <p>No courses assigned yet. Partner with companies to start teaching.</p>
+                    <div class="empty-state-v2">
+                        <div class="empty-icon">📂</div>
+                        <p>No courses assigned yet.</p>
+                        <a href="{% url 'trainer_apply_list' %}" class="empty-link">Apply to Companies →</a>
                     </div>
                     {% endfor %}
                 </div>
             </section>
 
-            <section class="content-section">
+            <section class="content-section slide-up" style="animation-delay: 0.1s">
                 <div class="section-header">
-                    <h3>Recent Student Activity</h3>
+                    <h3>Student Quiz Activity</h3>
                 </div>
 
                 <div class="results-feed">
                     {% for r in results %}
-                    <div class="result-item">
-                        <div class="student-avatar">
+                    <div class="result-item-v2">
+                        <div class="student-avatar-box">
                             {{ r.student.username|slice:":1"|upper }}
                         </div>
-                        <div class="result-details">
-                            <div class="result-row">
+                        <div class="result-body">
+                            <div class="result-top">
                                 <strong>{{ r.student.username }}</strong>
-                                <span class="score-badge">{{ r.score }}/{{ r.total }}</span>
+                                <div class="score-pill-v2">{{ r.score }} / {{ r.total }}</div>
                             </div>
-                            <p class="result-meta">{{ r.batch.course.title }} • {{ r.batch.title }}</p>
+                            <p class="result-meta-v2">
+                                <span class="c-title">{{ r.batch.course.title }}</span>
+                                <span class="b-title">{{ r.batch.title }}</span>
+                            </p>
                         </div>
                     </div>
                     {% empty %}
-                    <p class="empty-msg">No quiz attempts recorded yet.</p>
+                    <div class="empty-feed">
+                        <p>Waiting for students to complete quizzes...</p>
+                    </div>
                     {% endfor %}
                 </div>
             </section>

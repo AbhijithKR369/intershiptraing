@@ -4,96 +4,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Learning Journey</title>
+    <title>My Learning Journey | Career Portal</title>
     <link rel="stylesheet" href="{% static 'css/student_courses.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
 
 <div class="dashboard-wrapper">
-    <main class="content-area">
+    <main class="content-area fade-in">
         <header class="page-header">
-            <h1>My Courses</h1>
-            <p>Access your enrolled materials and live sessions.</p>
+            <div class="header-text">
+                <span class="breadcrumb">Student Portal</span>
+                <h1>My Enrolled Courses</h1>
+                <p>Track your progress and access your study materials.</p>
+            </div>
+            <a href="{% url 'student_dashboard' %}" class="back-link">← Dashboard</a>
         </header>
 
-        {% for item in course_data %}
-        <section class="course-section">
-            <div class="course-card">
-                <div class="course-info">
-                    <div class="course-header-row">
-                        <h2>{{ item.course.title }}</h2>
-                        <span class="company-badge">{{ item.course.company.profile.company_name }}</span>
-                    </div>
-                    <p class="description">{{ item.course.description }}</p>
-                    
-                    <div class="instructor-tag">
-                        <span>Instructor:</span>
-                        <strong>
-                            {% if item.course.trainer %}
-                                {{ item.course.trainer.username }}
-                            {% else %}
-                                <span class="handled-by">Platform Verified</span>
-                            {% endif %}
-                        </strong>
-                    </div>
-                </div>
-
-                <div class="materials-container">
-                    <h3>Course Materials</h3>
-                    <div class="material-grid">
-                        {% for mat in item.materials %}
-                        <div class="material-item">
-                            <div class="mat-info">
-                                <strong>{{ mat.title }}</strong>
-                                {% if mat.class_time %}
-                                    <span class="time-tag">🕒 {{ mat.class_time }}</span>
-                                {% endif %}
+        <div class="course-stack">
+            {% for item in course_data %}
+            <section class="course-block slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+                <div class="course-card-v2">
+                    <div class="course-main-info">
+                        <div class="card-top">
+                            <span class="org-badge">{{ item.course.company.profile.company_name }}</span>
+                            <h2>{{ item.course.title }}</h2>
+                        </div>
+                        <p class="course-bio">{{ item.course.description|truncatewords:30 }}</p>
+                        
+                        <div class="instructor-box">
+                            <div class="ins-avatar">
+                                {{ item.course.trainer.username|slice:":1"|upper|default:"P" }}
                             </div>
-
-                            <div class="mat-actions">
-                                {% if mat.file %}
-                                    <a href="{{ mat.file.url }}" class="btn-file">📄 Download PDF</a>
-                                {% endif %}
-
-                                {% if mat.link %}
-                                    <a href="{{ mat.link }}" target="_blank" class="btn-link">🔗 Resource Link</a>
-                                {% endif %}
-
-                                {% if mat.class_link %}
-                                    <a href="{{ mat.class_link }}" target="_blank" class="btn-live">🎥 Join Live Class</a>
-                                {% endif %}
+                            <div class="ins-text">
+                                <small>Instructor</small>
+                                <strong>{{ item.course.trainer.username|default:"Platform Expert" }}</strong>
                             </div>
                         </div>
-                        {% empty %}
-                        <p class="empty-text">No materials have been uploaded yet.</p>
-                        {% endfor %}
+                    </div>
+
+                    <div class="materials-pane">
+                        <div class="pane-header">
+                            <h3>Course Resources</h3>
+                            <span class="res-count">{{ item.materials|length }} items</span>
+                        </div>
+                        
+                        <div class="material-list">
+                            {% for mat in item.materials %}
+                            <div class="resource-item">
+                                <div class="res-meta">
+                                    <span class="res-name">{{ mat.title }}</span>
+                                    {% if mat.class_time %}
+                                        <span class="res-time">🕒 {{ mat.class_time }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="res-actions">
+                                    {% if mat.file %}
+                                        <a href="{{ mat.file.url }}" class="action-btn file">PDF</a>
+                                    {% endif %}
+                                    {% if mat.link %}
+                                        <a href="{{ mat.link }}" target="_blank" class="action-btn link">Link</a>
+                                    {% endif %}
+                                    {% if mat.class_link %}
+                                        <a href="{{ mat.class_link }}" target="_blank" class="action-btn live">Live</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-res">
+                                <p>Materials will be uploaded soon by your instructor.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
+            </section>
+            {% empty %}
+            <div class="empty-journey">
+                <div class="empty-icon">📂</div>
+                <h2>Your journey hasn't started yet!</h2>
+                <p>Enroll in a course to see your learning materials here.</p>
+                <a href="/view_courses/" class="cta-btn">Browse Catalog</a>
             </div>
-        </section>
-        {% empty %}
-        <div class="empty-dashboard">
-            <p>You haven't enrolled in any courses yet. Start your journey today!</p>
-            <a href="/view_courses/" class="explore-btn">Browse Courses</a>
+            {% endfor %}
         </div>
-        {% endfor %}
     </main>
 
-    <aside class="sidebar-certificates">
-        <div class="sidebar-card">
-            <h3>🎓 Achievements</h3>
-            <div class="certificate-list">
+    <aside class="sidebar-achievements">
+        <div class="achievements-card sticky-sidebar">
+            <div class="ach-header">
+                <h3>🏆 Achievements</h3>
+                <p>Your earned credentials</p>
+            </div>
+            
+            <div class="ach-list">
                 {% for cert in certificates %}
-                <div class="cert-item">
-                    <div class="cert-icon">📜</div>
-                    <div class="cert-details">
-                        <span class="cert-title">{{ cert.course.title }}</span>
-                        <a href="/certificate/{{ cert.id }}/download/" class="cert-download">Download</a>
+                <div class="ach-item bounce-in">
+                    <div class="ach-icon">📜</div>
+                    <div class="ach-details">
+                        <span class="ach-title">{{ cert.course.title }}</span>
+                        <small class="ach-org">
+                            {% if cert.internship %}
+                                {{ cert.internship.company.profile.company_name|default:cert.internship.company.username }}
+                            {% else %}
+                                {{ cert.course.company.profile.company_name|default:cert.course.company.username }}
+                            {% endif %}
+                        </small>
+                        <a href="{% url 'download_certificate' cert.id %}" class="ach-dl">Download</a>
                     </div>
                 </div>
                 {% empty %}
-                <p class="empty-text">Complete a course to unlock your first certificate!</p>
+                <div class="ach-empty">
+                    <p>Finish your first course to unlock professional certificates!</p>
+                </div>
                 {% endfor %}
             </div>
         </div>
