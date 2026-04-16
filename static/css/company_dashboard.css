@@ -8,6 +8,22 @@
     --border: #e2e8f0;
     --success: #10b981;
     --danger: #ef4444;
+
+}
+html {
+    width: 100%;
+    overflow-x: hidden;
+}
+.course-card,
+.top-bar,
+h1, h2, h3, h4, p {
+    overflow-wrap: break-word;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
 }
 
 body {
@@ -16,9 +32,18 @@ body {
     margin: 0;
     color: var(--text-main);
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 .dashboard-container { display: flex; min-height: 100vh; }
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden;
+    width: 100%;
+}
+
 
 /* SIDEBAR FIX */
 .sidebar {
@@ -27,11 +52,15 @@ body {
     color: white;
     display: flex;
     flex-direction: column;
-    padding: 2.5rem 1.5rem;
-    position: sticky;
+     padding: 1.5rem 1rem;
+    flex-shrink: 0; /* Prevents sidebar from shrinking */
+    position: relative; /* Keeps it visible while scrolling without overlapping */
+    left: 0;
     top: 0;
-    height: 100vh;
-    box-sizing: border-box;
+    height: 100dvh;
+    overflow: hidden;
+    min-width: 280px;
+
 }
 
 .sidebar-header { display: flex; align-items: center; gap: 12px; margin-bottom: 3rem; }
@@ -42,9 +71,8 @@ body {
     font-size: 1.25rem;
     font-weight: 800;
     margin-bottom: 3rem;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;   /* ✅ FIX */
+    background: var(--primary-gradient); 
+    -webkit-background-clip: text;  /* ✅ FIX */
     -webkit-text-fill-color: transparent;
 }
 
@@ -67,6 +95,72 @@ body {
     align-items: center;
     gap: 12px;
     transition: 0.3s;
+
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.logout-btn {
+    color: #ef4444;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 1rem;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: auto;
+}
+
+/* --- MAIN CONTENT FIX --- */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    min-width: 0; /* 🔥 VERY IMPORTANT */
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between; /* Pushes title to left and buttons to right */
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap; /* Allows wrapping on small screens */
+    gap: 1rem;
+}
+
+.top-bar h1 {
+    font-size: clamp(1.5rem, 5vw, 2rem); /* Fluid typography */
+    font-weight: 800;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    text-decoration: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    background: white;
+    white-space: nowrap; /* Prevents text inside button from breaking */
+    max-width: 100%;
 }
 
 .menu-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
@@ -151,6 +245,7 @@ body {
 
 /* RESPONSIVE */
 @media (max-width: 1024px) {
+
     .sidebar { width: 80px; padding: 1.5rem 0.5rem; align-items: center; }
     .sidebar-header h2, .menu-item span:not(.m-icon), .logout-btn { display: none; }
     .main-content { max-width: calc(100vw - 80px); padding: 2rem; }
@@ -163,4 +258,5 @@ body {
     .top-bar { flex-direction: column; align-items: flex-start; gap: 1rem; }
     .request-card { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
     .student-info, .meta-info, .action-row { width: 100%; justify-content: flex-start; }
+
 }
