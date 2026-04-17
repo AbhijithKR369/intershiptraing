@@ -6,15 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Access Portal</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="entry-fade">
 
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+</div>
+
 <div class="main-wrapper">
     <div class="login-card-v2">
+
+        <!-- Corner ornaments -->
+        <svg class="corner-ornament tl" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
+            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
+            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
+        </svg>
+        <svg class="corner-ornament br" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
+            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
+            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
+        </svg>
+
         <header class="login-header">
-            <div class="brand-logo">🔑</div>
-            <h1>Welcome Back</h1>
+            <div class="brand-logo">
+                <svg class="logo-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="14" cy="10" r="5" stroke="#c9a96e" stroke-width="1.5"/>
+                    <path d="M14 17 C8 17 4 20 4 24" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M14 17 C20 17 24 20 24 24" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M14 15 L14 17" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                Access Portal
+                <span class="eyebrow-line r"></span>
+            </div>
+            <h1>Welcome <em>Back</em></h1>
             <p>Enter your credentials to access your dashboard</p>
         </header>
 
@@ -31,17 +64,27 @@
 
             <div class="form-body">
                 <div class="input-container">
-                    <label>Username</label>
+                    <label class="field-label">Username</label>
                     <div class="input-field">
-                        <span class="field-icon">👤</span>
+                        <span class="field-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="8" r="4"/>
+                                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                            </svg>
+                        </span>
                         <input type="text" name="username" placeholder="Enter your username" required>
                     </div>
                 </div>
 
                 <div class="input-container">
-                    <label>Password</label>
+                    <label class="field-label">Password</label>
                     <div class="input-field">
-                        <span class="field-icon">🔒</span>
+                        <span class="field-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="11" width="14" height="10" rx="2"/>
+                                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                            </svg>
+                        </span>
                         <input type="password" name="password" placeholder="••••••••" required>
                     </div>
                 </div>

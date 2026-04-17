@@ -7,166 +7,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Certificates | Admin Portal</title>
     <link rel="stylesheet" href="{% static 'css/manage_certificates.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-bg">
 
-<div class="dashboard-wrapper scale-in">
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="dashboard-wrapper">
+
+    <!-- Page Header -->
     <header class="page-header">
         <div class="header-content">
-            <span class="badge-accent">Verification Center</span>
-            <h1>Certificate Dashboard</h1>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                Verification Center
+                <span class="eyebrow-line r"></span>
+            </div>
+            <h1>Certificate <em>Dashboard</em></h1>
             <p>Manage and issue credentials for courses and internships.</p>
         </div>
         <a href="{% url 'company_dashboard' %}" class="back-link">← Dashboard</a>
     </header>
 
+    <!-- Filters -->
     <section class="filter-section">
         <form method="GET" class="filter-card">
             <div class="filter-grid">
                 <div class="filter-group search">
-                    <label>Search Student</label>
-                    <input type="text" name="q" placeholder="Name or Roll No..." value="{{ request.GET.q }}">
+                    <label class="field-label">Search Student</label>
+                    <div class="search-wrap">
+                        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" name="q" placeholder="Name or Roll No..." value="{{ request.GET.q }}">
+                    </div>
                 </div>
                 <div class="filter-group">
-                    <label>By Course</label>
-                    <select name="course">
-                        <option value="">All Courses</option>
-                        {% for c in courses %}
-                            <option value="{{ c.course__id }}" {% if request.GET.course == c.course__id|stringformat:"s" %}selected{% endif %}>
-                                {{ c.course__title }}
-                            </option>
-                        {% endfor %}
-                    </select>
+                    <label class="field-label">By Course</label>
+                    <div class="sel-wrap">
+                        <select name="course">
+                            <option value="">All Courses</option>
+                            {% for c in courses %}
+                                <option value="{{ c.course__id }}" {% if request.GET.course == c.course__id|stringformat:"s" %}selected{% endif %}>
+                                    {{ c.course__title }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <svg class="sel-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
                 </div>
                 <div class="filter-group">
-                    <label>By Internship</label>
-                    <select name="internship">
-                        <option value="">All Internships</option>
-                        {% for i in internships %}
-                            <option value="{{ i.internship__id }}" {% if request.GET.internship == i.internship__id|stringformat:"s" %}selected{% endif %}>
-                                {{ i.internship__title }}
-                            </option>
-                        {% endfor %}
-                    </select>
+                    <label class="field-label">By Internship</label>
+                    <div class="sel-wrap">
+                        <select name="internship">
+                            <option value="">All Internships</option>
+                            {% for i in internships %}
+                                <option value="{{ i.internship__id }}" {% if request.GET.internship == i.internship__id|stringformat:"s" %}selected{% endif %}>
+                                    {{ i.internship__title }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <svg class="sel-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
                 </div>
                 <div class="filter-actions">
-                    <button type="submit" class="filter-btn">Apply Filters</button>
+                    <button type="submit" class="filter-btn">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                        Apply Filters
+                    </button>
                 </div>
             </div>
         </form>
     </section>
 
-    <section class="table-container slide-up">
+    <!-- Course Enrollments Table -->
+    <section class="table-container">
         <div class="table-header">
             <div class="title-stack">
-                <h3>Course Enrollments</h3>
+                <h3>Course <em>Enrollments</em></h3>
                 <p>Manage digital credentials for active students</p>
             </div>
             <span class="count-tag">{{ enrollments.count }} Students</span>
         </div>
-        
-        <div class="table-responsive">
-            <div class="custom-grid header-row">
-                <div>Roll No</div>
-                <div>Student Name</div>
-                <div>Course</div>
-                <div>Joined Date</div>
-                <div class="text-right">Action</div>
-            </div>
 
-            {% for e in enrollments %}
-            <div class="custom-grid data-row">
-                <div class="roll-cell">#{{ e.roll_number }}</div>
-                <div class="name-cell"><strong>{{ e.student.username }}</strong></div>
-                <div class="title-cell"><span class="pill-title">{{ e.course.title }}</span></div>
-                <div class="date-cell">{{ e.joined_date|date:"M d, Y" }}</div>
-                <div class="action-cell">
-                    {% with cert=cert_map|get_item:e.id %}
-                        {% if cert %}
-                            <div class="status-stack">
-                                <span class="status-text success">● Issued</span>
-                                <div class="action-links">
-                                    <a href="{% url 'download_certificate' cert.id %}" class="dl-icon" title="Download">💾</a>
-                                    <form method="POST" enctype="multipart/form-data" class="inline-form">
-                                        {% csrf_token %}
-                                        <input type="file" name="certificate" id="replace_{{e.id}}" required hidden onchange="this.form.submit()">
-                                        <label for="replace_{{e.id}}" class="replace-btn">Replace</label>
-                                        <input type="hidden" name="enroll_id" value="{{ e.id }}">
-                                    </form>
-                                </div>
-                            </div>
-                        {% else %}
-                            <form method="POST" enctype="multipart/form-data" class="upload-area">
-                                {% csrf_token %}
-                                <input type="file" name="certificate" id="up_{{e.id}}" required hidden onchange="this.form.submit()">
-                                <label for="up_{{e.id}}" class="primary-upload-btn">Upload Certificate</label>
-                                <input type="hidden" name="enroll_id" value="{{ e.id }}">
-                            </form>
-                        {% endif %}
-                    {% endwith %}
+        <div class="table-scroll">
+            <div class="data-table">
+                <div class="table-head">
+                    <div>Roll No</div>
+                    <div>Student Name</div>
+                    <div>Course</div>
+                    <div>Joined Date</div>
+                    <div class="text-right">Action</div>
                 </div>
+
+                {% for e in enrollments %}
+                <div class="table-row">
+                    <div class="roll-cell">#{{ e.roll_number }}</div>
+                    <div class="name-cell">
+                        <div class="avatar">{{ e.student.username|slice:":1"|upper }}</div>
+                        <strong>{{ e.student.username }}</strong>
+                    </div>
+                    <div class="title-cell"><span class="pill course-pill">{{ e.course.title }}</span></div>
+                    <div class="date-cell">{{ e.joined_date|date:"M d, Y" }}</div>
+                    <div class="action-cell">
+                        {% with cert=cert_map|get_item:e.id %}
+                            {% if cert %}
+                                <div class="status-stack">
+                                    <span class="status-issued">
+                                        <svg width="8" height="8" viewBox="0 0 8 8" fill="#4ade80"><circle cx="4" cy="4" r="4"/></svg>
+                                        Issued
+                                    </span>
+                                    <div class="action-links">
+                                        <a href="{% url 'download_certificate' cert.id %}" class="dl-btn" title="Download">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        </a>
+                                        <form method="POST" enctype="multipart/form-data" class="inline-form">
+                                            {% csrf_token %}
+                                            <input type="file" name="certificate" id="replace_{{e.id}}" required hidden onchange="this.form.submit()">
+                                            <label for="replace_{{e.id}}" class="replace-btn">Replace</label>
+                                            <input type="hidden" name="enroll_id" value="{{ e.id }}">
+                                        </form>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <form method="POST" enctype="multipart/form-data" class="upload-area">
+                                    {% csrf_token %}
+                                    <input type="file" name="certificate" id="up_{{e.id}}" required hidden onchange="this.form.submit()">
+                                    <label for="up_{{e.id}}" class="upload-btn">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Upload
+                                    </label>
+                                    <input type="hidden" name="enroll_id" value="{{ e.id }}">
+                                </form>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </section>
 
+    <!-- Internship Applications Table -->
     {% if applications %}
-    <section class="table-container slide-up" style="margin-top: 3rem;">
+    <section class="table-container">
         <div class="table-header">
             <div class="title-stack">
-                <h3>Internship Applications</h3>
+                <h3>Internship <em>Applications</em></h3>
                 <p>Verify and issue internship completion letters</p>
             </div>
-            <span class="count-tag intern-count">{{ applications.count }} Interns</span>
+            <span class="count-tag intern-tag">{{ applications.count }} Interns</span>
         </div>
-        
-        <div class="table-responsive">
-            <div class="custom-grid header-row">
-                <div>Roll No</div>
-                <div>Name</div>
-                <div>Internship</div>
-                <div>Joined</div>
-                <div class="text-right">Action</div>
-            </div>
 
-            {% for a in applications %}
-            <div class="custom-grid data-row">
-                <div class="roll-cell">#{{ a.roll_number }}</div>
-                <div class="name-cell"><strong>{{ a.student.username }}</strong></div>
-                <div class="title-cell"><span class="pill-title intern">{{ a.internship.title }}</span></div>
-                <div class="date-cell">{{ a.joined_date|date:"M d, Y" }}</div>
-                <div class="action-cell">
-                    {% with cert=cert_map|get_item:a.id %}
-                        {% if cert %}
-                            <div class="status-stack">
-                                <span class="status-text success">● Issued</span>
-                                <div class="action-links">
-                                    <a href="{% url 'download_certificate' cert.id %}" class="dl-icon">💾</a>
-                                    <form method="POST" enctype="multipart/form-data" class="inline-form">
-                                        {% csrf_token %}
-                                        <input type="file" name="certificate" id="replace_app_{{a.id}}" required hidden onchange="this.form.submit()">
-                                        <label for="replace_app_{{a.id}}" class="replace-btn">Replace</label>
-                                        <input type="hidden" name="app_id" value="{{ a.id }}">
-                                    </form>
-                                </div>
-                            </div>
-                        {% else %}
-                            <form method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="file" name="certificate" id="up_app_{{a.id}}" required hidden onchange="this.form.submit()">
-                                <label for="up_app_{{a.id}}" class="primary-upload-btn">Upload Certificate</label>
-                                <input type="hidden" name="app_id" value="{{ a.id }}">
-                            </form>
-                        {% endif %}
-                    {% endwith %}
+        <div class="table-scroll">
+            <div class="data-table">
+                <div class="table-head">
+                    <div>Roll No</div>
+                    <div>Name</div>
+                    <div>Internship</div>
+                    <div>Joined</div>
+                    <div class="text-right">Action</div>
                 </div>
+
+                {% for a in applications %}
+                <div class="table-row">
+                    <div class="roll-cell">#{{ a.roll_number }}</div>
+                    <div class="name-cell">
+                        <div class="avatar avatar-intern">{{ a.student.username|slice:":1"|upper }}</div>
+                        <strong>{{ a.student.username }}</strong>
+                    </div>
+                    <div class="title-cell"><span class="pill intern-pill">{{ a.internship.title }}</span></div>
+                    <div class="date-cell">{{ a.joined_date|date:"M d, Y" }}</div>
+                    <div class="action-cell">
+                        {% with cert=cert_map|get_item:a.id %}
+                            {% if cert %}
+                                <div class="status-stack">
+                                    <span class="status-issued">
+                                        <svg width="8" height="8" viewBox="0 0 8 8" fill="#4ade80"><circle cx="4" cy="4" r="4"/></svg>
+                                        Issued
+                                    </span>
+                                    <div class="action-links">
+                                        <a href="{% url 'download_certificate' cert.id %}" class="dl-btn" title="Download">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        </a>
+                                        <form method="POST" enctype="multipart/form-data" class="inline-form">
+                                            {% csrf_token %}
+                                            <input type="file" name="certificate" id="replace_app_{{a.id}}" required hidden onchange="this.form.submit()">
+                                            <label for="replace_app_{{a.id}}" class="replace-btn">Replace</label>
+                                            <input type="hidden" name="app_id" value="{{ a.id }}">
+                                        </form>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <form method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="file" name="certificate" id="up_app_{{a.id}}" required hidden onchange="this.form.submit()">
+                                    <label for="up_app_{{a.id}}" class="upload-btn">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Upload
+                                    </label>
+                                    <input type="hidden" name="app_id" value="{{ a.id }}">
+                                </form>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </section>
     {% endif %}
-</div>
 
+</div>
 </body>
 </html>

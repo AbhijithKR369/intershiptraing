@@ -4,31 +4,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Course | Instructor Portal</title>
+    <title>Add New Course | Instructor/Company Portal</title>
     <link rel="stylesheet" href="{% static 'css/add_course.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="fade-in">
 
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+</div>
+
 <div class="main-wrapper">
     <div class="add-course-card">
+
+        <svg class="corner-ornament tl" viewBox="0 0 40 40" fill="none">
+            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
+            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
+            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
+        </svg>
+        <svg class="corner-ornament br" viewBox="0 0 40 40" fill="none">
+            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
+            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
+            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
+        </svg>
+
         <header class="form-header">
-            <div class="icon-box">📚</div>
-            <h1>Add New Course</h1>
+            <div class="icon-box">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                    <path d="M3 7 L13 3 L23 7 L23 13 C23 18 18 22 13 24 C8 22 3 18 3 13 Z" stroke="#c9a96e" stroke-width="1.4" stroke-linejoin="round"/>
+                    <path d="M9 13 L12 16 L17 11" stroke="#c9a96e" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                Instructor Portal
+                <span class="eyebrow-line r"></span>
+            </div>
+            <h1>Add New <em>Course</em></h1>
             <p>Fill in the details to publish a new learning module.</p>
         </header>
 
         <form method="POST" class="course-form">
             {% csrf_token %}
-            
+
             <div class="form-section">
                 <div class="input-group">
-                    <label>Course Title</label>
+                    <label class="field-label">Course Title</label>
                     <input type="text" name="title" placeholder="e.g. Advanced Python Mastery" required>
                 </div>
 
                 <div class="input-group">
-                    <label>Description</label>
+                    <label class="field-label">Description</label>
                     <textarea name="description" rows="5" placeholder="Describe the course objectives and what students will learn..." required></textarea>
                 </div>
 
@@ -40,9 +70,8 @@
         </form>
 
         <div class="divider"></div>
-        
-        <div class="auth-footer">
 
+        <div class="auth-footer">
             {% if request.user.profile.role == 'company' %}
                 <a href="{% url 'company_dashboard' %}" class="back-link">← Company Dashboard</a>
             {% elif request.user.profile.role == 'trainer' %}
@@ -50,8 +79,8 @@
             {% else %}
                 <a href="/" class="back-link">← Back to Home</a>
             {% endif %}
-
         </div>
+
     </div>
 </div>
 
