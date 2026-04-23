@@ -6,68 +6,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results | {{ course.title }}</title>
     <link rel="stylesheet" href="{% static 'css/result.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-dark-radial">
 
-<div class="main-wrapper fade-in">
-    <div class="result-card-v2 scale-up">
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="main-wrapper">
+    <div class="result-card-v2">
+
+        <svg class="corner-ornament tl" viewBox="0 0 40 40" fill="none">
+            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
+            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
+            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
+        </svg>
+        <svg class="corner-ornament br" viewBox="0 0 40 40" fill="none">
+            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
+            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
+            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
+        </svg>
+
         <header class="result-header">
             <div class="header-content">
-                <span class="status-pill">Course Completed</span>
-                <h1>Quiz Summary</h1>
+                <div class="eyebrow">
+                    <span class="eyebrow-line"></span>
+                    Course Completed
+                    <span class="eyebrow-line r"></span>
+                </div>
+                <h1>Quiz <em>Summary</em></h1>
                 <p class="course-name">{{ course.title }}</p>
             </div>
-            <a href="{% url 'quiz_batches' course.id %}" class="close-btn" title="Close">×</a>
+            <a href="{% url 'quiz_batches' course.id %}" class="close-btn" title="Close">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </a>
         </header>
 
+        <!-- Score Hero -->
         <section class="score-hero">
-            <div class="score-ring">
-                <div class="score-content">
-                    <span class="big-score">{{ score }}</span>
-                    <span class="total-out-of">/ {{ total }}</span>
+            <div class="score-ring-wrap">
+                <div class="score-ring">
+                    <svg class="ring-svg" viewBox="0 0 160 160">
+                        <circle class="ring-track" cx="80" cy="80" r="68"/>
+                        <circle class="ring-fill" cx="80" cy="80" r="68"
+                            style="stroke-dasharray: 427; stroke-dashoffset: calc(427 - (427 * {{ score }}) / {{ total }})"/>
+                    </svg>
+                    <div class="score-content">
+                        <span class="big-score">{{ score }}</span>
+                        <span class="total-out-of">/ {{ total }}</span>
+                    </div>
                 </div>
-                <svg class="ring-svg">
-                    <circle cx="80" cy="80" r="70"></circle>
-                </svg>
             </div>
-            
+
             <div class="feedback-area">
                 <h2>Great Job!</h2>
                 <p>You have successfully completed the latest quiz module with a solid performance.</p>
             </div>
         </section>
 
+        <!-- History -->
         <div class="history-divider">
+            <div class="div-line"></div>
             <span class="divider-text">Attempt History</span>
+            <div class="div-line"></div>
         </div>
 
         <section class="history-container">
-            <div class="history-scroll">
-                {% for r in results %}
-                <div class="history-item-v2 slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
-                    <div class="item-left">
-                        <div class="batch-avatar">
-                            <span class="icon">📊</span>
-                        </div>
-                        <div class="batch-meta">
-                            <span class="label">Quiz Batch</span>
-                            <span class="id">#{{ r.batch.id }}</span>
-                        </div>
+            {% for r in results %}
+            <div class="history-item-v2" style="animation-delay: {{ forloop.counter0|add:0.05 }}s">
+                <div class="item-left">
+                    <div class="batch-avatar">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                     </div>
-                    <div class="item-right">
-                        <div class="result-pill">
-                            <span class="p-score">{{ r.score }}</span>
-                            <span class="p-total">/ {{ r.total }}</span>
-                        </div>
+                    <div class="batch-meta">
+                        <span class="b-label">Quiz Batch</span>
+                        <span class="b-id">#{{ r.batch.id }}</span>
                     </div>
                 </div>
-                {% empty %}
-                <div class="empty-state">
-                    <p>No previous attempts recorded for this course.</p>
+                <div class="item-right">
+                    <div class="result-pill">
+                        <span class="p-score">{{ r.score }}</span>
+                        <span class="p-sep">/</span>
+                        <span class="p-total">{{ r.total }}</span>
+                    </div>
                 </div>
-                {% endfor %}
             </div>
+            {% empty %}
+            <div class="empty-state">
+                <p>No previous attempts recorded for this course.</p>
+            </div>
+            {% endfor %}
         </section>
 
         <footer class="result-footer-v2">

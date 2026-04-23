@@ -6,34 +6,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trainer Applications | Management Hub</title>
     <link rel="stylesheet" href="{% static 'css/trainer_requests.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-subtle">
 
-<div class="dashboard-wrapper fade-in">
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="dashboard-wrapper">
+
     <header class="page-header">
         <div class="header-content">
-            <span class="context-badge">HR & Verification</span>
-            <h1>Trainer Applications</h1>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                HR &amp; Verification
+                <span class="eyebrow-line r"></span>
+            </div>
+            <h1>Trainer <em>Applications</em></h1>
             <p>Review and verify professionals applying to join your organization.</p>
         </div>
-        <a href="{% url 'company_dashboard' %}" class="back-link-pill">← Dashboard Hub</a>
+        <a href="{% url 'company_dashboard' %}" class="back-link">← Dashboard</a>
     </header>
 
     <div class="request-grid">
         {% for app in apps %}
-        <div class="request-card slide-up {% if app.status == 'pending' %}is-active{% endif %}" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
-            
+        <div class="request-card {% if app.status == 'pending' %}is-active{% endif %}" style="animation-delay: {{ forloop.counter0|add:0.05 }}s">
+
+            <!-- Profile block -->
             <div class="card-part profile-block">
-                <div class="user-avatar-v2">
-                    {{ app.trainer.username|slice:":1"|upper }}
-                </div>
+                <div class="user-avatar-v2">{{ app.trainer.username|slice:":1"|upper }}</div>
                 <div class="user-meta">
                     <h3>{{ app.trainer.username }}</h3>
-                    <span class="status-indicator {{ app.status }}">{{ app.status|title }}</span>
+                    <span class="status-indicator status-{{ app.status }}">{{ app.status|title }}</span>
                 </div>
             </div>
 
+            <!-- Details block -->
             <div class="card-part details-block">
                 <div class="data-entry">
                     <label>Qualification</label>
@@ -49,30 +61,38 @@
                 </div>
             </div>
 
+            <!-- Action block -->
             <div class="card-part action-block">
                 <div class="doc-preview">
                     <a href="{{ app.resume.url }}" target="_blank" class="resume-button">
-                        <span class="icon">📄</span>
-                        <span>Review Resume</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Review Resume
                     </a>
                 </div>
-
                 {% if app.status == 'pending' %}
                 <div class="decision-group">
-                    <a href="{% url 'approve_trainer' app.id %}" class="btn-action approve">Verify</a>
-                    <a href="{% url 'reject_trainer' app.id %}" class="btn-action reject">Decline</a>
+                    <a href="{% url 'approve_trainer' app.id %}" class="btn-action approve">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Verify
+                    </a>
+                    <a href="{% url 'reject_trainer' app.id %}" class="btn-action reject">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Decline
+                    </a>
                 </div>
                 {% endif %}
             </div>
+
         </div>
         {% empty %}
         <div class="empty-placeholder">
-            <div class="empty-illustration">📂</div>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.35;margin-bottom:1rem"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             <h3>All caught up!</h3>
             <p>There are no pending trainer applications at the moment.</p>
         </div>
         {% endfor %}
     </div>
+
 </div>
 
 </body>

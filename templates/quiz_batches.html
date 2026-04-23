@@ -6,30 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizzes & Certificates | {{ course.title }}</title>
     <link rel="stylesheet" href="{% static 'css/quiz_batches.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-bg">
 
-<div class="main-container fade-in">
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="main-container">
+
     <header class="course-header">
         <div class="header-left">
             <a href="{% url 'student_dashboard' %}" class="back-nav">← Back to Dashboard</a>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                Learning Path
+                <span class="eyebrow-line r"></span>
+            </div>
             <h1>{{ course.title }}</h1>
             <p>Master the curriculum and claim your professional credentials.</p>
         </div>
         <div class="header-stats">
             <div class="stat-pill">
                 <span class="pill-label">Progress</span>
-                <span class="pill-value">{{ attempted_batches|length }}/{{ batches|length }} Done</span>
+                <span class="pill-value">{{ attempted_batches|length }}<span class="pill-sep">/</span>{{ batches|length }}</span>
+                <span class="pill-sub">Done</span>
             </div>
         </div>
     </header>
 
     <div class="content-grid">
+
+        <!-- Quiz Section -->
         <section class="quiz-section">
             <div class="section-title">
-                <h3>Learning Path</h3>
+                <h3>Quiz <em>Modules</em></h3>
                 <span class="count-badge">{{ batches|length }} Modules</span>
+                <div class="title-line"></div>
             </div>
 
             <div class="quiz-list">
@@ -40,7 +58,7 @@
                         <div class="quiz-meta">
                             <div class="status-icon">
                                 {% if b.id in attempted_batches %}
-                                    <span class="check-mark">✓</span>
+                                    <svg class="check-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 {% else %}
                                     <span class="dot-mark"></span>
                                 {% endif %}
@@ -54,7 +72,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        
+
                         <div class="quiz-actions">
                             {% if b.id in attempted_batches %}
                                 <a href="{% url 'review_quiz' b.id %}" class="btn-review">View Results</a>
@@ -68,22 +86,28 @@
             </div>
         </section>
 
+        <!-- Credentials Section -->
         <aside class="cert-section">
             <div class="section-title">
                 <h3>Credentials</h3>
+                <div class="title-line"></div>
             </div>
 
             <div class="cert-display">
                 {% for cert in certificates %}
-                <div class="award-card bounce-in">
+                <div class="award-card">
                     <div class="award-header">
                         <div class="seal">
-                            <span class="seal-icon">🎓</span>
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                            </svg>
                         </div>
+                        <div class="award-glow"></div>
                     </div>
                     <div class="award-body">
-                        <h5>Certificate of Completion</h5>
-                        <p class="award-course">{{ cert.course.title }}</p>
+                        <div class="cert-eyebrow">Certificate of Completion</div>
+                        <h5>{{ cert.course.title }}</h5>
                         <div class="award-divider"></div>
                         {% if cert.is_manual %}
                             <p class="issuer">Issued by <strong>{{ cert.course.company.profile.company_name|default:cert.course.company.username }}</strong></p>
@@ -91,19 +115,26 @@
                     </div>
                     <div class="award-footer">
                         <a href="{% url 'download_certificate' cert.id %}" class="btn-download-cert">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             Download PDF
                         </a>
                     </div>
                 </div>
                 {% empty %}
                 <div class="lock-state">
-                    <div class="lock-icon">🔒</div>
+                    <div class="lock-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
                     <h4>Certificates Locked</h4>
                     <p>Complete all modules and the final exam to unlock your official certification.</p>
                 </div>
                 {% endfor %}
             </div>
         </aside>
+
     </div>
 </div>
 

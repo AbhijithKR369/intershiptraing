@@ -6,16 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Learning Journey | Career Portal</title>
     <link rel="stylesheet" href="{% static 'css/student_courses.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-light">
 
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+</div>
+
 <div class="dashboard-wrapper">
-    <main class="content-area fade-in">
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="content-area">
+
         <header class="page-header">
             <div class="header-text">
-                <span class="breadcrumb">Student Portal</span>
-                <h1>My Enrolled Courses</h1>
+                <div class="eyebrow">
+                    <span class="eyebrow-line"></span>
+                    Student Portal
+                    <span class="eyebrow-line r"></span>
+                </div>
+                <h1>My Enrolled <em>Courses</em></h1>
                 <p>Track your progress and access your study materials.</p>
             </div>
             <a href="{% url 'student_dashboard' %}" class="back-link">← Dashboard</a>
@@ -23,19 +37,18 @@
 
         <div class="course-stack">
             {% for item in course_data %}
-            <section class="course-block slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+            <section class="course-block" style="animation-delay: {{ forloop.counter0|add:0.05 }}s">
                 <div class="course-card-v2">
+
                     <div class="course-main-info">
                         <div class="card-top">
                             <span class="org-badge">{{ item.course.company.profile.company_name }}</span>
                             <h2>{{ item.course.title }}</h2>
                         </div>
                         <p class="course-bio">{{ item.course.description|truncatewords:30 }}</p>
-                        
+
                         <div class="instructor-box">
-                            <div class="ins-avatar">
-                                {{ item.course.trainer.username|slice:":1"|upper|default:"P" }}
-                            </div>
+                            <div class="ins-avatar">{{ item.course.trainer.username|slice:":1"|upper|default:"P" }}</div>
                             <div class="ins-text">
                                 <small>Instructor</small>
                                 <strong>{{ item.course.trainer.username|default:"Platform Expert" }}</strong>
@@ -45,29 +58,31 @@
 
                     <div class="materials-pane">
                         <div class="pane-header">
-                            <h3>Course Resources</h3>
+                            <h3>Course <em>Resources</em></h3>
                             <span class="res-count">{{ item.materials|length }} items</span>
                         </div>
-                        
+
                         <div class="material-list">
                             {% for mat in item.materials %}
                             <div class="resource-item">
                                 <div class="res-meta">
                                     <span class="res-name">{{ mat.title }}</span>
                                     {% if mat.class_time %}
-                                        <span class="res-time">🕒 {{ mat.class_time }}</span>
+                                        <span class="res-time">
+                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                            {{ mat.class_time }}
+                                        </span>
                                     {% endif %}
                                 </div>
-
                                 <div class="res-actions">
                                     {% if mat.file %}
-                                        <a href="{{ mat.file.url }}" class="action-btn file">PDF</a>
+                                        <a href="{{ mat.file.url }}" class="action-btn btn-file">PDF</a>
                                     {% endif %}
                                     {% if mat.link %}
-                                        <a href="{{ mat.link }}" target="_blank" class="action-btn link">Link</a>
+                                        <a href="{{ mat.link }}" target="_blank" class="action-btn btn-link">Link</a>
                                     {% endif %}
                                     {% if mat.class_link %}
-                                        <a href="{{ mat.class_link }}" target="_blank" class="action-btn live">Live</a>
+                                        <a href="{{ mat.class_link }}" target="_blank" class="action-btn btn-live">Live</a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -78,11 +93,14 @@
                             {% endfor %}
                         </div>
                     </div>
+
                 </div>
             </section>
             {% empty %}
             <div class="empty-journey">
-                <div class="empty-icon">📂</div>
+                <div class="empty-icon">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </div>
                 <h2>Your journey hasn't started yet!</h2>
                 <p>Enroll in a course to see your learning materials here.</p>
                 <a href="/view_courses/" class="cta-btn">Browse Catalog</a>
@@ -90,23 +108,31 @@
             {% endfor %}
         </div>
 
-        {% endfor %}
-        <div class="back-link">
-            <a href="{% url 'student_dashboard' %}">← Back to Dashboard</a>
+        <div class="footer-nav">
+            <a href="{% url 'student_dashboard' %}" class="back-link">← Back to Dashboard</a>
         </div>
+
     </main>
 
+    <!-- ── SIDEBAR ACHIEVEMENTS ── -->
     <aside class="sidebar-achievements">
-        <div class="achievements-card sticky-sidebar">
+        <div class="achievements-card">
             <div class="ach-header">
-                <h3>🏆 Achievements</h3>
-                <p>Your earned credentials</p>
+                <div class="eyebrow">
+                    <span class="eyebrow-line"></span>
+                    Achievements
+                    <span class="eyebrow-line r"></span>
+                </div>
+                <h3>Your <em>Credentials</em></h3>
+                <p>Earned certifications</p>
             </div>
-            
+
             <div class="ach-list">
                 {% for cert in certificates %}
-                <div class="ach-item bounce-in">
-                    <div class="ach-icon">📜</div>
+                <div class="ach-item">
+                    <div class="ach-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
                     <div class="ach-details">
                         <span class="ach-title">{{ cert.course.title }}</span>
                         <small class="ach-org">
@@ -116,7 +142,10 @@
                                 {{ cert.course.company.profile.company_name|default:cert.course.company.username }}
                             {% endif %}
                         </small>
-                        <a href="{% url 'download_certificate' cert.id %}" class="ach-dl">Download</a>
+                        <a href="{% url 'download_certificate' cert.id %}" class="ach-dl">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Download
+                        </a>
                     </div>
                 </div>
                 {% empty %}
@@ -127,6 +156,7 @@
             </div>
         </div>
     </aside>
+
 </div>
 
 </body>

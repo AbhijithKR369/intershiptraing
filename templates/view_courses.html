@@ -6,15 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Catalog | Learning Portal</title>
     <link rel="stylesheet" href="{% static 'css/view_courses.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-catalog">
 
-<div class="page-wrapper fade-in">
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="page-wrapper">
+
     <header class="catalog-header">
         <div class="header-content">
-            <span class="catalog-pill">Academic Catalog</span>
-            <h1>Available Courses</h1>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                Academic Catalog
+                <span class="eyebrow-line r"></span>
+            </div>
+            <h1>Available <em>Courses</em></h1>
             <p>Explore high-impact modules taught by industry experts and global leaders.</p>
         </div>
         <a href="{% url 'student_dashboard' %}" class="dashboard-nav-btn">← My Dashboard</a>
@@ -22,36 +35,35 @@
 
     <div class="course-grid">
         {% for c in courses %}
-        <div class="course-card-v3 slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+        <div class="course-card-v3" style="animation-delay: {{ forloop.counter0|add:0.05 }}s">
+
             <div class="card-top-accent"></div>
-            
+
             <div class="card-header-v3">
-                <div class="header-meta">
-                    <span class="company-tag">{{ c.company.profile.company_name }}</span>
-                    <h3>{{ c.title }}</h3>
-                </div>
+                <span class="company-tag">{{ c.company.profile.company_name }}</span>
+                <h3>{{ c.title }}</h3>
             </div>
 
             <div class="card-body-v3">
                 <p class="course-desc">{{ c.description|truncatewords:20 }}</p>
-                
+
                 <div class="instructor-preview">
                     {% if c.trainer %}
-                        <div class="ins-tag">
-                            <span class="ins-icon">👨‍🏫</span>
-                            <div class="ins-details">
-                                <small>Instructor</small>
-                                <strong>{{ c.trainer.username }}</strong>
-                            </div>
+                    <div class="ins-tag">
+                        <div class="ins-avatar">{{ c.trainer.username|slice:":1"|upper }}</div>
+                        <div class="ins-details">
+                            <small>Instructor</small>
+                            <strong>{{ c.trainer.username }}</strong>
                         </div>
+                    </div>
                     {% else %}
-                        <div class="ins-tag platform">
-                            <span class="ins-icon">🏢</span>
-                            <div class="ins-details">
-                                <small>Managed by</small>
-                                <strong>{{ c.company.profile.company_name }}</strong>
-                            </div>
+                    <div class="ins-tag platform">
+                        <div class="ins-avatar platform-av">{{ c.company.profile.company_name|slice:":1"|upper }}</div>
+                        <div class="ins-details">
+                            <small>Managed by</small>
+                            <strong>{{ c.company.profile.company_name }}</strong>
                         </div>
+                    </div>
                     {% endif %}
                 </div>
 
@@ -61,7 +73,7 @@
                         <span class="ratio">{{ c.enrollment_set.count }} / {{ c.max_students }}</span>
                     </div>
                     <div class="engine-track">
-                        <div class="engine-fill" style="width: {% widthratio c.enrollment_set.count c.max_students 100 %}%"></div>
+                        <div class="engine-fill" style="--prog-width: {% widthratio c.enrollment_set.count c.max_students 100 %}%"></div>
                     </div>
                 </div>
             </div>
@@ -69,23 +81,25 @@
             <div class="card-footer-v3">
                 {% if c.id in enrolled_ids %}
                     <div class="status-indicator enrolled">
-                        <span class="icon">✅</span> Enrolled
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Enrolled
                     </div>
                 {% elif c.enrollment_set.count >= c.max_students %}
                     <div class="status-indicator full">
-                        <span class="icon">🚫</span> Full
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                        Full
                     </div>
                 {% else %}
                     <a href="{% url 'enroll_course' c.id %}" class="enroll-action-btn">
                         <span>Enroll Now</span>
-                        <div class="btn-arrow">→</div>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </a>
                 {% endif %}
             </div>
         </div>
         {% endfor %}
     </div>
-</div>
 
+</div>
 </body>
 </html>

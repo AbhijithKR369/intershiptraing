@@ -6,11 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz | {{ course.title }}</title>
     <link rel="stylesheet" href="{% static 'css/quiz.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="quiz-page">
 
-<div class="quiz-wrapper fade-in">
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="quiz-wrapper">
+
     <header class="quiz-sticky-header">
         <div class="header-container">
             <div class="header-info">
@@ -18,6 +26,7 @@
                 <h1>{{ batch.title }}</h1>
             </div>
             <div class="quiz-progress-pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span class="q-total">{{ questions|length }} Questions</span>
             </div>
         </div>
@@ -29,7 +38,7 @@
 
             <div class="questions-stack">
                 {% for q in questions %}
-                <div class="question-card slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+                <div class="question-card" style="animation-delay: {{ forloop.counter0|add:0.05 }}s">
                     <div class="q-header">
                         <span class="q-num">{{ forloop.counter }}</span>
                         <h3>{{ q.question_text }}</h3>
@@ -43,7 +52,6 @@
                                 <span class="opt-val">{{ q.option1 }}</span>
                             </div>
                         </label>
-
                         <label class="option-card">
                             <input type="radio" name="{{ q.id }}" value="2">
                             <div class="option-inner">
@@ -51,7 +59,6 @@
                                 <span class="opt-val">{{ q.option2 }}</span>
                             </div>
                         </label>
-
                         <label class="option-card">
                             <input type="radio" name="{{ q.id }}" value="3">
                             <div class="option-inner">
@@ -59,7 +66,6 @@
                                 <span class="opt-val">{{ q.option3 }}</span>
                             </div>
                         </label>
-
                         <label class="option-card">
                             <input type="radio" name="{{ q.id }}" value="4">
                             <div class="option-inner">
@@ -73,7 +79,10 @@
             </div>
 
             <div class="submit-footer">
-                <p class="warning-text">Check your answers before submitting. You cannot go back.</p>
+                <p class="warning-text">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Check your answers before submitting. You cannot go back.
+                </p>
                 <button type="submit" class="finish-btn">
                     <span>Submit Quiz</span>
                     <div class="btn-ripple"></div>
@@ -84,12 +93,17 @@
         {% if user.is_staff %}
         <section class="admin-preview">
             <div class="preview-header">
-                <h3>Instructor Preview</h3>
+                <div class="eyebrow">
+                    <span class="eyebrow-line"></span>
+                    Instructor Preview
+                    <span class="eyebrow-line r"></span>
+                </div>
                 <span class="staff-badge">Staff Only</span>
             </div>
             {% for q in batch.questions.all %}
                 <div class="ref-strip">
-                    <p><strong>{{ forloop.counter }}.</strong> {{ q.question_text }}</p>
+                    <span class="ref-num">{{ forloop.counter }}</span>
+                    <p>{{ q.question_text }}</p>
                 </div>
             {% endfor %}
         </section>

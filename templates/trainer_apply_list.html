@@ -6,15 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partner with Companies | Trainer Portal</title>
     <link rel="stylesheet" href="{% static 'css/trainer_apply_list.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-smooth">
 
-<div class="page-wrapper fade-in">
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="page-wrapper">
+
     <header class="page-header">
         <div class="header-content">
-            <span class="context-pill">Trainer Marketplace</span>
-            <h1>Partner with Companies</h1>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                Trainer Marketplace
+                <span class="eyebrow-line r"></span>
+            </div>
+            <h1>Partner with <em>Companies</em></h1>
             <p>Apply to become a verified trainer for top-tier industry organizations.</p>
         </div>
         <a href="{% url 'trainer_dashboard' %}" class="back-link">← Dashboard</a>
@@ -22,7 +35,8 @@
 
     <div class="company-grid">
         {% for c in companies %}
-        <div class="company-card slide-up" style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+        <div class="company-card" style="animation-delay: {{ forloop.counter0|add:0.05 }}s">
+
             <div class="card-top">
                 <div class="company-logo-v2">{{ c.profile.company_name|slice:":1"|upper }}</div>
                 <div class="company-meta">
@@ -43,7 +57,7 @@
             </div>
 
             <div class="course-exploration">
-                <label>Actively Hiring for Courses:</label>
+                <div class="ce-label">Actively Hiring for Courses</div>
                 <div class="course-tag-wrap">
                     {% for course in c.company_courses.all %}
                         <span class="course-chip">{{ course.title }}</span>
@@ -56,10 +70,12 @@
             <div class="action-footer">
                 {% if c.id in applied_ids %}
                     <div class="applied-success-box">
-                        <span class="check-circle">✓</span>
+                        <div class="check-circle">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
                         <div class="success-text">
-                            <strong>Applied</strong>
-                            <span>Wait for company review</span>
+                            <strong>Application Submitted</strong>
+                            <span>Awaiting company review</span>
                         </div>
                     </div>
                 {% else %}
@@ -68,7 +84,8 @@
                         <div class="file-drop-area">
                             <input type="file" name="resume" id="file_{{ c.id }}" required class="real-file-input" onchange="updateFileName(this, 'label_{{ c.id }}')">
                             <label for="file_{{ c.id }}" class="custom-file-btn" id="label_{{ c.id }}">
-                                📂 Upload Resume
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                Upload Resume
                             </label>
                         </div>
                         <button type="submit" class="apply-btn-v2">Submit Application</button>
@@ -78,13 +95,14 @@
         </div>
         {% endfor %}
     </div>
+
 </div>
 
 <script>
 function updateFileName(input, labelId) {
     const fileName = input.files[0].name;
     const label = document.getElementById(labelId);
-    label.innerHTML = `✔️ ${fileName}`;
+    label.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> ${fileName}`;
     label.classList.add("file-selected");
 }
 </script>

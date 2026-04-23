@@ -7,18 +7,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Review Quiz | {{ batch.title }}</title>
     <link rel="stylesheet" href="{% static 'css/review.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-soft">
 
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+</div>
+
 <div class="review-wrapper">
+
     <header class="review-header">
         <div class="header-container">
-            <div class="nav-area">
-                <a href="{% url 'quiz_batches' batch.course.id %}" class="back-pill">← Exit Review</a>
-            </div>
+            <a href="{% url 'quiz_batches' batch.course.id %}" class="back-pill">← Exit Review</a>
             <div class="title-area">
-                <span class="context-tag">Performance Review</span>
+                <div class="eyebrow">
+                    <span class="eyebrow-line"></span>
+                    Performance Review
+                    <span class="eyebrow-line r"></span>
+                </div>
                 <h1>{{ batch.title }}</h1>
                 <p>Detailed breakdown of your answers and correct solutions.</p>
             </div>
@@ -28,29 +38,37 @@
     <main class="question-flow">
         {% for q in questions %}
         {% with user_ans=answers|get_item:q.id %}
-        
-<<<<<<< HEAD
-        <div class="review-card {% if user_ans == q.correct_option %}is-correct{% else %}is-wrong{% endif %} slide-up">
+
+        <div class="review-card {% if user_ans == q.correct_option %}is-correct{% else %}is-wrong{% endif %}">
             <div class="card-side-indicator"></div>
-            
+
             <div class="card-content">
                 <div class="q-meta">
                     <span class="q-index">Question {{ forloop.counter }}</span>
                     {% if user_ans == q.correct_option %}
-                        <span class="badge success">✓ Correct</span>
+                        <span class="badge badge-success">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Correct
+                        </span>
                     {% else %}
-                        <span class="badge danger">✕ Incorrect</span>
+                        <span class="badge badge-danger">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Incorrect
+                        </span>
                     {% endif %}
                 </div>
 
                 <h3 class="q-text">{{ q.question_text }}</h3>
 
                 <div class="comparison-grid">
-                    <div class="ans-box user-choice">
-                        <label>Your Choice</label>
+                    <div class="ans-box user-choice {% if user_ans == q.correct_option %}ans-correct{% else %}ans-wrong{% endif %}">
+                        <label class="ans-label">Your Choice</label>
                         <div class="ans-pill">
                             {% if user_ans %}
-                                {% if user_ans == 1 %}{{ q.option1 }}{% elif user_ans == 2 %}{{ q.option2 }}{% elif user_ans == 3 %}{{ q.option3 }}{% elif user_ans == 4 %}{{ q.option4 }}{% endif %}
+                                {% if user_ans == 1 %}{{ q.option1 }}
+                                {% elif user_ans == 2 %}{{ q.option2 }}
+                                {% elif user_ans == 3 %}{{ q.option3 }}
+                                {% elif user_ans == 4 %}{{ q.option4 }}{% endif %}
                             {% else %}
                                 <span class="no-selection">No Answer Selected</span>
                             {% endif %}
@@ -59,69 +77,16 @@
 
                     {% if user_ans != q.correct_option %}
                     <div class="ans-box correct-key">
-                        <label>Correct Solution</label>
+                        <label class="ans-label">Correct Solution</label>
                         <div class="ans-pill">
-                            {% if q.correct_option == 1 %}{{ q.option1 }}{% elif q.correct_option == 2 %}{{ q.option2 }}{% elif q.correct_option == 3 %}{{ q.option3 }}{% elif q.correct_option == 4 %}{{ q.option4 }}{% endif %}
+                            {% if q.correct_option == 1 %}{{ q.option1 }}
+                            {% elif q.correct_option == 2 %}{{ q.option2 }}
+                            {% elif q.correct_option == 3 %}{{ q.option3 }}
+                            {% elif q.correct_option == 4 %}{{ q.option4 }}{% endif %}
                         </div>
                     </div>
                     {% endif %}
                 </div>
-=======
-        <div class="review-card {% if user_ans == q.correct_option %}correct-border{% else %}wrong-border{% endif %}">
-            
-            <div class="q-meta">
-                <span class="q-number">Question {{ forloop.counter }}</span>
-
-                {% if user_ans == q.correct_option %}
-                    <span class="badge success">Correct</span>
-                {% else %}
-                    <span class="badge danger">Incorrect</span>
-                {% endif %}
-            </div>
-
-            <h3 class="q-text">{{ q.question_text }}</h3>
-
-            <div class="answer-comparison">
-
-                <!-- ✅ USER ANSWER -->
-                <div class="answer-box {% if user_ans == q.correct_option %}ans-correct{% else %}ans-wrong{% endif %}">
-                    <label>Your Choice</label>
-                    <p>
-                        {% if user_ans %}
-                            {% if user_ans == 1 %}
-                                {{ q.option1 }}
-                            {% elif user_ans == 2 %}
-                                {{ q.option2 }}
-                            {% elif user_ans == 3 %}
-                                {{ q.option3 }}
-                            {% elif user_ans == 4 %}
-                                {{ q.option4 }}
-                            {% endif %}
-                        {% else %}
-                            No Answer Selected
-                        {% endif %}
-                    </p>
-                </div>
-
-                <!-- ✅ CORRECT ANSWER (ONLY IF WRONG) -->
-                {% if user_ans != q.correct_option %}
-                <div class="answer-box ans-actual">
-                    <label>Correct Answer</label>
-                    <p>
-                        {% if q.correct_option == 1 %}
-                            {{ q.option1 }}
-                        {% elif q.correct_option == 2 %}
-                            {{ q.option2 }}
-                        {% elif q.correct_option == 3 %}
-                            {{ q.option3 }}
-                        {% elif q.correct_option == 4 %}
-                            {{ q.option4 }}
-                        {% endif %}
-                    </p>
-                </div>
-                {% endif %}
-
->>>>>>> 5499072 (update8)
             </div>
         </div>
 
@@ -130,14 +95,12 @@
     </main>
 
     <footer class="review-footer">
-
         <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="scroll-btn">
-            <span>Scroll to Top</span>
-            <i>↑</i>
-
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+            Scroll to Top
         </button>
     </footer>
-</div>
 
+</div>
 </body>
 </html>
