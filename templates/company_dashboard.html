@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Company Dashboard | Management Portal</title>
-    <link rel="stylesheet" href="{% static 'css/company_dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/company_dashboard.css' %}?v=3">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="fade-in">
@@ -119,7 +119,8 @@
                         <a href="{% url 'assign_trainer' course.id %}" class="a-btn">Assign</a>
                         <a href="{% url 'add_material' course.id %}" class="a-btn">Material</a>
                         <a href="{% url 'add_question' course.id %}" class="a-btn">Quiz</a>
-                        <a href="{% url 'view_results' course.id %}" class="a-btn highlight">Results</a>
+                        <a href="{% url 'view_results' course.id %}" class="a-btn">Results</a>
+                        <a href="{% url 'course_chat' course.id %}" class="a-btn">Chat</a>
                     </div>
                 </div>
                 {% empty %}

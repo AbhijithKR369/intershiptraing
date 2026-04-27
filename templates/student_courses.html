@@ -54,6 +54,13 @@
                                 <strong>{{ item.course.trainer.username|default:"Platform Expert" }}</strong>
                             </div>
                         </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <a href="{% url 'course_chat' item.course.id %}" style="background: var(--purple-dim); color: var(--purple-light); border: 1px solid rgba(124, 58, 237, 0.3); padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                Group Chat
+                            </a>
+                        </div>
                     </div>
 
                     <div class="materials-pane">

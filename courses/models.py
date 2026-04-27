@@ -142,3 +142,13 @@ class StudentAnswer(models.Model):
 
     class Meta:
         unique_together = ('student', 'question')
+
+
+class CourseMessage(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.username} in {self.course.title}: {self.content[:20]}"

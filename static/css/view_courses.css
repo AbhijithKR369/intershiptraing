@@ -1,7 +1,7 @@
 /* ============================================================
    VIEW COURSES — Dark Luxury / Cinematic Redesign
    ============================================================ */
-:root{--gold:#c9a96e;--gold-light:#e8d5a3;--gold-dim:rgba(201,169,110,0.15);--page:#050410;--card-bg:rgba(14,11,22,0.92);--surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.07);--border:rgba(201,169,110,0.18);--border-hover:rgba(201,169,110,0.38);--text:#f0ece4;--muted:rgba(240,236,228,0.45);--label:rgba(201,169,110,0.85)}
+:root{--purple:#7c3aed;--purple-light:#a78bfa;--purple-dim:rgba(124, 58, 237,0.15);--page:#111018;--card-bg:#1a1625;--surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.07);--border:rgba(124, 58, 237,0.18);--border-hover:rgba(124, 58, 237,0.38);--text: #f0ecff;--muted: #8b82a7;--label:rgba(124, 58, 237,0.85)}
 @keyframes bg-drift{0%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.07) rotate(1.5deg)}100%{transform:scale(1) rotate(0deg)}}
 @keyframes orb-float{0%,100%{transform:translate(0,0)}33%{transform:translate(28px,-18px)}66%{transform:translate(-18px,14px)}}
 @keyframes fade-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -9,39 +9,39 @@
 @keyframes divider-reveal{from{opacity:0;width:0}to{opacity:1;width:28px}}
 @keyframes bar-grow{from{width:0}to{width:var(--prog-width)}}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{background-color:#050410}
-body{font-family:'DM Sans',sans-serif;background:#050410;color:var(--text);min-height:100vh;overflow-x:hidden}
+html{background-color:#111018}
+body{font-family:'DM Sans',sans-serif;background:#111018;color:var(--text);min-height:100vh;overflow-x:hidden}
 .bg-scene{position:fixed;inset:0;z-index:0;overflow:hidden}
 .bg-img{position:absolute;inset:-10%;width:120%;height:120%;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(60,34,89,0.55) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(30,15,50,0.75) 0%,transparent 60%),radial-gradient(100% 100% at 50% 50%,#0d0b1a 0%,#04030a 100%);animation:bg-drift 22s ease-in-out infinite}
 .orb{position:absolute;border-radius:50%;filter:blur(80px);animation:orb-float linear infinite;pointer-events:none}
 .orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(120,60,160,0.28),transparent 70%);top:-100px;left:-100px;animation-duration:18s}
-.orb-2{width:380px;height:380px;background:radial-gradient(circle,rgba(201,169,110,0.1),transparent 70%);bottom:-60px;right:-60px;animation-duration:24s;animation-delay:-9s}
+.orb-2{width:380px;height:380px;background:radial-gradient(circle,rgba(124, 58, 237,0.1),transparent 70%);bottom:-60px;right:-60px;animation-duration:24s;animation-delay:-9s}
 .orb-3{width:280px;height:280px;background:radial-gradient(circle,rgba(80,40,120,0.18),transparent 70%);top:50%;left:40%;animation-duration:16s;animation-delay:-5s}
-.grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(201,169,110,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(201,169,110,0.025) 1px,transparent 1px);background-size:60px 60px}
+.grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(124, 58, 237,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124, 58, 237,0.025) 1px,transparent 1px);background-size:60px 60px}
 .page-wrapper{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:2.5rem 2rem 4rem;animation:fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both}
 .catalog-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2.5rem;gap:1rem;flex-wrap:wrap}
-.eyebrow{display:flex;align-items:center;gap:10px;font-size:0.63rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:0.7rem}
-.eyebrow-line{display:inline-block;height:1px;background:linear-gradient(90deg,transparent,var(--gold));animation:divider-reveal 0.6s ease both;animation-delay:0.3s}
-.eyebrow-line.r{background:linear-gradient(90deg,var(--gold),transparent)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:0.63rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--purple);font-weight:500;margin-bottom:0.7rem}
+.eyebrow-line{display:inline-block;height:1px;background:linear-gradient(90deg,transparent,var(--purple));animation:divider-reveal 0.6s ease both;animation-delay:0.3s}
+.eyebrow-line.r{background:linear-gradient(90deg,var(--purple),transparent)}
 .header-content h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--text);line-height:1.1}
-.header-content h1 em{font-style:normal;color:var(--gold)}
+.header-content h1 em{font-style:normal;color:var(--purple)}
 .header-content p{color:var(--muted);font-size:0.83rem;margin-top:4px;font-weight:300}
-.dashboard-nav-btn{font-size:0.8rem;color:var(--gold);text-decoration:none;font-weight:500;border-bottom:1px solid transparent;padding-bottom:1px;transition:all 0.2s;white-space:nowrap;align-self:flex-start}
-.dashboard-nav-btn:hover{color:var(--gold-light);border-color:var(--gold)}
+.dashboard-nav-btn{font-size:0.8rem;color:var(--purple);text-decoration:none;font-weight:500;border-bottom:1px solid transparent;padding-bottom:1px;transition:all 0.2s;white-space:nowrap;align-self:flex-start}
+.dashboard-nav-btn:hover{color:var(--purple-light);border-color:var(--purple)}
 .course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
 .course-card-v3{background:var(--card-bg);border:1px solid var(--border);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:border-color 0.25s,transform 0.25s,box-shadow 0.25s;animation:card-in 0.55s ease both;position:relative}
-.course-card-v3::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity 0.3s}
+.course-card-v3::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--purple),transparent);opacity:0;transition:opacity 0.3s}
 .course-card-v3:hover{border-color:var(--border-hover);transform:translateY(-3px);box-shadow:0 16px 36px rgba(0,0,0,0.5)}
 .course-card-v3:hover::before{opacity:0.5}
-.card-top-accent{height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.35}
+.card-top-accent{height:3px;background:linear-gradient(90deg,transparent,var(--purple),transparent);opacity:0.35}
 .card-header-v3{padding:1.25rem 1.4rem 0.75rem}
-.company-tag{font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--label);background:var(--gold-dim);border:1px solid rgba(201,169,110,0.2);border-radius:20px;padding:3px 10px;display:inline-block;font-weight:500;margin-bottom:0.6rem}
+.company-tag{font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--label);background:var(--purple-dim);border:1px solid rgba(124, 58, 237,0.2);border-radius:20px;padding:3px 10px;display:inline-block;font-weight:500;margin-bottom:0.6rem}
 .card-header-v3 h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;color:var(--text);line-height:1.25;overflow-wrap:break-word}
 .card-body-v3{padding:0 1.4rem 1.1rem;flex:1;display:flex;flex-direction:column;gap:1rem}
 .course-desc{font-size:0.8rem;color:var(--muted);line-height:1.55;font-weight:300}
 .instructor-preview{}
 .ins-tag{display:flex;align-items:center;gap:10px;padding:0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:11px}
-.ins-avatar{width:30px;height:30px;border-radius:50%;background:var(--gold-dim);border:1px solid rgba(201,169,110,0.25);display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:500;color:var(--gold);flex-shrink:0}
+.ins-avatar{width:30px;height:30px;border-radius:50%;background:var(--purple-dim);border:1px solid rgba(124, 58, 237,0.25);display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:500;color:var(--purple);flex-shrink:0}
 .platform-av{background:rgba(127,119,221,0.12);border-color:rgba(127,119,221,0.2);color:#afa9ec}
 .ins-details small{font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block}
 .ins-details strong{font-size:0.82rem;color:var(--text);font-weight:500;display:block}
@@ -50,11 +50,11 @@ body{font-family:'DM Sans',sans-serif;background:#050410;color:var(--text);min-h
 .engine-labels label{color:var(--muted)}
 .ratio{color:var(--label);font-weight:500}
 .engine-track{height:4px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
-.engine-fill{height:100%;background:linear-gradient(90deg,#c9a96e,#e8d5a3);border-radius:4px;width:var(--prog-width,0%);animation:bar-grow 1s cubic-bezier(0.16,1,0.3,1) 0.3s both}
+.engine-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:4px;width:var(--prog-width,0%);animation:bar-grow 1s cubic-bezier(0.16,1,0.3,1) 0.3s both}
 .card-footer-v3{padding:1rem 1.4rem;border-top:1px solid var(--border)}
 .status-indicator{display:flex;align-items:center;gap:7px;font-size:0.76rem;font-weight:500;padding:0.6rem 0;letter-spacing:0.06em}
 .status-indicator.enrolled{color:#4ade80}
 .status-indicator.full{color:var(--muted)}
-.enroll-action-btn{display:flex;align-items:center;justify-content:space-between;text-decoration:none;background:linear-gradient(135deg,#c9a96e 0%,#a07840 50%,#c9a96e 100%);background-size:200%;color:#1a1208;border-radius:11px;padding:0.75rem 1.1rem;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;transition:all 0.3s;position:relative;overflow:hidden}
-.enroll-action-btn:hover{background-position:right center;box-shadow:0 8px 20px rgba(201,169,110,0.28);transform:translateY(-1px)}
+.enroll-action-btn{display:flex;align-items:center;justify-content:space-between;text-decoration:none;background:linear-gradient(135deg,#7c3aed 0%,#a07840 50%,#7c3aed 100%);background-size:200%;color:#1a1208;border-radius:11px;padding:0.75rem 1.1rem;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;transition:all 0.3s;position:relative;overflow:hidden}
+.enroll-action-btn:hover{background-position:right center;box-shadow:0 8px 20px rgba(124, 58, 237,0.28);transform:translateY(-1px)}
 @media(max-width:640px){.page-wrapper{padding:1.5rem 1rem 3rem}.header-content h1{font-size:1.75rem}.catalog-header{flex-direction:column}.course-grid{grid-template-columns:1fr}}

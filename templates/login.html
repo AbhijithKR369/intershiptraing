@@ -6,105 +6,157 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Access Portal</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
-<body class="entry-fade">
+<body>
 
-<div class="bg-scene">
-    <div class="bg-img"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="grid-overlay"></div>
-</div>
+<div class="split-layout">
 
-<div class="main-wrapper">
-    <div class="login-card-v2">
+    <!-- ── LEFT: Dark Form Panel ── -->
+    <div class="left-panel">
+        <div class="form-box">
 
-        <!-- Corner ornaments -->
-        <svg class="corner-ornament tl" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
-            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
-            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
-        </svg>
-        <svg class="corner-ornament br" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
-            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
-            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
-        </svg>
-
-        <header class="login-header">
-            <div class="brand-logo">
-                <svg class="logo-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="14" cy="10" r="5" stroke="#c9a96e" stroke-width="1.5"/>
-                    <path d="M14 17 C8 17 4 20 4 24" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M14 17 C20 17 24 20 24 24" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M14 15 L14 17" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                    </svg>
+                </div>
+                <span>Verida</span>
             </div>
-            <div class="eyebrow">
-                <span class="eyebrow-line"></span>
-                Access Portal
-                <span class="eyebrow-line r"></span>
-            </div>
-            <h1>Welcome <em>Back</em></h1>
-            <p>Enter your credentials to access your dashboard</p>
-        </header>
 
-        {% if messages %}
-            <div class="error-zone">
+            <div class="form-title">
+                <h1>Login</h1>
+                <p>Enter your account details</p>
+            </div>
+
+            {% if messages %}
+            <div class="alert-box">
                 {% for message in messages %}
-                    <p class="error-msg">{{ message }}</p>
+                <p>{{ message }}</p>
                 {% endfor %}
             </div>
-        {% endif %}
+            {% endif %}
 
-        <form method="POST" class="login-form">
-            {% csrf_token %}
+            <form method="POST" class="login-form">
+                {% csrf_token %}
 
-            <div class="form-body">
-                <div class="input-container">
-                    <label class="field-label">Username</label>
-                    <div class="input-field">
-                        <span class="field-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-                            </svg>
-                        </span>
-                        <input type="text" name="username" placeholder="Enter your username" required>
-                    </div>
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Enter your username" required>
                 </div>
 
-                <div class="input-container">
-                    <label class="field-label">Password</label>
-                    <div class="input-field">
-                        <span class="field-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="5" y="11" width="14" height="10" rx="2"/>
-                                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
-                            </svg>
-                        </span>
-                        <input type="password" name="password" placeholder="••••••••" required>
+                <div class="field">
+                    <div class="label-row">
+                        <label>Password</label>
+                        <button type="button" class="eye-btn" onclick="togglePw(this)">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
                     </div>
+                    <input type="password" name="password" id="pw" placeholder="••••••••" required>
                 </div>
 
-                <button type="submit" class="sign-in-btn">
-                    <span>Sign In</span>
-                    <div class="btn-glow"></div>
-                </button>
-            </div>
+                <div class="forgot">
+                    <a href="#">Forgot Password?</a>
+                </div>
 
-            <div class="form-divider">
-                <span>or</span>
-            </div>
+                <button type="submit" class="btn-login">Login</button>
 
-            <div class="login-footer">
-                <p>New to the platform? <a href="/register/">Join now</a></p>
-            </div>
-        </form>
+                <div class="bottom-row">
+                    <span>Don't have an account?</span>
+                    <a href="/register/" class="btn-signup">Sign up</a>
+                </div>
+            </form>
+
+        </div>
     </div>
+
+    <!-- ── RIGHT: Purple Illustration Panel ── -->
+    <div class="right-panel">
+        <div class="rp-blobs">
+            <div class="blob b1"></div>
+            <div class="blob b2"></div>
+            <div class="blob b3"></div>
+        </div>
+
+        <div class="rp-text">
+            <h2>Welcome to<br><span>student portal</span></h2>
+            <p>Login to access your account</p>
+        </div>
+
+        <div class="rp-illo">
+            <svg viewBox="0 0 460 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Document -->
+                <rect x="130" y="55" width="210" height="268" rx="16" fill="white" fill-opacity="0.96"/>
+                <!-- Doc lines -->
+                <rect x="158" y="105" width="154" height="10" rx="5" fill="#ddd6fe"/>
+                <rect x="158" y="127" width="128" height="8" rx="4" fill="#ede9fe"/>
+                <rect x="158" y="147" width="142" height="8" rx="4" fill="#ede9fe"/>
+                <rect x="158" y="167" width="112" height="8" rx="4" fill="#ede9fe"/>
+                <rect x="158" y="193" width="154" height="8" rx="4" fill="#ddd6fe"/>
+                <rect x="158" y="213" width="134" height="8" rx="4" fill="#ede9fe"/>
+                <rect x="158" y="233" width="146" height="8" rx="4" fill="#ede9fe"/>
+                <rect x="158" y="259" width="154" height="8" rx="4" fill="#ddd6fe"/>
+                <rect x="158" y="279" width="118" height="8" rx="4" fill="#ede9fe"/>
+                <!-- Gear on doc -->
+                <circle cx="235" cy="80" r="20" fill="#7c3aed" fill-opacity="0.12" stroke="#7c3aed" stroke-width="1.8"/>
+                <circle cx="235" cy="80" r="9" stroke="#7c3aed" stroke-width="1.8"/>
+                <rect x="231" y="57" width="8" height="8" rx="2" fill="#7c3aed"/>
+                <rect x="231" y="95" width="8" height="8" rx="2" fill="#7c3aed"/>
+                <rect x="210" y="76" width="8" height="8" rx="2" fill="#7c3aed"/>
+                <rect x="252" y="76" width="8" height="8" rx="2" fill="#7c3aed"/>
+
+                <!-- Person 1 left (standing, phone) -->
+                <ellipse cx="90" cy="348" rx="30" ry="9" fill="black" fill-opacity="0.12"/>
+                <circle cx="90" cy="248" r="17" fill="#f5d0b0"/>
+                <path d="M73 242 C73 232 107 232 107 242" fill="#1a1625"/>
+                <rect x="75" y="264" width="30" height="70" rx="14" fill="#1a1625"/>
+                <rect x="104" y="272" width="24" height="11" rx="5.5" fill="#1a1625"/>
+                <rect x="122" y="264" width="15" height="25" rx="4" fill="#4c1d95"/>
+                <rect x="124" y="267" width="11" height="18" rx="2" fill="#7c3aed" fill-opacity="0.55"/>
+
+                <!-- Person 2 right (sitting on doc with laptop) -->
+                <ellipse cx="348" cy="248" rx="34" ry="9" fill="black" fill-opacity="0.12"/>
+                <circle cx="348" cy="170" r="20" fill="#f5d0b0"/>
+                <path d="M328 163 C328 150 368 150 368 163" fill="#2d1b69"/>
+                <rect x="324" y="188" width="48" height="50" rx="14" fill="#1a1625"/>
+                <path d="M314 238 L306 262 L390 262 L382 238" fill="#1a1625"/>
+                <ellipse cx="312" cy="264" rx="11" ry="5" fill="#111" transform="rotate(-8 312 264)"/>
+                <ellipse cx="384" cy="264" rx="11" ry="5" fill="#111" transform="rotate(8 384 264)"/>
+                <!-- Laptop -->
+                <rect x="364" y="192" width="46" height="32" rx="5" fill="#3b0d99"/>
+                <rect x="367" y="195" width="40" height="26" rx="3" fill="#6d28d9" fill-opacity="0.5"/>
+                <rect x="360" y="224" width="54" height="6" rx="3" fill="#1e0c56"/>
+
+                <!-- Plant left -->
+                <rect x="45" y="322" width="24" height="24" rx="5" fill="#4c1d95" fill-opacity="0.7"/>
+                <ellipse cx="57" cy="300" rx="20" ry="34" fill="#5b21b6" fill-opacity="0.38" transform="rotate(-18 57 300)"/>
+                <ellipse cx="38" cy="282" rx="14" ry="26" fill="#7c3aed" fill-opacity="0.3" transform="rotate(-32 38 282)"/>
+                <rect x="55" y="300" width="3" height="26" rx="1.5" fill="#4c1d95" fill-opacity="0.5"/>
+
+                <!-- Plant right -->
+                <rect x="392" y="330" width="24" height="24" rx="5" fill="#4c1d95" fill-opacity="0.7"/>
+                <ellipse cx="404" cy="308" rx="20" ry="34" fill="#5b21b6" fill-opacity="0.38" transform="rotate(18 404 308)"/>
+                <ellipse cx="422" cy="288" rx="13" ry="24" fill="#7c3aed" fill-opacity="0.3" transform="rotate(32 422 288)"/>
+                <rect x="402" y="308" width="3" height="26" rx="1.5" fill="#4c1d95" fill-opacity="0.5"/>
+            </svg>
+        </div>
+    </div>
+
 </div>
 
+<script>
+function togglePw(btn) {
+    const input = document.getElementById('pw');
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    }
+}
+</script>
 </body>
 </html>

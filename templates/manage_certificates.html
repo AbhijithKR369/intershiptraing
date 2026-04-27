@@ -108,7 +108,17 @@
                     <div class="roll-cell">#{{ e.roll_number }}</div>
                     <div class="name-cell">
                         <div class="avatar">{{ e.student.username|slice:":1"|upper }}</div>
-                        <strong>{{ e.student.username }}</strong>
+                        <div style="display: flex; flex-direction: column;">
+                            <strong>{{ e.student.username }}</strong>
+                            {% with passed=passed_final_map|get_item:e.id %}
+                                {% if passed %}
+                                    <span style="font-size: 11px; color: #4ade80; display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Passed Final
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
                     </div>
                     <div class="title-cell"><span class="pill course-pill">{{ e.course.title }}</span></div>
                     <div class="date-cell">{{ e.joined_date|date:"M d, Y" }}</div>

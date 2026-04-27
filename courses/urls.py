@@ -70,4 +70,7 @@ urlpatterns = [
         name='quiz_batches'
     ),
     path('view/', views.view_courses, name='view_courses'),
+    path('chat/<int:course_id>/', views.course_chat, name='course_chat'),
+    path('chat/<int:course_id>/messages/', views.get_course_messages, name='get_course_messages'),
+    path('chat/<int:course_id>/send/', views.send_course_message, name='send_course_message'),
 ]

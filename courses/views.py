@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Course, QuizBatch
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from .models import Material
+from django.http import HttpResponse, JsonResponse
+from .models import Material, CourseMessage
 from .models import Enrollment
 from django.contrib.auth.models import User
 from .models import TrainerApplication
@@ -110,6 +110,7 @@ def manage_certificates(request):
 
     # 🧠 Build certificate map (NO duplicates in UI)
     cert_map = {}
+    passed_final_map = {}
 
     # Course certificates
     for e in enrollments:
@@ -118,6 +119,19 @@ def manage_certificates(request):
             course=e.course
         ).first()
         cert_map[e.id] = cert
+        
+        # Check if student passed final quiz
+        passed = False
+        final_results = QuizResult.objects.filter(
+            student=e.student,
+            batch__course=e.course,
+            batch__is_final=True
+        )
+        for r in final_results:
+            if r.total > 0 and r.score >= (r.total / 2):
+                passed = True
+                break
+        passed_final_map[e.id] = passed
 
     # Internship certificates
     for a in applications:
@@ -141,7 +155,8 @@ def manage_certificates(request):
         'applications': applications,
         'courses': courses,
         'internships': internships,
-        'cert_map': cert_map   # ✅ IMPORTANT
+        'cert_map': cert_map,          # ✅ IMPORTANT
+        'passed_final_map': passed_final_map
     })
 
 
@@ -775,3 +790,100 @@ def review_quiz(request, batch_id):
         'answers': answer_map,
         'batch': batch
     })
+
+
+@login_required
+def course_chat(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    user = request.user
+    role = user.profile.role
+
+    # Access control
+    has_access = False
+    if role == 'company' and course.company == user:
+        has_access = True
+    elif role == 'trainer' and course.trainer == user:
+        has_access = True
+    elif role == 'student':
+        if Enrollment.objects.filter(student=user, course=course, status='approved').exists():
+            has_access = True
+
+    if not has_access:
+        return HttpResponse("You do not have access to this course's chat.", status=403)
+
+    return render(request, 'course_chat.html', {'course': course})
+
+
+@login_required
+def get_course_messages(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    user = request.user
+    role = user.profile.role
+
+    # Access control
+    has_access = False
+    if role == 'company' and course.company == user:
+        has_access = True
+    elif role == 'trainer' and course.trainer == user:
+        has_access = True
+    elif role == 'student':
+        if Enrollment.objects.filter(student=user, course=course, status='approved').exists():
+            has_access = True
+
+    if not has_access:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    messages = CourseMessage.objects.filter(course=course).order_by('timestamp')
+    data = []
+    for msg in messages:
+        sender_role = msg.sender.profile.role.capitalize()
+        # Fallback to username if name is not set
+        sender_name = msg.sender.username
+        if msg.sender.profile.role == 'student' and msg.sender.profile.full_name:
+            sender_name = msg.sender.profile.full_name
+        elif msg.sender.profile.role == 'company' and msg.sender.profile.company_name:
+            sender_name = msg.sender.profile.company_name
+            
+        data.append({
+            'id': msg.id,
+            'sender_name': sender_name,
+            'sender_role': sender_role,
+            'is_me': msg.sender == user,
+            'content': msg.content,
+            'timestamp': msg.timestamp.strftime('%I:%M %p')
+        })
+
+    return JsonResponse({'messages': data})
+
+
+@login_required
+def send_course_message(request, course_id):
+    if request.method == 'POST':
+        course = get_object_or_404(Course, id=course_id)
+        user = request.user
+        role = user.profile.role
+
+        # Access control
+        has_access = False
+        if role == 'company' and course.company == user:
+            has_access = True
+        elif role == 'trainer' and course.trainer == user:
+            has_access = True
+        elif role == 'student':
+            if Enrollment.objects.filter(student=user, course=course, status='approved').exists():
+                has_access = True
+
+        if not has_access:
+            return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+        content = request.POST.get('content')
+        if content and content.strip():
+            CourseMessage.objects.create(
+                course=course,
+                sender=user,
+                content=content.strip()
+            )
+            return JsonResponse({'status': 'ok'})
+        return JsonResponse({'error': 'Message content cannot be empty'}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

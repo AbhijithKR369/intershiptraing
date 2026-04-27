@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.title }} - Group Chat</title>
+    <link rel="stylesheet" href="{% static 'css/course_chat.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body class="bg-dark">
+
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="chat-container">
+    <header class="chat-header">
+        <div class="header-info">
+            <h1>{{ course.title }}</h1>
+            <p>Course Group Chat</p>
+        </div>
+        <button onclick="window.history.back()" class="back-btn">← Back</button>
+    </header>
+
+    <div class="chat-messages" id="chat-messages">
+        <!-- Messages will be loaded here via JS -->
+    </div>
+
+    <div class="chat-input-area">
+        <form id="chat-form" onsubmit="sendMessage(event)">
+            {% csrf_token %}
+            <input type="text" id="message-input" placeholder="Type your message here..." autocomplete="off" required>
+            <button type="submit" class="send-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const courseId = "{{ course.id }}";
+    const messagesContainer = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    let lastMessageCount = 0;
+    let isUserScrolledUp = false;
+
+    // Check if user has scrolled up
+    messagesContainer.addEventListener('scroll', () => {
+        const threshold = 50; // pixels from bottom
+        const position = messagesContainer.scrollTop + messagesContainer.clientHeight;
+        const height = messagesContainer.scrollHeight;
+        isUserScrolledUp = position < height - threshold;
+    });
+
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    async function fetchMessages() {
+        try {
+            const response = await fetch(`/courses/chat/${courseId}/messages/`);
+            const data = await response.json();
+            
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+
+            if (data.messages.length !== lastMessageCount) {
+                renderMessages(data.messages);
+                lastMessageCount = data.messages.length;
+                
+                if (!isUserScrolledUp) {
+                    scrollToBottom();
+                }
+            }
+        } catch (err) {
+            console.error("Error fetching messages:", err);
+        }
+    }
+
+    function renderMessages(messages) {
+        messagesContainer.innerHTML = '';
+        
+        if (messages.length === 0) {
+            messagesContainer.innerHTML = '<div class="empty-chat">Start the conversation!</div>';
+            return;
+        }
+
+        messages.forEach(msg => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message-bubble ${msg.is_me ? 'me' : 'them'}`;
+            
+            let html = '';
+            if (!msg.is_me) {
+                html += `
+                    <div class="msg-meta">
+                        <span class="sender-name">${msg.sender_name}</span>
+                        <span class="sender-role ${msg.sender_role.toLowerCase()}">${msg.sender_role}</span>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="msg-content">${msg.content}</div>
+                <div class="msg-time">${msg.timestamp}</div>
+            `;
+            
+            msgDiv.innerHTML = html;
+            messagesContainer.appendChild(msgDiv);
+        });
+    }
+
+    async function sendMessage(e) {
+        e.preventDefault();
+        
+        const content = messageInput.value.trim();
+        if (!content) return;
+        
+        // Optimistic UI update could go here
+        messageInput.value = '';
+        
+        try {
+            const formData = new FormData();
+            formData.append('content', content);
+            
+            const response = await fetch(`/courses/chat/${courseId}/send/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            if (data.status === 'ok') {
+                await fetchMessages();
+                scrollToBottom();
+            } else {
+                console.error(data.error);
+            }
+        } catch (err) {
+            console.error("Error sending message:", err);
+        }
+    }
+
+    // Initial load
+    fetchMessages().then(() => {
+        setTimeout(scrollToBottom, 100);
+    });
+
+    // Poll every 2 seconds
+    setInterval(fetchMessages, 2000);
+
+</script>
+
+</body>
+</html>

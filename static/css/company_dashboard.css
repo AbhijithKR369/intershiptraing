@@ -5,21 +5,21 @@
    ============================================================ */
 
 :root {
-    --gold: #c9a96e;
-    --gold-light: #e8d5a3;
-    --gold-dim: rgba(201, 169, 110, 0.15);
-    --sidebar-bg: #07050f;
-    --sidebar-border: rgba(201, 169, 110, 0.12);
-    --page-bg: #050410;
-    --glass: rgba(14, 11, 22, 0.82);
-    --card-bg: rgba(16, 12, 26, 0.92);
+    --purple: #7c3aed;
+    --purple-light: #a78bfa;
+    --purple-dim: rgba(124, 58, 237, 0.15);
+    --sidebar-bg: #111018;
+    --sidebar-border: rgba(124, 58, 237, 0.12);
+    --page-bg: #111018;
+    --glass: #1a1625;
+    --card-bg: #1a1625;
     --surface: rgba(255, 255, 255, 0.04);
     --surface2: rgba(255, 255, 255, 0.07);
-    --border: rgba(201, 169, 110, 0.18);
-    --border-hover: rgba(201, 169, 110, 0.38);
-    --text: #f0ece4;
-    --muted: rgba(240, 236, 228, 0.45);
-    --label: rgba(201, 169, 110, 0.82);
+    --border: rgba(124, 58, 237, 0.18);
+    --border-hover: rgba(124, 58, 237, 0.38);
+    --text: #f0ecff;
+    --muted: #8b82a7;
+    --label: rgba(124, 58, 237, 0.82);
     --success: #4ade80;
     --danger: #f87171;
 }
@@ -96,7 +96,7 @@ body {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    background: linear-gradient(90deg, transparent, var(--purple), transparent);
     opacity: 0.4;
 }
 
@@ -114,7 +114,7 @@ body {
     width: 38px;
     height: 38px;
     border-radius: 10px;
-    background: linear-gradient(135deg, rgba(201, 169, 110, 0.18), rgba(201, 169, 110, 0.05));
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.18), rgba(124, 58, 237, 0.05));
     border: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -138,7 +138,7 @@ body {
     font-size: 0.62rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--purple);
     font-weight: 500;
     display: block;
     margin-top: 2px;
@@ -199,14 +199,14 @@ body {
 }
 
 .menu-item.active {
-    background: var(--gold-dim);
-    color: var(--gold);
-    border-color: rgba(201, 169, 110, 0.2);
+    background: var(--purple-dim);
+    color: var(--purple);
+    border-color: rgba(124, 58, 237, 0.2);
 }
 
 .menu-item.active .m-icon {
     opacity: 1;
-    stroke: var(--gold);
+    stroke: var(--purple);
 }
 
 .spacer {
@@ -275,7 +275,7 @@ body {
 
 .header-title h1 em {
     font-style: normal;
-    color: var(--gold);
+    color: var(--purple);
 }
 
 .header-title p {
@@ -310,13 +310,13 @@ body {
 }
 
 .action-btn.outline:hover {
-    border-color: var(--gold);
-    color: var(--gold);
-    background: var(--gold-dim);
+    border-color: var(--purple);
+    color: var(--purple);
+    background: var(--purple-dim);
 }
 
 .action-btn.gradient-btn {
-    background: linear-gradient(135deg, #c9a96e 0%, #a07840 50%, #c9a96e 100%);
+    background: linear-gradient(135deg, #7c3aed 0%, #a07840 50%, #7c3aed 100%);
     background-size: 200% auto;
     color: #1a1208;
     border: none;
@@ -327,7 +327,7 @@ body {
 .action-btn.gradient-btn:hover {
     background-position: right center;
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(201, 169, 110, 0.25);
+    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.25);
 }
 
 /* ── Sections ─────────────────────────────────────────── */
@@ -359,9 +359,9 @@ body {
     font-size: 0.65rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--gold);
-    background: var(--gold-dim);
-    border: 1px solid rgba(201, 169, 110, 0.2);
+    color: var(--purple);
+    background: var(--purple-dim);
+    border: 1px solid rgba(124, 58, 237, 0.2);
     padding: 3px 10px;
     border-radius: 20px;
     font-weight: 500;
@@ -378,7 +378,7 @@ body {
 
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 1.25rem;
 }
 
@@ -399,7 +399,7 @@ body {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    background: linear-gradient(90deg, transparent, var(--purple), transparent);
     opacity: 0;
     transition: opacity 0.3s;
 }
@@ -446,9 +446,9 @@ body {
 }
 
 .badge-internal {
-    background: var(--gold-dim);
-    color: var(--gold);
-    border: 1px solid rgba(201, 169, 110, 0.2);
+    background: var(--purple-dim);
+    color: var(--purple);
+    border: 1px solid rgba(124, 58, 237, 0.2);
 }
 
 /* Enrollment stats */
@@ -483,7 +483,7 @@ body {
 
 .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #c9a96e, #e8d5a3);
+    background: linear-gradient(90deg, #7c3aed, #a78bfa);
     border-radius: 4px;
     width: var(--prog-width, 0%);
     animation: bar-grow 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
@@ -491,12 +491,12 @@ body {
 
 /* Course action buttons */
 .course-actions {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
     border-top: 1px solid var(--border);
 }
 
 .a-btn {
+    flex: 1;
     text-align: center;
     padding: 0.7rem 0.4rem;
     font-size: 0.72rem;
@@ -517,11 +517,11 @@ body {
 }
 
 .a-btn.highlight {
-    color: var(--gold);
+    color: var(--purple);
 }
 
 .a-btn.highlight:hover {
-    background: var(--gold-dim);
+    background: var(--purple-dim);
 }
 
 /* ── Enrollment Requests ─────────────────────────────── */
@@ -561,14 +561,14 @@ body {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: var(--gold-dim);
-    border: 1px solid rgba(201, 169, 110, 0.25);
+    background: var(--purple-dim);
+    border: 1px solid rgba(124, 58, 237, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--gold);
+    color: var(--purple);
     flex-shrink: 0;
 }
 
@@ -625,7 +625,7 @@ body {
 .doc-link {
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--gold);
+    color: var(--purple);
     text-decoration: none;
     border-bottom: 1px solid transparent;
     padding-bottom: 1px;
@@ -633,7 +633,7 @@ body {
 }
 
 .doc-link:hover {
-    border-color: var(--gold);
+    border-color: var(--purple);
 }
 
 .decision-btns {
@@ -681,7 +681,7 @@ body {
     text-align: center;
     color: var(--muted);
     font-size: 0.85rem;
-    border: 1px dashed rgba(201, 169, 110, 0.15);
+    border: 1px dashed rgba(124, 58, 237, 0.15);
     border-radius: 14px;
     grid-column: 1 / -1;
 }

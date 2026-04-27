@@ -6,109 +6,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Your Account | Join the Platform</title>
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gradient">
 
-<div class="bg-scene">
-    <div class="bg-img"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="grid-overlay"></div>
-</div>
+<div class="split-layout">
 
-<div class="main-wrapper fade-in">
-    <div class="register-card-v2">
+    <!-- ── LEFT: Dark Form Panel ── -->
+    <div class="left-panel">
+        <div class="form-box">
 
-        <!-- Corner ornaments -->
-        <svg class="corner-ornament tl" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
-            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
-            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
-        </svg>
-        <svg class="corner-ornament br" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2 L14 2 L14 5 L5 5 L5 14 L2 14 Z" fill="#c9a96e"/>
-            <path d="M2 2 L2 14" stroke="#c9a96e" stroke-width="0.5"/>
-            <path d="M2 2 L14 2" stroke="#c9a96e" stroke-width="0.5"/>
-        </svg>
-
-        <header class="reg-header">
-            <div class="brand-logo">
-                <svg class="logo-icon" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13 3 L20 8 L20 18 L13 23 L6 18 L6 8 Z" stroke="#c9a96e" stroke-width="1.4" stroke-linejoin="round"/>
-                    <path d="M13 8 L13 18 M9 11 L17 11 M9 15 L17 15" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <div class="eyebrow">
-                <span class="eyebrow-line"></span>
-                 
-                <span class="eyebrow-line r"></span>
-            </div>
-            <h1>Create Your <em>Account</em></h1>
-            <p>Join our ecosystem of students, trainers, and companies.</p>
-        </header>
-
-        <form method="POST" onsubmit="return validateForm()" class="modern-form">
-            {% csrf_token %}
-
-            <div class="form-step">
-                <div class="section-badge">
-                    <div class="badge-line"></div>
-                    <span class="step-title">Account Security</span>
-                    <div class="badge-line"></div>
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L19 7V17L12 22L5 17V7Z"/>
+                        <line x1="12" y1="7" x2="12" y2="17"/>
+                        <line x1="8" y1="10" x2="16" y2="10"/>
+                        <line x1="8" y1="14" x2="16" y2="14"/>
+                    </svg>
                 </div>
-                <div class="input-grid">
-                    <div class="input-group">
+                <span>Verida</span>
+            </div>
+
+            <div class="form-title">
+                <h1>Sign up</h1>
+                <p>Create your account to get started</p>
+            </div>
+
+            <form method="POST" onsubmit="return validateForm()" class="register-form">
+                {% csrf_token %}
+
+                <!-- Account Security -->
+                <div class="sec-label">
+                    <div class="sec-line"></div>
+                    <span>Account Security</span>
+                    <div class="sec-line"></div>
+                </div>
+
+                <div class="fields-row">
+                    <div class="field">
                         <label>Username</label>
                         <input type="text" name="username" required placeholder="johndoe">
                     </div>
-                    <div class="input-group">
+                    <div class="field">
                         <label>Email Address</label>
                         <input type="email" name="email" placeholder="john@example.com" required>
                     </div>
-                    <div class="input-group">
+                </div>
+
+                <div class="fields-row">
+                    <div class="field">
                         <label>Password</label>
                         <input type="password" id="password" name="password" required placeholder="••••••••">
                     </div>
-                    <div class="input-group">
+                    <div class="field">
                         <label>Confirm Password</label>
                         <input type="password" id="confirm_password" name="confirm_password" required placeholder="••••••••">
                     </div>
                 </div>
-            </div>
 
-            <div class="line-divider"></div>
-
-            <div class="form-step">
-                <div class="section-badge">
-                    <div class="badge-line"></div>
-                    <span class="step-title">Profile Information</span>
-                    <div class="badge-line"></div>
+                <!-- Profile Information -->
+                <div class="sec-label">
+                    <div class="sec-line"></div>
+                    <span>Profile Information</span>
+                    <div class="sec-line"></div>
                 </div>
-                <div class="input-grid">
-                    <div class="input-group">
+
+                <div class="fields-row">
+                    <div class="field">
                         <label>Full Name</label>
                         <input type="text" name="full_name" placeholder="Johnathan Doe" required>
                     </div>
-                    <div class="input-group">
+                    <div class="field">
                         <label>Phone Number</label>
                         <input type="text" name="phone" placeholder="+1 234 567 890">
                     </div>
-                    <div class="input-group">
+                </div>
+
+                <div class="fields-row">
+                    <div class="field select-field">
                         <label>Select Role</label>
-                        <div class="select-wrapper">
+                        <div class="sel-wrap">
                             <select name="role" id="role" onchange="showFields()" required>
                                 <option value="">Choose your path...</option>
                                 <option value="student">Student</option>
                                 <option value="company">Company</option>
                                 <option value="trainer">Trainer</option>
                             </select>
+                            <svg class="sel-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
                         </div>
                     </div>
-                    <div class="input-group">
+                    <div class="field select-field">
                         <label>Professional Domain</label>
-                        <div class="select-wrapper">
+                        <div class="sel-wrap">
                             <select name="domain">
                                 <option value="it">Information Technology</option>
                                 <option value="cloud">Cloud Computing</option>
@@ -116,74 +106,144 @@
                                 <option value="ai">Artificial Intelligence</option>
                                 <option value="data">Data Science</option>
                             </select>
+                            <svg class="sel-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="student_fields" class="dynamic-container">
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label>College</label>
-                        <input type="text" name="college" placeholder="University Name">
-                    </div>
-                    <div class="input-group">
-                        <label>Department</label>
-                        <input type="text" name="department" placeholder="e.g. Computer Science">
+                <!-- Dynamic Role Fields -->
+                <div id="student_fields" class="dynamic-container">
+                    <div class="fields-row">
+                        <div class="field">
+                            <label>College</label>
+                            <input type="text" name="college" placeholder="University Name">
+                        </div>
+                        <div class="field">
+                            <label>Department</label>
+                            <input type="text" name="department" placeholder="e.g. Computer Science">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="company_fields" class="dynamic-container">
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label>Company Name</label>
-                        <input type="text" name="company_name" placeholder="Tech Corp">
-                    </div>
-                    <div class="input-group">
-                        <label>Headquarters Location</label>
-                        <input type="text" name="location" placeholder="San Francisco, CA">
-                    </div>
-                </div>
-            </div>
-
-            <div id="trainer_fields" class="dynamic-container">
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label>Primary Qualification</label>
-                        <input type="text" name="qualification" placeholder="PhD, Senior Dev, etc.">
-                    </div>
-                    <div class="input-group">
-                        <label>Place of Practice</label>
-                        <input type="text" name="place" placeholder="New York, NY">
+                <div id="company_fields" class="dynamic-container">
+                    <div class="fields-row">
+                        <div class="field">
+                            <label>Company Name</label>
+                            <input type="text" name="company_name" placeholder="Tech Corp">
+                        </div>
+                        <div class="field">
+                            <label>Headquarters Location</label>
+                            <input type="text" name="location" placeholder="San Francisco, CA">
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <button type="submit" class="register-main-btn">
-                <span>Create My Account</span>
-                <div class="btn-shine"></div>
-            </button>
+                <div id="trainer_fields" class="dynamic-container">
+                    <div class="fields-row">
+                        <div class="field">
+                            <label>Primary Qualification</label>
+                            <input type="text" name="qualification" placeholder="PhD, Senior Dev, etc.">
+                        </div>
+                        <div class="field">
+                            <label>Place of Practice</label>
+                            <input type="text" name="place" placeholder="New York, NY">
+                        </div>
+                    </div>
+                </div>
 
-            <div class="form-footer">
-                <p>Already a member? <a href="/login/">Log in here</a></p>
-            </div>
-        </form>
+                <button type="submit" class="btn-register">Create My Account</button>
+
+                <div class="bottom-row">
+                    <span>Already a member?</span>
+                    <a href="/login/" class="btn-login">Log in here</a>
+                </div>
+
+            </form>
+        </div>
     </div>
+
+    <!-- ── RIGHT: Purple Illustration Panel ── -->
+    <div class="right-panel">
+        <div class="rp-blobs">
+            <div class="blob b1"></div>
+            <div class="blob b2"></div>
+            <div class="blob b3"></div>
+        </div>
+
+        <div class="rp-text">
+            <h2>Join the<br><span>student portal</span></h2>
+            <p>Access courses, internships, and professional certificates.</p>
+        </div>
+
+        <div class="rp-illo">
+            <svg viewBox="0 0 460 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Document -->
+                <rect x="120" y="40" width="224" height="286" rx="18" fill="white" fill-opacity="0.96"/>
+                <!-- Top bar -->
+                <rect x="120" y="40" width="224" height="44" rx="18" fill="#7c3aed" fill-opacity="0.12"/>
+                <!-- Lines -->
+                <rect x="148" y="102" width="168" height="9" rx="4.5" fill="#ddd6fe"/>
+                <rect x="148" y="123" width="140" height="7" rx="3.5" fill="#ede9fe"/>
+                <rect x="148" y="141" width="156" height="7" rx="3.5" fill="#ede9fe"/>
+                <rect x="148" y="159" width="122" height="7" rx="3.5" fill="#ede9fe"/>
+                <rect x="148" y="183" width="168" height="7" rx="3.5" fill="#ddd6fe"/>
+                <rect x="148" y="201" width="148" height="7" rx="3.5" fill="#ede9fe"/>
+                <rect x="148" y="219" width="160" height="7" rx="3.5" fill="#ede9fe"/>
+                <rect x="148" y="243" width="168" height="7" rx="3.5" fill="#ddd6fe"/>
+                <rect x="148" y="261" width="132" height="7" rx="3.5" fill="#ede9fe"/>
+                <rect x="148" y="279" width="152" height="7" rx="3.5" fill="#ede9fe"/>
+                <!-- Shield icon -->
+                <path d="M232 53 L239 57 L239 66 L232 70 L225 66 L225 57 Z" stroke="#7c3aed" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M229 62 L231 64 L235 60" stroke="#7c3aed" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+
+                <!-- Person 1 left (standing) -->
+                <ellipse cx="82" cy="346" rx="32" ry="10" fill="black" fill-opacity="0.11"/>
+                <circle cx="82" cy="243" r="18" fill="#f5c8a0"/>
+                <path d="M64 236 C64 224 100 224 100 236" fill="#1a1625"/>
+                <rect x="66" y="260" width="32" height="74" rx="14" fill="#1a1625"/>
+                <rect x="97" y="268" width="26" height="12" rx="6" fill="#1a1625"/>
+                <rect x="116" y="260" width="16" height="27" rx="4.5" fill="#4c1d95"/>
+                <rect x="118" y="263" width="12" height="20" rx="2.5" fill="#7c3aed" fill-opacity="0.55"/>
+
+                <!-- Person 2 right (sitting on doc) -->
+                <ellipse cx="356" cy="244" rx="36" ry="10" fill="black" fill-opacity="0.11"/>
+                <circle cx="356" cy="166" r="21" fill="#f5c8a0"/>
+                <path d="M335 158 C335 144 377 144 377 158" fill="#2d1b69"/>
+                <rect x="332" y="185" width="50" height="50" rx="15" fill="#1a1625"/>
+                <path d="M320 236 L310 262 L402 262 L392 236" fill="#1a1625"/>
+                <ellipse cx="316" cy="264" rx="12" ry="6" fill="#0d0b18" transform="rotate(-8 316 264)"/>
+                <ellipse cx="396" cy="264" rx="12" ry="6" fill="#0d0b18" transform="rotate(8 396 264)"/>
+                <!-- Laptop -->
+                <rect x="374" y="188" width="48" height="34" rx="5" fill="#3b0d99"/>
+                <rect x="377" y="191" width="42" height="28" rx="3" fill="#6d28d9" fill-opacity="0.48"/>
+                <rect x="370" y="222" width="56" height="6" rx="3" fill="#1e0c56"/>
+
+                <!-- Plant left -->
+                <rect x="36" y="318" width="26" height="26" rx="5" fill="#4c1d95" fill-opacity="0.75"/>
+                <ellipse cx="49" cy="294" rx="22" ry="38" fill="#5b21b6" fill-opacity="0.36" transform="rotate(-18 49 294)"/>
+                <ellipse cx="29" cy="274" rx="15" ry="28" fill="#7c3aed" fill-opacity="0.3" transform="rotate(-34 29 274)"/>
+                <rect x="47" y="294" width="4" height="28" rx="2" fill="#4c1d95" fill-opacity="0.45"/>
+
+                <!-- Plant right -->
+                <rect x="400" y="328" width="26" height="26" rx="5" fill="#4c1d95" fill-opacity="0.75"/>
+                <ellipse cx="413" cy="304" rx="22" ry="38" fill="#5b21b6" fill-opacity="0.36" transform="rotate(18 413 304)"/>
+                <ellipse cx="433" cy="282" rx="14" ry="26" fill="#7c3aed" fill-opacity="0.3" transform="rotate(34 433 282)"/>
+                <rect x="411" y="304" width="4" height="28" rx="2" fill="#4c1d95" fill-opacity="0.45"/>
+            </svg>
+        </div>
+    </div>
+
 </div>
 
 <script>
 function showFields() {
     let role = document.getElementById("role").value;
     const sections = ["student_fields", "company_fields", "trainer_fields"];
-
     sections.forEach(id => {
         let el = document.getElementById(id);
         el.classList.remove("slide-in-active");
-        // Small delay before hiding so exit is smooth
         setTimeout(() => { if (!el.classList.contains("slide-in-active")) el.style.display = "none"; }, 300);
     });
-
     if (role) {
         let activeDiv = document.getElementById(role + "_fields");
         activeDiv.style.display = "block";
