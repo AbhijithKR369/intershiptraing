@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from .models import TrainerApplication
 from django.contrib import messages
 from .models import Question, StudentAnswer
-from .models import QuizResult
+from .models import QuizResult, ReattemptRequest
 from internships.models import Application
 from certificates.models import Certificate
 from certificates.utils import generate_certificate
@@ -526,75 +526,74 @@ def assign_trainer(request, course_id):
 
 
 @login_required
-def add_question(request, course_id):
+def create_quiz_batch(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if request.user != course.company and request.user != course.trainer:
+        return HttpResponse("Not allowed")
 
-    course = Course.objects.get(id=course_id)
+    if request.method == "POST":
+        title = request.POST.get('title')
+        num_questions = int(request.POST.get('number_of_questions', 10))
+        time_limit = int(request.POST.get('time_limit', 15))
+        deadline = request.POST.get('deadline') or None
+        is_final = request.POST.get('is_final') == 'on'
+
+        if is_final:
+            if request.user.profile.role != 'company':
+                return HttpResponse("Only company can create final quiz")
+            if QuizBatch.objects.filter(course=course, is_final=True).exists():
+                return HttpResponse("Final quiz already exists")
+
+        batch = QuizBatch.objects.create(
+            course=course,
+            title=title,
+            number_of_questions=num_questions,
+            time_limit=time_limit,
+            deadline=deadline,
+            is_final=is_final
+        )
+        return redirect('add_question', batch_id=batch.id)
+
+    return render(request, 'create_quiz_batch.html', {'course': course})
+
+
+@login_required
+def add_question(request, batch_id):
+    batch = get_object_or_404(QuizBatch, id=batch_id)
+    course = batch.course
 
     if request.user != course.company and request.user != course.trainer:
         return HttpResponse("Not allowed")
 
-    message = ""
-
-    # ✅ Get latest batch (not using is_active anymore)
-    batch = QuizBatch.objects.filter(course=course).last()
-
     if request.method == "POST":
+        # Form should submit multiple questions
+        for i in range(1, batch.number_of_questions + 1):
+            q_text = request.POST.get(f'question_{i}')
+            opt1 = request.POST.get(f'opt1_{i}')
+            opt2 = request.POST.get(f'opt2_{i}')
+            opt3 = request.POST.get(f'opt3_{i}')
+            opt4 = request.POST.get(f'opt4_{i}')
+            correct = request.POST.get(f'correct_{i}')
 
-        # ✅ Create new batch
-        if 'new_batch' in request.POST:
-
-            batch_type = request.POST.get('new_batch')  # 👈 key change
-
-            existing_final = QuizBatch.objects.filter(
-                course=course,
-                is_final=True
-            ).exists()
-
-            is_final = False
-
-            # ✅ Handle FINAL quiz creation properly
-            if batch_type == 'final':
-
-                if request.user.profile.role != 'company':
-                    return HttpResponse("Only company can create final quiz")
-
-                if existing_final:
-                    return HttpResponse("Final quiz already exists")
-
-                is_final = True
-
-            quiz_count = QuizBatch.objects.filter(course=course).count() + 1
-
-            batch = QuizBatch.objects.create(
-                course=course,
-                title=f"Quiz {quiz_count}",
-                is_final=is_final
-            )
-
-            message = f"New batch created: {batch.title}"
-
-        # ✅ Add question (ONLY if question exists)
-        elif 'question' in request.POST:
-
-            Question.objects.create(
-                batch=batch,
-                question_text=request.POST.get('question'),
-                option1=request.POST.get('opt1'),
-                option2=request.POST.get('opt2'),
-                option3=request.POST.get('opt3'),
-                option4=request.POST.get('opt4'),
-                correct_option=request.POST.get('correct')
-            )
-
-            message = f"Question added to {batch.title}"
-
-    questions = batch.questions.all() if batch else []
+            if q_text and opt1 and opt2 and opt3 and opt4 and correct:
+                Question.objects.create(
+                    batch=batch,
+                    question_text=q_text,
+                    option1=opt1,
+                    option2=opt2,
+                    option3=opt3,
+                    option4=opt4,
+                    correct_option=correct
+                )
+        if request.user.profile.role == 'company':
+            return redirect('company_dashboard')
+        else:
+            return redirect('trainer_dashboard')
 
     return render(request, 'add_question.html', {
+        'batch': batch,
         'course': course,
-        'message': message,
-        'count': len(questions),
-        'batch': batch
+        'range': range(1, batch.number_of_questions + 1)
     })
 
 
@@ -609,6 +608,11 @@ def take_quiz(request, batch_id):
         student=request.user, course=course
     ).exists():
         return HttpResponse("Enroll first")
+
+    # Deadline check
+    import django.utils.timezone as timezone
+    if batch.deadline and timezone.now() > batch.deadline:
+        return HttpResponse("Deadline has passed")
 
     # ✅ Final quiz lock
     if batch.is_final:
@@ -805,6 +809,59 @@ def course_chat(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     user = request.user
     role = user.profile.role
+
+@login_required
+def request_reattempt(request, batch_id):
+    batch = get_object_or_404(QuizBatch, id=batch_id)
+    if not batch.is_final:
+        return HttpResponse("Re-attempts only available for final quizzes")
+    
+    # Check if a request already exists
+    if ReattemptRequest.objects.filter(student=request.user, batch=batch).exists():
+        return HttpResponse("Request already submitted")
+        
+    ReattemptRequest.objects.create(student=request.user, batch=batch)
+    return redirect('review_quiz', batch_id=batch.id)
+
+@login_required
+def view_reattempts(request):
+    if request.user.profile.role not in ['company', 'trainer']:
+        return HttpResponse("Not allowed")
+        
+    requests = ReattemptRequest.objects.filter(
+        batch__course__company=request.user, 
+        status='pending'
+    )
+    # If trainer, only show for assigned courses
+    if request.user.profile.role == 'trainer':
+        requests = ReattemptRequest.objects.filter(
+            batch__course__trainer=request.user,
+            status='pending'
+        )
+        
+    return render(request, 'reattempt_requests.html', {'requests': requests})
+
+@login_required
+def handle_reattempt(request, request_id, action):
+    req = get_object_or_404(ReattemptRequest, id=request_id)
+    
+    # Validation
+    if request.user.profile.role == 'company' and req.batch.course.company != request.user:
+        return HttpResponse("Not allowed")
+    if request.user.profile.role == 'trainer' and req.batch.course.trainer != request.user:
+        return HttpResponse("Not allowed")
+        
+    if action == 'approve':
+        req.status = 'approved'
+        # Delete previous results and answers
+        QuizResult.objects.filter(student=req.student, batch=req.batch).delete()
+        StudentAnswer.objects.filter(student=req.student, question__batch=req.batch).delete()
+    elif action == 'reject':
+        req.status = 'rejected'
+        
+    req.save()
+    return redirect('view_reattempts')
+
 
     # Access control
     has_access = False

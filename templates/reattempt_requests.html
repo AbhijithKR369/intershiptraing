@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Re-attempt Requests</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        html, body { background: #050410 !important; color: #f0ece4 !important; font-family: 'DM Sans', sans-serif; }
+        .dashboard-container { padding: 40px; max-width: 1000px; margin: 0 auto; }
+        h1 { font-family: 'Syne', sans-serif; font-size: 32px; color: #c9a96e; margin-bottom: 30px; }
+        .glass-card { background: rgba(14,11,22,0.9) !important; border: 1px solid rgba(201,169,110,0.18) !important; border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .req-info h3 { margin: 0 0 5px 0; font-family: 'Syne', sans-serif; font-size: 18px; }
+        .req-info p { margin: 0; color: #a19d94; font-size: 14px; }
+        .actions { display: flex; gap: 10px; }
+        .btn-approve { padding: 10px 20px; background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid #2ecc71; border-radius: 6px; cursor: pointer; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .btn-approve:hover { background: #2ecc71; color: #111; }
+        .btn-reject { padding: 10px 20px; background: rgba(255, 107, 107, 0.1); color: #ff6b6b; border: 1px solid #ff6b6b; border-radius: 6px; cursor: pointer; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .btn-reject:hover { background: #ff6b6b; color: #111; }
+        .empty-state { text-align: center; padding: 50px; color: #a19d94; border: 1px dashed rgba(201,169,110,0.3); border-radius: 12px; }
+    </style>
+</head>
+<body class="admin-theme">
+
+<div class="dashboard-container">
+    <a href="{% if request.user.profile.role == 'company' %}{% url 'company_dashboard' %}{% else %}{% url 'trainer_dashboard' %}{% endif %}" style="color: #c9a96e; text-decoration: none; display: inline-block; margin-bottom: 20px;">← Back to Dashboard</a>
+    <h1>Re-attempt Requests</h1>
+
+    {% for req in requests %}
+    <div class="glass-card">
+        <div class="req-info">
+            <h3>{{ req.student.username|title }}</h3>
+            <p>Course: {{ req.batch.course.title }} | Quiz: {{ req.batch.title }}</p>
+            <p style="font-size: 12px; margin-top: 5px;">Requested on: {{ req.created_at|date:"M d, Y" }}</p>
+        </div>
+        <div class="actions">
+            <a href="{% url 'handle_reattempt' req.id 'approve' %}" class="btn-approve">Approve</a>
+            <a href="{% url 'handle_reattempt' req.id 'reject' %}" class="btn-reject">Reject</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <p>No pending re-attempt requests found.</p>
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

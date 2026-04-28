@@ -124,11 +124,31 @@ class QuizBatch(models.Model):
                                related_name='batches')
     title = models.CharField(max_length=100)  # e.g. "Quiz 1", "Week 1 Test"
     is_final = models.BooleanField(default=False)
+    number_of_questions = models.IntegerField(default=10)
+    time_limit = models.IntegerField(default=15) # in minutes
+    deadline = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.course.title} - {self.title}"
+
+class ReattemptRequest(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    batch = models.ForeignKey(QuizBatch, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Pending'),
+            ('approved', 'Approved'),
+            ('rejected', 'Rejected')
+        ],
+        default='pending'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student.username} - {self.batch.title} ({self.status})"
 
 
 class QuizResult(models.Model):

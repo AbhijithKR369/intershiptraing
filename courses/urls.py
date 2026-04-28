@@ -41,10 +41,18 @@ urlpatterns = [
         name='assign_trainer'
     ),
     path(
-        'add-question/<int:course_id>/',
+        'add-question/<int:batch_id>/',
         views.add_question,
         name='add_question'
     ),
+    path(
+        'create-quiz-batch/<int:course_id>/',
+        views.create_quiz_batch,
+        name='create_quiz_batch'
+    ),
+    path('request-reattempt/<int:batch_id>/', views.request_reattempt, name='request_reattempt'),
+    path('reattempts/', views.view_reattempts, name='view_reattempts'),
+    path('handle-reattempt/<int:request_id>/<str:action>/', views.handle_reattempt, name='handle_reattempt'),
     path(
         'batches/<int:course_id>/',
         views.course_quizzes,

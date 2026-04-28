@@ -95,6 +95,12 @@
     </main>
 
     <footer class="review-footer">
+        {% if request.user.profile.role == 'student' and batch.is_final %}
+            <a href="{% url 'request_reattempt' batch.id %}" class="back-pill" style="margin-right: 15px; color: #ff6b6b; border-color: #ff6b6b; background: rgba(255, 107, 107, 0.1);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                Request Re-attempt
+            </a>
+        {% endif %}
         <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="scroll-btn">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
             Scroll to Top

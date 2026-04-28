@@ -29,11 +29,15 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span class="q-total">{{ questions|length }} Questions</span>
             </div>
+            <div class="quiz-progress-pill" style="margin-left: 10px; color: #ff6b6b; border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.1);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="timer-display" style="font-weight: bold;">{{ batch.time_limit }}:00</span>
+            </div>
         </div>
     </header>
 
     <main class="quiz-content">
-        <form method="POST" action="/courses/submit/{{ batch.id }}/" class="quiz-form">
+        <form method="POST" action="/courses/submit/{{ batch.id }}/" class="quiz-form" id="quiz-form">
             {% csrf_token %}
 
             <div class="questions-stack">
@@ -110,6 +114,38 @@
         {% endif %}
     </main>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let timeLimitMinutes = parseInt("{{ batch.time_limit }}");
+        let timeRemaining = timeLimitMinutes * 60; // in seconds
+        const timerDisplay = document.getElementById('timer-display');
+        const form = document.getElementById('quiz-form');
+
+        function updateTimer() {
+            let minutes = Math.floor(timeRemaining / 60);
+            let seconds = timeRemaining % 60;
+            
+            // Format to MM:SS
+            let mStr = minutes < 10 ? "0" + minutes : minutes;
+            let sStr = seconds < 10 ? "0" + seconds : seconds;
+            
+            timerDisplay.textContent = mStr + ":" + sStr;
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "00:00";
+                alert("Time is up! Your quiz will be submitted automatically.");
+                form.submit();
+            } else {
+                timeRemaining--;
+            }
+        }
+
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
+    });
+</script>
 
 </body>
 </html>

@@ -40,6 +40,12 @@
                 </svg>
                 <span>Partner with Companies</span>
             </a>
+            <a href="{% url 'view_reattempts' %}" class="menu-item">
+                <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                </svg>
+                <span>Re-attempt Requests</span>
+            </a>
             <div class="spacer"></div>
             <a href="{% url 'logout' %}" class="logout-btn">
                 <svg class="m-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -92,7 +98,7 @@
                         </div>
                         <div class="course-actions-v2">
                             <a href="{% url 'add_material' course.id %}" class="btn-primary">Upload Content</a>
-                            <a href="{% url 'add_question' course.id %}" class="btn-secondary">Manage Quiz</a>
+                            <a href="{% url 'create_quiz_batch' course.id %}" class="btn-secondary">Manage Quiz</a>
                             <a href="{% url 'course_chat' course.id %}" class="btn-secondary" style="color: var(--accent); border-color: var(--accent);">Group Chat</a>
                         </div>
                     </div>

@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Quiz | {{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/add_question.css' %}?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        html, body { background: #050410 !important; color: #f0ece4 !important; }
+        .dashboard-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .glass-card { background: rgba(14,11,22,0.9) !important; border: 1px solid rgba(201,169,110,0.18) !important; border-radius: 12px; padding: 30px; width: 100%; max-width: 500px; color: #f0ece4; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .field { margin-bottom: 20px; }
+        .field-label { display: block; margin-bottom: 8px; font-weight: 500; color: #c9a96e; }
+        input[type="text"], input[type="number"], input[type="datetime-local"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(201,169,110,0.2); background: rgba(255,255,255,0.04); color: #fff; outline: none; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; color: #c9a96e; }
+        .checkbox-label input { width: 18px; height: 18px; accent-color: #c9a96e; }
+        .primary-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, #c9a96e 0%, #b89554 100%); border: none; border-radius: 8px; color: #111; font-weight: 700; cursor: pointer; transition: 0.3s ease; }
+        .primary-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(201,169,110,0.2); }
+        .header-title { font-family: 'Syne', sans-serif; font-size: 24px; margin-bottom: 5px; }
+        .header-sub { color: #a19d94; margin-bottom: 30px; font-size: 14px; }
+    </style>
+</head>
+<body class="admin-theme">
+
+<div class="bg-scene">
+    <div class="bg-img"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+</div>
+
+<div class="dashboard-container">
+    <div class="glass-card">
+        <h1 class="header-title">Create Quiz Batch</h1>
+        <p class="header-sub">For {{ course.title }}</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="field">
+                <label class="field-label">Quiz Title</label>
+                <input type="text" name="title" placeholder="e.g. Midterm Exam" required>
+            </div>
+            
+            <div class="field">
+                <label class="field-label">Number of Questions</label>
+                <input type="number" name="number_of_questions" min="1" value="10" required>
+            </div>
+            
+            <div class="field">
+                <label class="field-label">Time Limit (Minutes)</label>
+                <input type="number" name="time_limit" min="1" value="15" required>
+            </div>
+            
+            <div class="field">
+                <label class="field-label">Deadline</label>
+                <input type="datetime-local" name="deadline">
+            </div>
+
+            {% if request.user.profile.role == 'company' %}
+            <div class="field">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_final">
+                    Is this the Final Quiz?
+                </label>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="primary-submit">Continue to Add Questions →</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -45,7 +45,7 @@
             <div class="metrics-row">
                 <div class="metric">
                     <span class="m-label">Batch</span>
-                    <span class="m-value">{{ batch.title|default:"None" }}</span>
+                    <span class="m-value">{{ batch.title }}</span>
                 </div>
                 <div class="metric">
                     <span class="m-label">Type</span>
@@ -57,56 +57,44 @@
                 </div>
                 <div class="metric">
                     <span class="m-label">Questions</span>
-                    <span class="m-value counter">{{ count }}</span>
+                    <span class="m-value counter">{{ batch.number_of_questions }}</span>
                 </div>
-            </div>
-
-            <div class="batch-factory">
-                <div class="section-label">Create New Batch</div>
-                <form method="POST" class="factory-btns">
-                    {% csrf_token %}
-                    <button name="new_batch" value="normal" class="btn-create">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        New Regular
-                    </button>
-                    {% if request.user.profile.role == 'company' %}
-                        <button name="new_batch" value="final" class="btn-create btn-gold">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                            New Final
-                        </button>
-                    {% endif %}
-                </form>
             </div>
         </div>
 
         <div class="glass-card form-card">
-            <div class="card-label">Add New Question</div>
+            <div class="card-label">Add Questions to {{ batch.title }}</div>
             <form method="POST" class="question-form">
                 {% csrf_token %}
-                <div class="field">
-                    <label class="field-label">Question Prompt</label>
-                    <textarea name="question" placeholder="e.g. What is the time complexity of Merge Sort?" required></textarea>
-                </div>
-                <div class="options-layout">
-                    <div class="field"><label class="field-label">Option 1</label><input type="text" name="opt1" required></div>
-                    <div class="field"><label class="field-label">Option 2</label><input type="text" name="opt2" required></div>
-                    <div class="field"><label class="field-label">Option 3</label><input type="text" name="opt3" required></div>
-                    <div class="field"><label class="field-label">Option 4</label><input type="text" name="opt4" required></div>
-                </div>
-                <div class="field">
-                    <label class="field-label">Correct Answer</label>
-                    <div class="select-wrap">
-                        <select name="correct" class="modern-select">
-                            <option value="1">Option 1</option>
-                            <option value="2">Option 2</option>
-                            <option value="3">Option 3</option>
-                            <option value="4">Option 4</option>
-                        </select>
-                        <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+                {% for i in range %}
+                <div class="question-block" style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <h3 style="margin-bottom: 15px; color: #c9a96e;">Question {{ i }}</h3>
+                    <div class="field">
+                        <label class="field-label">Question Prompt</label>
+                        <textarea name="question_{{ i }}" placeholder="e.g. What is the time complexity of Merge Sort?" required></textarea>
+                    </div>
+                    <div class="options-layout">
+                        <div class="field"><label class="field-label">Option 1</label><input type="text" name="opt1_{{ i }}" required></div>
+                        <div class="field"><label class="field-label">Option 2</label><input type="text" name="opt2_{{ i }}" required></div>
+                        <div class="field"><label class="field-label">Option 3</label><input type="text" name="opt3_{{ i }}" required></div>
+                        <div class="field"><label class="field-label">Option 4</label><input type="text" name="opt4_{{ i }}" required></div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Correct Answer</label>
+                        <div class="select-wrap">
+                            <select name="correct_{{ i }}" class="modern-select">
+                                <option value="1">Option 1</option>
+                                <option value="2">Option 2</option>
+                                <option value="3">Option 3</option>
+                                <option value="4">Option 4</option>
+                            </select>
+                            <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+                        </div>
                     </div>
                 </div>
-                <button type="submit" class="primary-submit">
-                    <span>Add to Batch</span>
+                {% endfor %}
+                <button type="submit" class="primary-submit" style="width: 100%;">
+                    <span>Save All Questions</span>
                     <div class="btn-shine"></div>
                 </button>
             </form>
