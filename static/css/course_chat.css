@@ -4,7 +4,7 @@
     --panel-border: rgba(255, 255, 255, 0.08);
     --text-main: #f3f4f6;
     --text-muted: #9ca3af;
-    --accent: #c9a96e;
+    --accent: var(--purple-light);
     --accent-hover: #e0c48c;
     
     --msg-me-bg: rgba(201, 169, 110, 0.15);
@@ -35,7 +35,7 @@ body {
 }
 
 /* Background Scene */
-.bg-scene {
+.bg-scene { display: none !important; 
     position: fixed;
     inset: 0;
     z-index: -1;
@@ -115,7 +115,7 @@ body {
 }
 
 .header-info h1 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Syne', sans-serif;
     font-size: 1.8rem;
     color: var(--accent);
     margin-bottom: 4px;

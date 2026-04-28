@@ -66,7 +66,7 @@
 html { background-color: #080610; }
 body { font-family: 'DM Sans', sans-serif; background: #080610; color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; overflow-x: hidden; }
 
-.bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+.bg-scene { display: none !important;  position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .bg-img { position: absolute; inset: -10%; width: 120%; height: 120%; background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(60,34,89,0.6) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 80% 90%, rgba(30,15,50,0.8) 0%, transparent 60%), radial-gradient(100% 100% at 50% 50%, #0d0b1a 0%, #04030a 100%); animation: bg-drift 20s ease-in-out infinite; }
 .orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: orb-float linear infinite; pointer-events: none; }
 .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(120,60,160,0.3), transparent 70%); top: -100px; left: -100px; animation-duration: 18s; }
@@ -95,7 +95,7 @@ body { font-family: 'DM Sans', sans-serif; background: #080610; color: var(--tex
 .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--purple); font-weight: 500; margin-bottom: 0.6rem; }
 .eyebrow-line { display: inline-block; height: 1px; background: linear-gradient(90deg, transparent, var(--purple)); animation: divider-reveal 0.6s ease both; animation-delay: 0.3s; }
 .eyebrow-line.r { background: linear-gradient(90deg, var(--purple), transparent); }
-.header-content h1 { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 300; color: var(--text); line-height: 1.1; animation: stagger-in 0.6s ease both; animation-delay: 0.3s; }
+.header-content h1 { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 300; color: var(--text); line-height: 1.1; animation: stagger-in 0.6s ease both; animation-delay: 0.3s; }
 .header-content h1 em { font-style: normal; color: var(--purple); }
 .course-name { color: var(--muted); font-size: 0.82rem; margin-top: 4px; font-weight: 300; animation: stagger-in 0.6s ease both; animation-delay: 0.4s; }
 
@@ -111,10 +111,10 @@ body { font-family: 'DM Sans', sans-serif; background: #080610; color: var(--tex
 .ring-track { fill: none; stroke: rgba(124, 58, 237,0.1); stroke-width: 6; }
 .ring-fill { fill: none; stroke: var(--purple); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 427; animation: ring-draw 1.4s cubic-bezier(0.16,1,0.3,1) 0.6s both; }
 .score-content { position: relative; z-index: 1; text-align: center; animation: score-pop 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.8s both; opacity: 0; }
-.big-score { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 300; color: var(--text); line-height: 1; display: block; }
+.big-score { font-family: 'Syne', sans-serif; font-size: 2.6rem; font-weight: 300; color: var(--text); line-height: 1; display: block; }
 .total-out-of { font-size: 0.78rem; color: var(--label); font-weight: 500; display: block; margin-top: 2px; }
 
-.feedback-area h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; color: var(--text); margin-bottom: 0.5rem; }
+.feedback-area h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 300; color: var(--text); margin-bottom: 0.5rem; }
 .feedback-area p { font-size: 0.82rem; color: var(--muted); line-height: 1.55; font-weight: 300; }
 
 /* History divider */
@@ -138,7 +138,7 @@ body { font-family: 'DM Sans', sans-serif; background: #080610; color: var(--tex
 .b-id { font-size: 0.88rem; font-weight: 500; color: var(--text); display: block; }
 
 .result-pill { display: flex; align-items: baseline; gap: 4px; background: var(--purple-dim); border: 1px solid rgba(124, 58, 237,0.22); border-radius: 20px; padding: 4px 14px; }
-.p-score { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; color: var(--purple); line-height: 1; }
+.p-score { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 300; color: var(--purple); line-height: 1; }
 .p-sep { font-size: 0.75rem; color: var(--muted); }
 .p-total { font-size: 0.75rem; color: var(--muted); }
 
@@ -148,7 +148,7 @@ body { font-family: 'DM Sans', sans-serif; background: #080610; color: var(--tex
 .result-footer-v2 { display: flex; justify-content: center; padding-top: 1.25rem; border-top: 1px solid var(--border); animation: stagger-in 0.6s ease 0.8s both; }
 .dashboard-btn {
     text-decoration: none; padding: 0.85rem 2.5rem;
-    background: linear-gradient(135deg, #7c3aed 0%, #a07840 50%, #7c3aed 100%);
+    background: var(--purple);
     background-size: 200% auto; color: #1a1208; border: none; border-radius: 12px;
     font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
     transition: all 0.3s; display: inline-block;

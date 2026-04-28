@@ -123,7 +123,7 @@ body {
 }
 
 .sb-title-block h2 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Syne', sans-serif;
     font-size: 1.1rem;
     font-weight: 400;
     color: var(--text);
@@ -265,7 +265,7 @@ body {
 }
 
 .header-title h1 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Syne', sans-serif;
     font-size: 2rem;
     font-weight: 300;
     color: var(--text);
@@ -316,7 +316,7 @@ body {
 }
 
 .action-btn.gradient-btn {
-    background: linear-gradient(135deg, #7c3aed 0%, #a07840 50%, #7c3aed 100%);
+    background: var(--purple);
     background-size: 200% auto;
     color: #1a1208;
     border: none;
@@ -348,7 +348,7 @@ body {
 }
 
 .section-header h3 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Syne', sans-serif;
     font-size: 1.3rem;
     font-weight: 400;
     color: var(--text);

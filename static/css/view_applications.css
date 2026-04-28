@@ -10,7 +10,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{background-color:#111018}
 body{font-family:'DM Sans',sans-serif;background:#111018;color:var(--text);min-height:100vh;overflow-x:hidden}
-.bg-scene{position:fixed;inset:0;z-index:0;overflow:hidden}
+.bg-scene { display: none !important; position:fixed;inset:0;z-index:0;overflow:hidden}
 .bg-img{position:absolute;inset:-10%;width:120%;height:120%;background:radial-gradient(ellipse 80% 60% at 15% 10%,rgba(60,34,89,0.5) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 85% 90%,rgba(30,15,50,0.7) 0%,transparent 60%),radial-gradient(100% 100% at 50% 50%,#0d0b1a 0%,#04030a 100%);animation:bg-drift 22s ease-in-out infinite}
 .orb{position:absolute;border-radius:50%;filter:blur(80px);animation:orb-float linear infinite;pointer-events:none}
 .orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(120,60,160,0.28),transparent 70%);top:-100px;left:-100px;animation-duration:18s}

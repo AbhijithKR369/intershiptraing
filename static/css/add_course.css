@@ -78,7 +78,7 @@ body {
 
 /* ── Background ────────────────────────────────────────── */
 
-.bg-scene {
+.bg-scene { display: none !important; 
     position: fixed;
     inset: 0;
     z-index: 0;
@@ -247,7 +247,7 @@ body {
 }
 
 .form-header h1 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Syne', sans-serif;
     font-size: 2.1rem;
     font-weight: 300;
     color: var(--text);
@@ -335,7 +335,7 @@ body {
 .publish-btn {
     position: relative;
     width: 100%;
-    background: linear-gradient(135deg, #7c3aed 0%, #a07840 50%, #7c3aed 100%);
+    background: var(--purple);
     background-size: 200% auto;
     color: #1a1208;
     border: none;

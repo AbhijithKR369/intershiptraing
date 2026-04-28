@@ -59,7 +59,7 @@ body {
     overflow-x: hidden;
 }
 
-.bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+.bg-scene { display: none !important;  position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .bg-img {
     position: absolute; inset: -10%; width: 120%; height: 120%;
     background:
@@ -125,7 +125,7 @@ body {
 .eyebrow-line { display: inline-block; height: 1px; background: linear-gradient(90deg, transparent, var(--purple)); animation: divider-reveal 0.6s ease both; animation-delay: 0.55s; }
 .eyebrow-line.r { background: linear-gradient(90deg, var(--purple), transparent); }
 
-.card-header h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.1rem; font-weight: 300; color: var(--text); letter-spacing: -0.01em; line-height: 1.1; animation: stagger-in 0.6s ease both; animation-delay: 0.5s; }
+.card-header h1 { font-family: 'Syne', sans-serif; font-size: 2.1rem; font-weight: 300; color: var(--text); letter-spacing: -0.01em; line-height: 1.1; animation: stagger-in 0.6s ease both; animation-delay: 0.5s; }
 .card-header h1 em { font-style: normal; color: var(--purple); }
 .card-header p { color: var(--muted); font-size: 0.82rem; margin-top: 0.5rem; font-weight: 300; animation: stagger-in 0.6s ease both; animation-delay: 0.6s; }
 .card-header p strong { color: var(--purple); font-weight: 500; }
@@ -174,7 +174,7 @@ body {
 /* Submit */
 .submit-action-btn {
     position: relative; width: 100%;
-    background: linear-gradient(135deg, #7c3aed 0%, #a07840 50%, #7c3aed 100%);
+    background: var(--purple);
     background-size: 200% auto; color: #1a1208; border: none; border-radius: 12px;
     padding: 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
     font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;

@@ -200,10 +200,21 @@ def add_course(request):
         return HttpResponse("Only companies allowed")
 
     if request.method == 'POST':
+        fee = request.POST.get('fee')
+        fee = float(fee) if fee else None
+
+        start_date = request.POST.get('start_date') or None
+        end_date = request.POST.get('end_date') or None
+        application_deadline = request.POST.get('application_deadline') or None
+
         Course.objects.create(
             company=request.user,   # ✅ company owns course
             title=request.POST['title'],
-            description=request.POST['description']
+            description=request.POST['description'],
+            fee=fee,
+            start_date=start_date,
+            end_date=end_date,
+            application_deadline=application_deadline
         )
         return redirect('company_dashboard')
 
@@ -282,16 +293,13 @@ def view_courses(request):
 
     courses = Course.objects.all()
 
-    enrolled_ids = []
-
     if request.user.is_authenticated:
-        enrolled_ids = Enrollment.objects.filter(
-            student=request.user
-        ).values_list('course_id', flat=True)
+        enrollment_map = {e.course_id: e.status for e in Enrollment.objects.filter(student=request.user)}
+        for c in courses:
+            c.user_enrollment_status = enrollment_map.get(c.id, None)
 
     return render(request, 'view_courses.html', {
-        'courses': courses,
-        'enrolled_ids': enrolled_ids
+        'courses': courses
     })
 
 

@@ -20,6 +20,28 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     max_students = models.IntegerField(default=30)
+    
+    fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    application_deadline = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def progress_percentage(self):
+        if not self.start_date or not self.end_date:
+            return 0
+        import datetime
+        today = datetime.date.today()
+        if today < self.start_date:
+            return 0
+        if today > self.end_date:
+            return 100
+        total_days = (self.end_date - self.start_date).days
+        passed_days = (today - self.start_date).days
+        if total_days <= 0:
+            return 100
+        return int((passed_days / total_days) * 100)
 
     def __str__(self):
         return self.title

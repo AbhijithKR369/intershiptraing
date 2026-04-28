@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Available Internships | Career Portal</title>
-    <link rel="stylesheet" href="{% static 'css/view_internships.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/view_internships.css' %}?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-job-portal">
 
@@ -64,17 +64,73 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="job-meta" style="margin-top: 15px; font-size: 0.9em; color: #a19d94;">
+                    <div style="margin-bottom: 5px;">
+                        <strong>Added:</strong> {{ i.created_at|date:"M d, Y" }}
+                    </div>
+                    <div style="margin-bottom: 5px;">
+                        <strong>Fee:</strong> {% if i.fee %}₹{{ i.fee }}{% else %}Free{% endif %}
+                    </div>
+                    {% if i.start_date and i.end_date %}
+                    <div style="margin-bottom: 5px;">
+                        <strong>Timeline:</strong> {{ i.start_date|date:"M d" }} - {{ i.end_date|date:"M d, Y" }}
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85em; margin-bottom: 3px;">
+                            <span>Internship Progress</span>
+                            <span>{{ i.progress_percentage }}%</span>
+                        </div>
+                        <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                            <div style="height: 100%; width: {{ i.progress_percentage }}%; background: #c9a96e; border-radius: 3px;"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if i.application_deadline %}
+                    <div style="margin-top: 10px; font-weight: bold; color: #c9a96e;">
+                        Deadline: {{ i.application_deadline|date:"M d, Y" }}
+                    </div>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="card-footer-v2">
-                {% if i.id in applied_ids %}
+                {% now "Y-m-d" as today_str %}
+                {% if i.user_application_status == 'approved' %}
                     <div class="applied-success-bar">
                         <div class="check-circle">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
                         <div class="applied-text">
+                            <strong>Enrolled</strong>
+                            <span>Application Approved</span>
+                        </div>
+                    </div>
+                {% elif i.user_application_status == 'pending' %}
+                    <div class="applied-success-bar" style="background: rgba(243, 156, 18, 0.1); border-color: rgba(243, 156, 18, 0.2);">
+                        <div class="check-circle" style="background: #f39c12; color: #fff;">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="applied-text" style="color: #f39c12;">
                             <strong>Application Submitted</strong>
-                            <span>Under Review</span>
+                            <span>Waiting for Approval</span>
+                        </div>
+                    </div>
+                {% elif i.user_application_status == 'rejected' %}
+                    <div class="applied-success-bar" style="background: rgba(255, 107, 107, 0.1); border-color: rgba(255, 107, 107, 0.2);">
+                        <div class="check-circle" style="background: #ff6b6b; color: #fff;">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </div>
+                        <div class="applied-text" style="color: #ff6b6b;">
+                            <strong>Application Rejected</strong>
+                            <span>Did Not Proceed</span>
+                        </div>
+                    </div>
+                {% elif i.application_deadline and i.application_deadline|date:"Y-m-d" < today_str %}
+                    <div class="applied-success-bar" style="background: rgba(255, 107, 107, 0.1); border-color: rgba(255, 107, 107, 0.2);">
+                        <div class="applied-text" style="color: #ff6b6b; margin-left: 0;">
+                            <strong>Can't apply after {{ i.application_deadline|date:"M d, Y" }}</strong>
+                            <span>Deadline Passed</span>
                         </div>
                     </div>
                 {% else %}

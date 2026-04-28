@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Catalog | Learning Portal</title>
-    <link rel="stylesheet" href="{% static 'css/view_courses.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/view_courses.css' %}?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="bg-catalog">
 
@@ -67,6 +67,32 @@
                     {% endif %}
                 </div>
 
+                <div class="course-meta" style="margin-top: 15px; font-size: 0.9em; color: #a19d94;">
+                    <div style="margin-bottom: 5px;">
+                        <strong>Added:</strong> {{ c.created_at|date:"M d, Y" }}
+                    </div>
+                    <div style="margin-bottom: 5px;">
+                        <strong>Fee:</strong> {% if c.fee %}₹{{ c.fee }}{% else %}Free{% endif %}
+                    </div>
+                    {% if c.start_date and c.end_date %}
+                    <div style="margin-bottom: 5px;">
+                        <strong>Timeline:</strong> {{ c.start_date|date:"M d" }} - {{ c.end_date|date:"M d, Y" }}
+                    </div>
+                    <div class="engine-labels">
+                        <label>Course Progress</label>
+                        <span class="ratio">{{ c.progress_percentage }}%</span>
+                    </div>
+                    <div class="engine-track">
+                        <div class="engine-fill" style="--prog-width: {{ c.progress_percentage }}%"></div>
+                    </div>
+                    {% endif %}
+                    {% if c.application_deadline %}
+                    <div style="margin-top: 10px; font-weight: bold; color: #c9a96e;">
+                        Deadline: {{ c.application_deadline|date:"M d, Y" }}
+                    </div>
+                    {% endif %}
+                </div>
+
                 <div class="capacity-engine">
                     <div class="engine-labels">
                         <label>Class Capacity</label>
@@ -79,15 +105,28 @@
             </div>
 
             <div class="card-footer-v3">
-                {% if c.id in enrolled_ids %}
+                {% now "Y-m-d" as today_str %}
+                {% if c.user_enrollment_status == 'approved' %}
                     <div class="status-indicator enrolled">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         Enrolled
+                    </div>
+                {% elif c.user_enrollment_status == 'pending' %}
+                    <div class="status-indicator enrolled" style="color: #f39c12; background: rgba(243, 156, 18, 0.1);">
+                        Waiting for Approval
+                    </div>
+                {% elif c.user_enrollment_status == 'rejected' %}
+                    <div class="status-indicator full" style="color: #ff6b6b;">
+                        Rejected
                     </div>
                 {% elif c.enrollment_set.count >= c.max_students %}
                     <div class="status-indicator full">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                         Full
+                    </div>
+                {% elif c.application_deadline and c.application_deadline|date:"Y-m-d" < today_str %}
+                    <div class="status-indicator full" style="color: #ff6b6b;">
+                        Can't apply after {{ c.application_deadline|date:"M d" }}
                     </div>
                 {% else %}
                     <a href="{% url 'enroll_course' c.id %}" class="enroll-action-btn">

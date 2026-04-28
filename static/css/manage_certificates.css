@@ -55,7 +55,7 @@ body {
     overflow-x: hidden;
 }
 
-.bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+.bg-scene { display: none !important;  position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .bg-img {
     position: absolute; inset: -10%; width: 120%; height: 120%;
     background:
@@ -85,7 +85,7 @@ body {
 .eyebrow-line { display: inline-block; height: 1px; background: linear-gradient(90deg, transparent, var(--purple)); animation: divider-reveal 0.6s ease both; animation-delay: 0.3s; }
 .eyebrow-line.r { background: linear-gradient(90deg, var(--purple), transparent); }
 
-.header-content h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 300; color: var(--text); line-height: 1.1; }
+.header-content h1 { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 300; color: var(--text); line-height: 1.1; }
 .header-content h1 em { font-style: normal; color: var(--purple); }
 .header-content p { color: var(--muted); font-size: 0.83rem; margin-top: 4px; font-weight: 300; }
 
@@ -148,7 +148,7 @@ body {
     padding: 1.4rem 1.75rem; border-bottom: 1px solid var(--border);
     gap: 1rem; flex-wrap: wrap;
 }
-.title-stack h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 300; color: var(--text); }
+.title-stack h3 { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 300; color: var(--text); }
 .title-stack h3 em { font-style: normal; color: var(--purple); }
 .title-stack p { color: var(--muted); font-size: 0.78rem; margin-top: 2px; font-weight: 300; }
 

@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Internship | Hiring Portal</title>
-    <link rel="stylesheet" href="{% static 'css/add_internship.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/add_internship.css' %}?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body class="entry-anim">
 
@@ -68,6 +68,27 @@
                 <div class="input-group">
                     <label class="field-label">Internship Description</label>
                     <textarea name="description" rows="6" placeholder="Describe the roles, responsibilities, and perks..." required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label">Internship Fee (Leave empty if free)</label>
+                    <input type="number" step="0.01" name="fee" placeholder="e.g. 199.99">
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="field-label">Start Date</label>
+                        <input type="date" name="start_date">
+                    </div>
+                    <div class="input-group">
+                        <label class="field-label">End Date</label>
+                        <input type="date" name="end_date">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label">Application Deadline</label>
+                    <input type="date" name="application_deadline">
                 </div>
 
                 <button type="submit" class="submit-btn">
