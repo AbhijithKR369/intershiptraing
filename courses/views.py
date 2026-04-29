@@ -13,6 +13,7 @@ from internships.models import Application
 from certificates.models import Certificate
 from certificates.utils import generate_certificate
 from django.db.models import Q
+from users.models import Notification
 
 
 def quiz_batches(request, course_id):
@@ -250,10 +251,12 @@ def add_material(request, course_id):
         title = request.POST.get('title')
         file = request.FILES.get('file')
         link = request.POST.get('link')
+        class_link = request.POST.get('class_link')
+        class_time = request.POST.get('class_time')
 
         # ❌ Must provide at least one
-        if not file and not link:
-            messages.error(request, "Provide file or link")
+        if not file and not link and not class_link:
+            messages.error(request, "Provide file, link, or class schedule")
             return redirect(request.path)
 
         # 📁 File validation
@@ -275,6 +278,8 @@ def add_material(request, course_id):
             title=title,
             file=file,
             link=link,
+            class_link=class_link,
+            class_time=class_time if class_time else None,
             uploaded_by=user
         )
 
@@ -331,6 +336,12 @@ def enroll_course(request, id):
                 status='pending'
             )
 
+            Notification.objects.create(
+                user=course.company,
+                message=f"New enrollment request from {request.user.username} for {course.title}",
+                link="/dashboard/"
+            )
+
             return HttpResponse("Request sent. Wait for approval")
 
         return render(request, 'upload_resume.html', {'course': course})
@@ -343,6 +354,12 @@ def enroll_course(request, id):
         student=request.user,
         course=course,
         status='pending'
+    )
+
+    Notification.objects.create(
+        user=course.company,
+        message=f"New enrollment request from {request.user.username} for {course.title}",
+        link="/dashboard/"
     )
 
     return HttpResponse("Enrollment request sent")
@@ -391,6 +408,13 @@ def apply_company(request, company_id):
             resume=resume
         )
 
+        from django.urls import reverse
+        Notification.objects.create(
+            user=company,
+            message=f"New trainer application from {request.user.username}",
+            link=reverse('view_trainer_requests')
+        )
+
         return redirect('trainer_apply_list')
 
     return HttpResponse("Invalid request")
@@ -417,6 +441,12 @@ def approve_trainer(request, id):
     app.status = 'approved'
     app.save()
 
+    Notification.objects.create(
+        user=app.trainer,
+        message=f"Your trainer application to {request.user.username} was approved",
+        link="/dashboard/"
+    )
+
     return redirect('view_trainer_requests')
 
 
@@ -441,6 +471,12 @@ def approve_enrollment(request, id):
 
     enroll.save()
 
+    Notification.objects.create(
+        user=enroll.student,
+        message=f"Your enrollment for {enroll.course.title} was approved",
+        link="/dashboard/"
+    )
+
     return redirect('company_dashboard')
 
 
@@ -455,6 +491,12 @@ def reject_enrollment(request, id):
     enroll.status = 'rejected'
     enroll.save()
 
+    Notification.objects.create(
+        user=enroll.student,
+        message=f"Your enrollment for {enroll.course.title} was rejected",
+        link="/dashboard/"
+    )
+
     return redirect('company_dashboard')
 
 
@@ -467,6 +509,12 @@ def reject_trainer(request, id):
 
     app.status = 'rejected'
     app.save()
+
+    Notification.objects.create(
+        user=app.trainer,
+        message=f"Your trainer application to {request.user.username} was rejected",
+        link="/dashboard/"
+    )
 
     return redirect('view_trainer_requests')
 
@@ -515,6 +563,12 @@ def assign_trainer(request, course_id):
         # ✅ Assign trainer
         course.trainer = trainer
         course.save()
+
+        Notification.objects.create(
+            user=trainer,
+            message=f"You have been assigned to course {course.title} by {request.user.username}",
+            link="/dashboard/"
+        )
 
         return redirect('company_dashboard')
 
@@ -810,6 +864,21 @@ def course_chat(request, course_id):
     user = request.user
     role = user.profile.role
 
+    # Access control
+    has_access = False
+    if role == 'company' and course.company == user:
+        has_access = True
+    elif role == 'trainer' and course.trainer == user:
+        has_access = True
+    elif role == 'student':
+        if Enrollment.objects.filter(student=user, course=course, status='approved').exists():
+            has_access = True
+
+    if not has_access:
+        return HttpResponse("You do not have access to this course's chat.", status=403)
+
+    return render(request, 'course_chat.html', {'course': course})
+
 @login_required
 def request_reattempt(request, batch_id):
     batch = get_object_or_404(QuizBatch, id=batch_id)
@@ -821,6 +890,20 @@ def request_reattempt(request, batch_id):
         return HttpResponse("Request already submitted")
         
     ReattemptRequest.objects.create(student=request.user, batch=batch)
+
+    from django.urls import reverse
+    Notification.objects.create(
+        user=batch.course.company,
+        message=f"New re-attempt request from {request.user.username} for {batch.course.title}",
+        link=reverse('view_reattempts')
+    )
+    if batch.course.trainer:
+        Notification.objects.create(
+            user=batch.course.trainer,
+            message=f"New re-attempt request from {request.user.username} for {batch.course.title}",
+            link=reverse('view_reattempts')
+        )
+
     return redirect('review_quiz', batch_id=batch.id)
 
 @login_required
@@ -860,23 +943,17 @@ def handle_reattempt(request, request_id, action):
         req.status = 'rejected'
         
     req.save()
+
+    status_msg = "approved" if req.status == 'approved' else "rejected"
+    Notification.objects.create(
+        user=req.student,
+        message=f"Your re-attempt request for {req.batch.course.title} was {status_msg}",
+        link="/dashboard/"
+    )
+
     return redirect('view_reattempts')
 
 
-    # Access control
-    has_access = False
-    if role == 'company' and course.company == user:
-        has_access = True
-    elif role == 'trainer' and course.trainer == user:
-        has_access = True
-    elif role == 'student':
-        if Enrollment.objects.filter(student=user, course=course, status='approved').exists():
-            has_access = True
-
-    if not has_access:
-        return HttpResponse("You do not have access to this course's chat.", status=403)
-
-    return render(request, 'course_chat.html', {'course': course})
 
 
 @login_required
@@ -948,6 +1025,29 @@ def send_course_message(request, course_id):
                 sender=user,
                 content=content.strip()
             )
+
+            from django.urls import reverse
+            chat_link = reverse('course_chat', kwargs={'course_id': course.id})
+            
+            users_to_notify = []
+            if course.company != user:
+                users_to_notify.append(course.company)
+            if course.trainer and course.trainer != user:
+                users_to_notify.append(course.trainer)
+            
+            enrolled_students = User.objects.filter(
+                enrollment__course=course,
+                enrollment__status='approved'
+            ).exclude(id=user.id)
+            users_to_notify.extend(enrolled_students)
+
+            for u in users_to_notify:
+                Notification.objects.create(
+                    user=u,
+                    message=f"New message in {course.title} from {user.username}",
+                    link=chat_link
+                )
+
             return JsonResponse({'status': 'ok'})
         return JsonResponse({'error': 'Message content cannot be empty'}, status=400)
     

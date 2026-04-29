@@ -34,4 +34,5 @@ urlpatterns = [
     path('internships/', include('internships.urls')),
     path('courses/', include('courses.urls')),
     path('certificates/', include('certificates.urls')),
+    path('notifications/read/<int:notification_id>/', views.read_notification, name='read_notification'),
 ]

@@ -132,26 +132,21 @@ def student_dashboard(request):
     # ✅ Only enrolled courses
     courses = [enroll.course for enroll in enrollments]
 
-    # ✅ Course certificates (auto generated)
-    course_certs = Certificate.objects.filter(
-        student=request.user,
-        course__isnull=False
-    ).select_related('course')
-
-    # ✅ Internship certificates (company uploaded)
-    internship_certs = Certificate.objects.filter(
-        student=request.user,
-        internship__isnull=False
+    # ✅ All certificates
+    all_certs = Certificate.objects.filter(
+        student=request.user
     ).select_related(
-        'internship__company__profile'
+        'course__company', 'internship__company__profile'
     )
+
+    notifications = request.user.notifications.all().order_by('-created_at')
 
     return render(request, 'student_dashboard.html', {
         'enrollments': enrollments,
         'courses': courses,
         'results': results,
-        'course_certs': course_certs,            # ✅ ADD
-        'internship_certs': internship_certs     # ✅ ADD
+        'all_certs': all_certs,
+        'notifications': notifications
     })
 
 
@@ -164,8 +159,11 @@ def company_dashboard(request):
         status='pending'
     ).select_related('student', 'student__profile', 'course')
 
+    notifications = request.user.notifications.all().order_by('-created_at')
+
     return render(request, 'company_dashboard.html', {
-        'enroll_requests': enroll_requests
+        'enroll_requests': enroll_requests,
+        'notifications': notifications
     })
 
 
@@ -179,9 +177,12 @@ def trainer_dashboard(request):
         batch__course__in=courses
     ).select_related('student', 'batch', 'batch__course')
 
+    notifications = request.user.notifications.all().order_by('-created_at')
+
     return render(request, 'trainer_dashboard.html', {
         'courses': courses,
-        'results': results
+        'results': results,
+        'notifications': notifications
     })
 
 
@@ -199,3 +200,16 @@ def dashboard(request):
         return redirect('company_dashboard')
     elif user.profile.role == 'trainer':
         return redirect('trainer_dashboard')
+
+
+@login_required
+def read_notification(request, notification_id):
+    from .models import Notification
+    from django.shortcuts import get_object_or_404
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    if notification.link:
+        return redirect(notification.link)
+    return redirect('dashboard')
+

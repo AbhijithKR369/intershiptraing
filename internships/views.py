@@ -3,6 +3,7 @@ from .models import Internship
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import Application
+from users.models import Notification
 
 
 @login_required
@@ -50,6 +51,13 @@ def apply_internship(request, id):
             student=request.user,
             internship=internship,
             resume=resume
+        )
+
+        from django.urls import reverse
+        Notification.objects.create(
+            user=internship.company,
+            message=f"New internship application from {request.user.username} for {internship.title}",
+            link=reverse('view_applications')
         )
 
         return redirect('student_dashboard')
@@ -101,6 +109,12 @@ def approve_application(request, id):
 
     app.save()
 
+    Notification.objects.create(
+        user=app.student,
+        message=f"Your application for {app.internship.title} was approved",
+        link="/dashboard/"
+    )
+
     return redirect('view_applications')
 
 
@@ -113,6 +127,12 @@ def reject_application(request, id):
 
     app.status = 'rejected'
     app.save()
+
+    Notification.objects.create(
+        user=app.student,
+        message=f"Your application for {app.internship.title} was rejected",
+        link="/dashboard/"
+    )
 
     return redirect('view_applications')
 

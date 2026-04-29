@@ -144,6 +144,36 @@
                 </div>
             </section>
 
+            <!-- Notifications Section -->
+            <section class="content-section" style="animation-delay: 0.2s">
+                <div class="section-header">
+                    <h3>Recent <em>Notifications</em></h3>
+                    <div class="sec-line"></div>
+                </div>
+
+                <div class="results-feed" style="max-height: 400px; overflow-y: auto;">
+                    {% for n in notifications %}
+                    <a href="{% url 'read_notification' n.id %}" class="result-item-v2" style="text-decoration: none; transition: 0.3s; {% if n.is_read %}opacity: 0.6;{% else %}border-left: 3px solid #c9a96e;{% endif %}">
+                        <div class="result-body">
+                            <div class="result-top">
+                                <strong style="{% if not n.is_read %}color: #fff; font-weight: 600;{% else %}color: #a0a0a0;{% endif %}">{{ n.message }}</strong>
+                            </div>
+                            <p class="result-meta-v2">
+                                <span class="c-title">{{ n.created_at|timesince }} ago</span>
+                            </p>
+                        </div>
+                        {% if not n.is_read %}
+                            <span style="display:inline-block; width:8px; height:8px; background:#c9a96e; border-radius:50%; align-self:center;"></span>
+                        {% endif %}
+                    </a>
+                    {% empty %}
+                    <div class="empty-feed">
+                        <p>No new notifications.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
         </div>
     </main>
 </div>

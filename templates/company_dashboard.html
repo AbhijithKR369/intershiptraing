@@ -188,6 +188,32 @@
             </div>
         </section>
 
+        <!-- Notifications Section -->
+        <section class="section">
+            <div class="section-header">
+                <h3>Recent Notifications</h3>
+                <div class="sec-divider"></div>
+            </div>
+
+            <div class="request-list" style="max-height: 400px; overflow-y: auto;">
+                {% for n in notifications %}
+                <a href="{% url 'read_notification' n.id %}" class="request-card" style="text-decoration: none; transition: 0.3s; {% if n.is_read %}opacity: 0.6;{% else %}border-left: 3px solid #c9a96e;{% endif %}">
+                    <div class="student-info" style="flex: 1;">
+                        <div class="info-text">
+                            <h5 style="{% if not n.is_read %}color: #fff; font-weight: 600;{% else %}color: #a0a0a0;{% endif %}">{{ n.message }}</h5>
+                            <span class="sub" style="font-size: 0.8rem;">{{ n.created_at|timesince }} ago</span>
+                        </div>
+                    </div>
+                    {% if not n.is_read %}
+                        <span style="display:inline-block; width:8px; height:8px; background:#c9a96e; border-radius:50%; align-self:center;"></span>
+                    {% endif %}
+                </a>
+                {% empty %}
+                <p class="empty-msg">No new notifications.</p>
+                {% endfor %}
+            </div>
+        </section>
+
     </main>
 </div>
 
