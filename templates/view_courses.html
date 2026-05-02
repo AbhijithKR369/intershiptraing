@@ -40,7 +40,14 @@
             <div class="card-top-accent"></div>
 
             <div class="card-header-v3">
-                <span class="company-tag">{{ c.company.profile.company_name }}</span>
+                <a href="{% url 'view_profile' c.company.username %}" style="text-decoration: none;">
+                    <span class="company-tag" style="display: flex; align-items: center; gap: 5px;">
+                        {% if c.company.profile.profile_picture %}
+                            <img src="{{ c.company.profile.profile_picture.url }}" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;">
+                        {% endif %}
+                        {{ c.company.profile.company_name|default:c.company.username }}
+                    </span>
+                </a>
                 <h3>{{ c.title }}</h3>
             </div>
 
@@ -49,21 +56,33 @@
 
                 <div class="instructor-preview">
                     {% if c.trainer %}
-                    <div class="ins-tag">
-                        <div class="ins-avatar">{{ c.trainer.username|slice:":1"|upper }}</div>
-                        <div class="ins-details">
-                            <small>Instructor</small>
-                            <strong>{{ c.trainer.username }}</strong>
+                    <a href="{% url 'view_profile' c.trainer.username %}" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="ins-tag">
+                            {% if c.trainer.profile.profile_picture %}
+                                <img src="{{ c.trainer.profile.profile_picture.url }}" class="ins-avatar" style="object-fit: cover; border: none;">
+                            {% else %}
+                                <div class="ins-avatar">{{ c.trainer.username|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="ins-details">
+                                <small>Instructor</small>
+                                <strong>{{ c.trainer.profile.full_name|default:c.trainer.username }}</strong>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                     {% else %}
-                    <div class="ins-tag platform">
-                        <div class="ins-avatar platform-av">{{ c.company.profile.company_name|slice:":1"|upper }}</div>
-                        <div class="ins-details">
-                            <small>Managed by</small>
-                            <strong>{{ c.company.profile.company_name }}</strong>
+                    <a href="{% url 'view_profile' c.company.username %}" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="ins-tag platform">
+                            {% if c.company.profile.profile_picture %}
+                                <img src="{{ c.company.profile.profile_picture.url }}" class="ins-avatar platform-av" style="object-fit: cover; border: none;">
+                            {% else %}
+                                <div class="ins-avatar platform-av">{{ c.company.profile.company_name|default:c.company.username|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="ins-details">
+                                <small>Managed by</small>
+                                <strong>{{ c.company.profile.company_name|default:c.company.username }}</strong>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                     {% endif %}
                 </div>
 

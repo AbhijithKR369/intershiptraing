@@ -59,10 +59,19 @@
                     Student Portal
                     <span class="eyebrow-line r"></span>
                 </div>
-                <h1>Hello, <em>{{ request.user.username }}</em></h1>
+                <h1>Hello, <em>{{ request.user.profile.full_name|default:request.user.username }}</em></h1>
                 <p>You have <strong>{{ request.user.application_set.count }}</strong> active applications this month.</p>
             </div>
-            <div class="user-avatar-top">{{ request.user.username|slice:":1"|upper }}</div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="{% url 'edit_profile' %}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#9ca3af'">Edit Profile</a>
+                <a href="{% url 'view_profile' request.user.username %}">
+                    {% if request.user.profile.profile_picture %}
+                        <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed;">
+                    {% else %}
+                        <div class="user-avatar-top">{{ request.user.username|slice:":2"|upper }}</div>
+                    {% endif %}
+                </a>
+            </div>
         </header>
 
         <!-- Stats -->
@@ -187,10 +196,24 @@
                                 <div class="cert-text">
                                     {% if cert.internship %}
                                         <strong>{{ cert.internship.title }}</strong>
-                                        <span>{{ cert.internship.company.profile.company_name|default:cert.internship.company.username }}</span>
+                                        <a href="{% url 'view_profile' cert.internship.company.username %}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                                            {% if cert.internship.company.profile.profile_picture %}
+                                                <img src="{{ cert.internship.company.profile.profile_picture.url }}" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;">
+                                            {% else %}
+                                                <div style="width: 16px; height: 16px; border-radius: 50%; background: #4c1d95; color: white; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold;">{{ cert.internship.company.username|slice:":1"|upper }}</div>
+                                            {% endif %}
+                                            <span style="font-size: 0.8rem; color: #9ca3af;">{{ cert.internship.company.profile.company_name|default:cert.internship.company.username }}</span>
+                                        </a>
                                     {% else %}
                                         <strong>{{ cert.course.title }}</strong>
-                                        <span>{{ cert.course.company.profile.company_name|default:cert.course.company.username }}</span>
+                                        <a href="{% url 'view_profile' cert.course.company.username %}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px; margin-top: 3px;">
+                                            {% if cert.course.company.profile.profile_picture %}
+                                                <img src="{{ cert.course.company.profile.profile_picture.url }}" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover;">
+                                            {% else %}
+                                                <div style="width: 16px; height: 16px; border-radius: 50%; background: #4c1d95; color: white; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold;">{{ cert.course.company.username|slice:":1"|upper }}</div>
+                                            {% endif %}
+                                            <span style="font-size: 0.8rem; color: #9ca3af;">{{ cert.course.company.profile.company_name|default:cert.course.company.username }}</span>
+                                        </a>
                                     {% endif %}
                                 </div>
                             </div>

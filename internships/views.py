@@ -8,6 +8,12 @@ from users.models import Notification
 
 @login_required
 def add_internship(request):
+    if request.user.profile.role != 'company':
+        return HttpResponse("Only companies allowed")
+
+    if not request.user.profile.is_verified:
+        return HttpResponse("Your account is pending verification. You cannot add internships.")
+
     if request.method == 'POST':
         fee = request.POST.get('fee')
         fee = float(fee) if fee else None

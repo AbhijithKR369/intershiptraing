@@ -200,6 +200,10 @@ def add_course(request):
     if request.user.profile.role != 'company':
         return HttpResponse("Only companies allowed")
 
+    # 🔒 Verification check
+    if not request.user.profile.is_verified:
+        return HttpResponse("Your account is pending verification. You cannot add courses.")
+
     if request.method == 'POST':
         fee = request.POST.get('fee')
         fee = float(fee) if fee else None
@@ -525,6 +529,10 @@ def assign_trainer(request, course_id):
     # 🔒 Only company allowed
     if request.user.profile.role != 'company':
         return HttpResponse("Only companies allowed")
+
+    # 🔒 Verification check
+    if not request.user.profile.is_verified:
+        return HttpResponse("Your account is pending verification. You cannot assign trainers.")
 
     # ✅ Get course belonging to this company
     course = get_object_or_404(Course, id=course_id, company=request.user)
@@ -989,6 +997,8 @@ def get_course_messages(request, course_id):
         data.append({
             'id': msg.id,
             'sender_name': sender_name,
+            'sender_username': msg.sender.username,
+            'sender_avatar_url': msg.sender.profile.profile_picture.url if msg.sender.profile.profile_picture else None,
             'sender_role': sender_role,
             'is_me': msg.sender == user,
             'content': msg.content,

@@ -1,0 +1,251 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | Learning Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0812;
+            --panel-bg: #131020;
+            --border-color: #2a2540;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #7c3aed;
+            --accent-hover: #6d28d9;
+            --input-bg: #1a1625;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .edit-container {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            margin: 0;
+            color: white;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #d1d5db;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input[type="file"] {
+            color: var(--text-muted);
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        .messages {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="edit-container">
+    <div class="header">
+        <h1>Edit Profile</h1>
+        <p>Update your personal and professional details</p>
+    </div>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Profile Picture</label>
+            <input type="file" name="profile_picture" accept="image/*">
+            {% if profile.profile_picture %}
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">Current: {{ profile.profile_picture.name }}</small>
+            {% endif %}
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label>First Name</label>
+                <input type="text" name="first_name" value="{{ request.user.first_name }}">
+            </div>
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" name="last_name" value="{{ request.user.last_name }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Full Display Name</label>
+            <input type="text" name="full_name" value="{{ profile.full_name|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label>About Me</label>
+            <textarea name="about" placeholder="Tell us about yourself...">{{ profile.about|default:'' }}</textarea>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="phone" value="{{ profile.phone|default:'' }}">
+            </div>
+        </div>
+
+        <!-- Role Specific Fields -->
+        {% if profile.role == 'student' %}
+        <div class="row">
+            <div class="form-group">
+                <label>College Name</label>
+                <input type="text" name="college_name" value="{{ profile.college_name|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" name="department" value="{{ profile.department|default:'' }}">
+            </div>
+        </div>
+        {% elif profile.role == 'company' %}
+        <div class="row">
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" name="company_name" value="{{ profile.company_name|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="location" value="{{ profile.location|default:'' }}">
+            </div>
+        </div>
+        {% elif profile.role == 'trainer' %}
+        <div class="row">
+            <div class="form-group">
+                <label>Qualification</label>
+                <input type="text" name="qualification" value="{{ profile.qualification|default:'' }}">
+            </div>
+            <div class="form-group">
+                <label>Place of Practice</label>
+                <input type="text" name="place" value="{{ profile.place|default:'' }}">
+            </div>
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn-submit">Save Changes</button>
+        <a href="{% url 'dashboard' %}" class="back-link">Back to Dashboard</a>
+    </form>
+</div>
+
+</body>
+</html>

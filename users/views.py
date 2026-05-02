@@ -66,6 +66,14 @@ def register(request):
         # Company
         profile.company_name = request.POST.get('company_name')
         profile.location = request.POST.get('location')
+        profile.registration_number = request.POST.get('registration_number')
+        profile.registration_proof = request.FILES.get('registration_proof')
+
+        # Role-based Verification
+        if profile.role == 'company':
+            profile.is_verified = False
+        else:
+            profile.is_verified = True
 
         # Trainer
         profile.qualification = request.POST.get('qualification')
@@ -213,3 +221,44 @@ def read_notification(request, notification_id):
         return redirect(notification.link)
     return redirect('dashboard')
 
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    profile = user.profile
+
+    if request.method == 'POST':
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.save()
+
+        profile.full_name = request.POST.get('full_name', profile.full_name)
+        profile.phone = request.POST.get('phone', profile.phone)
+        profile.about = request.POST.get('about', profile.about)
+
+        if 'profile_picture' in request.FILES:
+            profile.profile_picture = request.FILES['profile_picture']
+
+        # Role-specific fields
+        if profile.role == 'student':
+            profile.college_name = request.POST.get('college_name', profile.college_name)
+            profile.department = request.POST.get('department', profile.department)
+        elif profile.role == 'company':
+            profile.company_name = request.POST.get('company_name', profile.company_name)
+            profile.location = request.POST.get('location', profile.location)
+        elif profile.role == 'trainer':
+            profile.qualification = request.POST.get('qualification', profile.qualification)
+            profile.place = request.POST.get('place', profile.place)
+
+        profile.save()
+        messages.success(request, "Profile updated successfully")
+        return redirect('view_profile', username=user.username)
+
+    return render(request, 'edit_profile.html', {'profile': profile})
+
+
+@login_required
+def view_profile(request, username):
+    from django.shortcuts import get_object_or_404
+    target_user = get_object_or_404(User, username=username)
+    return render(request, 'view_profile.html', {'target_user': target_user})

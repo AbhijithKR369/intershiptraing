@@ -33,7 +33,7 @@
                 <p>Create your account to get started</p>
             </div>
 
-            <form method="POST" onsubmit="return validateForm()" class="register-form">
+            <form method="POST" enctype="multipart/form-data" onsubmit="return validateForm()" class="register-form">
                 {% csrf_token %}
 
                 <!-- Account Security -->
@@ -134,6 +134,16 @@
                         <div class="field">
                             <label>Headquarters Location</label>
                             <input type="text" name="location" placeholder="San Francisco, CA">
+                        </div>
+                    </div>
+                    <div class="fields-row">
+                        <div class="field">
+                            <label>Registration Number (CIN/GST/etc)</label>
+                            <input type="text" name="registration_number" id="reg_num" placeholder="ABC123XYZ">
+                        </div>
+                        <div class="field">
+                            <label>Business Registration Document</label>
+                            <input type="file" name="registration_proof" id="reg_proof" accept=".pdf,.jpg,.jpeg,.png">
                         </div>
                     </div>
                 </div>
@@ -248,6 +258,17 @@ function showFields() {
         let activeDiv = document.getElementById(role + "_fields");
         activeDiv.style.display = "block";
         setTimeout(() => { activeDiv.classList.add("slide-in-active"); }, 10);
+    }
+    
+    // Toggle required attributes for company validation
+    let regNum = document.getElementById("reg_num");
+    let regProof = document.getElementById("reg_proof");
+    if (role === "company") {
+        regNum.required = true;
+        regProof.required = true;
+    } else {
+        regNum.required = false;
+        regProof.required = false;
     }
 }
 

@@ -71,8 +71,15 @@
                 <h1>Welcome Back, <em>{{ request.user.username }}</em></h1>
                 <p>Manage your curriculum and track student performance.</p>
             </div>
-            <div class="user-profile">
-                <div class="profile-initial">{{ request.user.username|slice:":1"|upper }}</div>
+            <div class="user-profile" style="display: flex; align-items: center; gap: 15px;">
+                <a href="{% url 'edit_profile' %}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#9ca3af'">Edit Profile</a>
+                <a href="{% url 'view_profile' request.user.username %}">
+                    {% if request.user.profile.profile_picture %}
+                        <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a96e;">
+                    {% else %}
+                        <div class="profile-initial">{{ request.user.username|slice:":2"|upper }}</div>
+                    {% endif %}
+                </a>
             </div>
         </header>
 
@@ -122,10 +129,14 @@
                 <div class="results-feed">
                     {% for r in results %}
                     <div class="result-item-v2">
-                        <div class="student-avatar-box">{{ r.student.username|slice:":1"|upper }}</div>
+                        {% if r.student.profile.profile_picture %}
+                            <img src="{{ r.student.profile.profile_picture.url }}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; margin-right: 15px;">
+                        {% else %}
+                            <div class="student-avatar-box">{{ r.student.username|slice:":2"|upper }}</div>
+                        {% endif %}
                         <div class="result-body">
                             <div class="result-top">
-                                <strong>{{ r.student.username }}</strong>
+                                <strong><a href="{% url 'view_profile' r.student.username %}" style="text-decoration: none; color: inherit;">{{ r.student.profile.full_name|default:r.student.username }}</a></strong>
                                 <div class="score-pill-v2">{{ r.score }}<span class="sp-sep">/</span>{{ r.total }}</div>
                             </div>
                             <p class="result-meta-v2">

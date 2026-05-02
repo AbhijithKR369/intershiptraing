@@ -48,7 +48,11 @@
                         <span class="type-tag">Full-time</span>
                     </div>
                 </div>
-                <div class="company-logo-square">{{ i.company.profile.company_name|slice:":1"|upper }}</div>
+                {% if i.company.profile.profile_picture %}
+                    <img src="{{ i.company.profile.profile_picture.url }}" class="company-logo-square" style="object-fit: cover; border: none; padding: 0;">
+                {% else %}
+                    <div class="company-logo-square">{{ i.company.profile.company_name|default:i.company.username|slice:":2"|upper }}</div>
+                {% endif %}
             </div>
 
             <div class="card-body-v2">
@@ -56,13 +60,19 @@
 
                 <div class="hiring-box">
                     <div class="hb-label">Hiring Organization</div>
-                    <div class="hiring-meta">
-                        <div class="org-avatar">{{ i.company.profile.company_name|slice:":1"|upper }}</div>
-                        <div class="org-text">
-                            <strong>{{ i.company.profile.company_name }}</strong>
-                            <span>{{ i.company.profile.email }}</span>
+                    <a href="{% url 'view_profile' i.company.username %}" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="hiring-meta">
+                            {% if i.company.profile.profile_picture %}
+                                <img src="{{ i.company.profile.profile_picture.url }}" class="org-avatar" style="object-fit: cover; border: none;">
+                            {% else %}
+                                <div class="org-avatar">{{ i.company.profile.company_name|default:i.company.username|slice:":2"|upper }}</div>
+                            {% endif %}
+                            <div class="org-text">
+                                <strong>{{ i.company.profile.company_name|default:i.company.username }}</strong>
+                                <span>{{ i.company.profile.email }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="job-meta" style="margin-top: 15px; font-size: 0.9em; color: #a19d94;">

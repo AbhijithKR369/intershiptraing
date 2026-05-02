@@ -31,8 +31,17 @@ urlpatterns = [
     path('company/', views.company_dashboard, name='company_dashboard'),
     path('trainer/', views.trainer_dashboard, name='trainer_dashboard'),
 
+    path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('profile/<str:username>/', views.view_profile, name='view_profile'),
+
     path('internships/', include('internships.urls')),
     path('courses/', include('courses.urls')),
     path('certificates/', include('certificates.urls')),
     path('notifications/read/<int:notification_id>/', views.read_notification, name='read_notification'),
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -25,6 +25,9 @@ class Profile(models.Model):
         blank=True,
         null=True
     )
+    
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    about = models.TextField(blank=True, null=True)
 
     # 👨‍🎓 Student fields
     full_name = models.CharField(max_length=100, blank=True, null=True)
@@ -34,6 +37,9 @@ class Profile(models.Model):
     # 🏢 Company fields
     company_name = models.CharField(max_length=200, blank=True, null=True)
     location = models.CharField(max_length=200, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+    registration_number = models.CharField(max_length=100, blank=True, null=True)
+    registration_proof = models.FileField(upload_to='company_docs/', blank=True, null=True)
 
     # 👨‍🏫 Trainer fields
     qualification = models.CharField(max_length=200, blank=True, null=True)
