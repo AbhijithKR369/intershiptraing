@@ -38,6 +38,9 @@ urlpatterns = [
     path('courses/', include('courses.urls')),
     path('certificates/', include('certificates.urls')),
     path('notifications/read/<int:notification_id>/', views.read_notification, name='read_notification'),
+    
+    path('payment/checkout/<str:item_type>/<int:item_id>/', views.payment_checkout, name='payment_checkout'),
+    path('payment/success/', views.payment_success, name='payment_success'),
 ]
 
 from django.conf import settings

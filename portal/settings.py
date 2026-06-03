@@ -140,3 +140,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+# Razorpay Test Keys
+RAZORPAY_KEY_ID = 'rzp_test_dummy_key_id'
+RAZORPAY_KEY_SECRET = 'dummy_secret_key'

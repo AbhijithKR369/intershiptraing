@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from .models import Internship
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -41,14 +42,24 @@ def add_internship(request):
 def apply_internship(request, id):
 
     if request.user.profile.role != 'student':
-        return HttpResponse("Only students can apply")
+        return render(request, 'message.html', {
+            'title': 'Access Denied',
+            'heading': 'Access Denied',
+            'message': 'Only students are allowed to apply for internships.',
+            'back_url': reverse('student_dashboard')
+        })
 
     internship = Internship.objects.get(id=id)
 
     if Application.objects.filter(
         student=request.user, internship=internship
     ).exists():
-        return HttpResponse("Already applied")
+        return render(request, 'message.html', {
+            'title': 'Already Applied',
+            'heading': 'Already Applied',
+            'message': 'You have already applied for this internship.',
+            'back_url': reverse('student_dashboard')
+        })
 
     if request.method == 'POST':
         resume = request.FILES.get('resume')
@@ -68,7 +79,12 @@ def apply_internship(request, id):
 
         return redirect('student_dashboard')
 
-    return HttpResponse("Invalid request")
+    return render(request, 'message.html', {
+        'title': 'Invalid Request',
+        'heading': 'Invalid Request',
+        'message': 'The request method or parameters are invalid.',
+        'back_url': reverse('student_dashboard')
+    })
 
 # student view internships
 
@@ -100,10 +116,19 @@ def approve_application(request, id):
     app = Application.objects.get(id=id)
 
     if app.internship.company != request.user:
-        return HttpResponse("Unauthorized")
+        return render(request, 'message.html', {
+            'title': 'Unauthorized',
+            'heading': 'Unauthorized',
+            'message': 'You are not authorized to approve this application.',
+            'back_url': '/'
+        })
 
     # ✅ Approve
     app.status = 'approved'
+    
+    # ✅ Auto-pay if free
+    if not app.internship.fee or app.internship.fee <= 0:
+        app.is_paid = True
 
     # ✅ Assign roll number (per internship)
     count = Application.objects.filter(
@@ -115,10 +140,11 @@ def approve_application(request, id):
 
     app.save()
 
+    from django.urls import reverse
     Notification.objects.create(
         user=app.student,
         message=f"Your application for {app.internship.title} was approved",
-        link="/dashboard/"
+        link=reverse('student_dashboard')
     )
 
     return redirect('view_applications')
@@ -129,15 +155,21 @@ def reject_application(request, id):
     app = Application.objects.get(id=id)
 
     if app.internship.company != request.user:
-        return HttpResponse("Unauthorized")
+        return render(request, 'message.html', {
+            'title': 'Unauthorized',
+            'heading': 'Unauthorized',
+            'message': 'You are not authorized to reject this application.',
+            'back_url': '/'
+        })
 
     app.status = 'rejected'
     app.save()
 
+    from django.urls import reverse
     Notification.objects.create(
         user=app.student,
         message=f"Your application for {app.internship.title} was rejected",
-        link="/dashboard/"
+        link=reverse('student_dashboard')
     )
 
     return redirect('view_applications')
@@ -149,12 +181,22 @@ def complete_internship(request, id):
     app = Application.objects.get(id=id, student=request.user)
 
     if app.status != 'approved':
-        return HttpResponse("Not allowed")
+        return render(request, 'message.html', {
+            'title': 'Access Denied',
+            'heading': 'Access Denied',
+            'message': 'You cannot mark this internship as completed.',
+            'back_url': reverse('student_dashboard')
+        })
 
     app.completed = True
     app.save()
 
-    return HttpResponse("Internship completed")
+    return render(request, 'message.html', {
+        'title': 'Internship Completed',
+        'heading': 'Internship Completed',
+        'message': 'You have successfully completed this internship.',
+        'back_url': reverse('student_dashboard')
+    })
 
 
 @login_required
@@ -163,6 +205,11 @@ def download_certificate(request, id):
     app = Application.objects.get(id=id, student=request.user)
 
     if not app.certificate:
-        return HttpResponse("No certificate uploaded")
+        return render(request, 'message.html', {
+            'title': 'No Certificate',
+            'heading': 'Certificate Unavailable',
+            'message': 'No certificate has been uploaded for this internship yet.',
+            'back_url': reverse('student_dashboard')
+        })
 
     return redirect(app.certificate.url)

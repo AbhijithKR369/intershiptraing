@@ -81,4 +81,9 @@ urlpatterns = [
     path('chat/<int:course_id>/', views.course_chat, name='course_chat'),
     path('chat/<int:course_id>/messages/', views.get_course_messages, name='get_course_messages'),
     path('chat/<int:course_id>/send/', views.send_course_message, name='send_course_message'),
+    
+    path('assignments/create/<int:course_id>/', views.create_assignment, name='create_assignment'),
+    path('assignments/<int:course_id>/', views.view_assignments, name='view_assignments'),
+    path('assignments/submit/<int:assignment_id>/', views.submit_assignment, name='submit_assignment'),
+    path('assignments/grade/<int:assignment_id>/', views.grade_assignment, name='grade_assignment'),
 ]

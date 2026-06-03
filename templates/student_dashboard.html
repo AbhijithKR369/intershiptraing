@@ -118,12 +118,17 @@
                     </div>
                     <div class="list-container">
                         {% for app in request.user.application_set.all %}
-                        <div class="list-item-v2">
+                        <div class="list-item-v2" style="justify-content: space-between; align-items: center;">
                             <div class="item-main">
                                 <span class="item-title">{{ app.internship.title }}</span>
                                 <span class="item-sub">{{ app.internship.company.profile.company_name }}</span>
                             </div>
-                            <span class="status-pill status-{{ app.status }}">{{ app.status|title }}</span>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span class="status-pill status-{{ app.status }}">{{ app.status|title }}</span>
+                                {% if app.status == 'approved' and not app.is_paid %}
+                                    <a href="{% url 'payment_checkout' 'internship' app.id %}" style="background: var(--gold-main); color: #000; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-decoration: none;">Pay ₹{{ app.internship.fee }}</a>
+                                {% endif %}
+                            </div>
                         </div>
                         {% empty %}
                         <div class="empty-mini">

@@ -262,3 +262,74 @@ def view_profile(request, username):
     from django.shortcuts import get_object_or_404
     target_user = get_object_or_404(User, username=username)
     return render(request, 'view_profile.html', {'target_user': target_user})
+
+import razorpay
+from django.conf import settings
+from internships.models import Application
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+
+@login_required
+def payment_checkout(request, item_type, item_id):
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    
+    amount = 0
+    item = None
+
+    if item_type == 'course':
+        from courses.models import Enrollment
+        item = get_object_or_404(Enrollment, id=item_id, student=request.user)
+        if item.course.fee:
+            amount = int(item.course.fee * 100) # Razorpay expects paise
+    elif item_type == 'internship':
+        item = get_object_or_404(Application, id=item_id, student=request.user)
+        if item.internship.fee:
+            amount = int(item.internship.fee * 100)
+
+    if amount <= 0 or item.is_paid:
+        messages.success(request, "No payment required or already paid.")
+        return redirect('dashboard')
+
+    # Create Razorpay Order
+    data = { "amount": amount, "currency": "INR", "receipt": f"order_{item_type}_{item_id}" }
+    
+    if settings.RAZORPAY_KEY_ID == 'rzp_test_dummy_key_id':
+        payment = {'id': 'order_dummy_12345', 'amount': amount}
+    else:
+        try:
+            payment = client.order.create(data=data)
+        except Exception as e:
+            messages.error(request, f"Payment configuration error: {str(e)}")
+            return redirect('student_dashboard')
+
+    context = {
+        'payment': payment,
+        'item': item,
+        'item_type': item_type,
+        'amount': amount / 100, # Display in rupees
+        'razorpay_key_id': settings.RAZORPAY_KEY_ID
+    }
+    return render(request, 'payment_checkout.html', context)
+
+@csrf_exempt
+def payment_success(request):
+    if request.method == "POST":
+        item_type = request.POST.get('item_type')
+        item_id = request.POST.get('item_id')
+        
+        if item_type == 'course':
+            from courses.models import Enrollment
+            item = Enrollment.objects.get(id=item_id)
+            item.is_paid = True
+            item.save()
+            messages.success(request, "Payment successful! You can now access the course.")
+            return redirect('student_dashboard')
+            
+        elif item_type == 'internship':
+            item = Application.objects.get(id=item_id)
+            item.is_paid = True
+            item.save()
+            messages.success(request, "Payment successful! You can now access the internship.")
+            return redirect('student_dashboard')
+
+    return redirect('dashboard')

@@ -140,12 +140,13 @@
                         </div>
                     </div>
 
-                    <div class="course-actions">
+                    <div class="course-actions" style="flex-wrap: wrap;">
                         {% if request.user.profile.is_verified %}
                             <a href="{% url 'assign_trainer' course.id %}" class="a-btn">Assign</a>
                         {% endif %}
                         <a href="{% url 'add_material' course.id %}" class="a-btn">Material</a>
                         <a href="{% url 'create_quiz_batch' course.id %}" class="a-btn">Quiz</a>
+                        <a href="{% url 'view_assignments' course.id %}" class="a-btn">Assignments</a>
                         <a href="{% url 'view_results' course.id %}" class="a-btn">Results</a>
                         <a href="{% url 'course_chat' course.id %}" class="a-btn">Chat</a>
                     </div>

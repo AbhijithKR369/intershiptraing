@@ -82,6 +82,7 @@ class Enrollment(models.Model):
         ],
         default='pending'
     )
+    is_paid = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.student.username} - {self.course.title} ({self.status})"
@@ -194,3 +195,32 @@ class CourseMessage(models.Model):
 
     def __str__(self):
         return f"{self.sender.username} in {self.course.title}: {self.content[:20]}"
+
+
+class Assignment(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assignments')
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    file = models.FileField(upload_to='assignment_files/', null=True, blank=True)
+    deadline = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.course.title} - {self.title}"
+
+
+class AssignmentSubmission(models.Model):
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='submissions')
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    submitted_file = models.FileField(upload_to='assignment_submissions/', null=True, blank=True)
+    github_link = models.URLField(blank=True, null=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    
+    grade = models.CharField(max_length=20, blank=True, null=True)
+    feedback = models.TextField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('assignment', 'student')
+
+    def __str__(self):
+        return f"{self.student.username} - {self.assignment.title}"

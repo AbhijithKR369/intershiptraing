@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Assignment | {{ course.title }}</title>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #1f2937; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .main-wrapper { width: 100%; padding: 40px 20px; display: flex; justify-content: center; }
+        .material-card-v2 {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+        .card-header { text-align: center; margin-bottom: 30px; }
+        .eyebrow { color: #6b7280; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+        .card-header h1 { font-family: 'Syne', sans-serif; font-size: 2.2rem; color: #111827; margin: 0; font-weight: 700; }
+        .card-header p { color: #4b5563; margin-top: 10px; font-size: 0.95rem; }
+        .card-header strong { color: #111827; }
+        .input-group { margin-bottom: 20px; }
+        .field-label { display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 8px; }
+        input[type="text"], input[type="datetime-local"], textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: #111827;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        input[type="text"]:focus, input[type="datetime-local"]:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+            color: #374151;
+            cursor: pointer;
+        }
+        .submit-action-btn {
+            width: 100%;
+            background: #3b82f6;
+            color: #ffffff;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .submit-action-btn:hover { background: #2563eb; }
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 100; }
+        .toast-alert { background: #d1fae5; border: 1px solid #10b981; color: #047857; padding: 12px 20px; border-radius: 8px; font-weight: 500; margin-bottom: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .footer-nav { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+        .back-link { color: #6b7280; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .back-link:hover { color: #374151; }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    {% if messages %}
+        <div class="toast-container">
+            {% for message in messages %}
+                <div class="toast-alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="material-card-v2">
+        <header class="card-header">
+            <div class="eyebrow">Course Assignment</div>
+            <h1>Create Assignment</h1>
+            <p>Publishing to: <strong>{{ course.title }}</strong></p>
+        </header>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <label class="field-label">Assignment Title</label>
+                <input type="text" name="title" placeholder="e.g. Build a Web Scraper" required>
+            </div>
+
+            <div class="input-group">
+                <label class="field-label">Description / Instructions</label>
+                <textarea name="description" placeholder="Provide detailed instructions..." style="min-height: 120px;" required></textarea>
+            </div>
+
+            <div class="input-group">
+                <label class="field-label">Attachment (Optional PDF/Zip)</label>
+                <input type="file" name="file">
+            </div>
+
+            <div class="input-group">
+                <label class="field-label">Deadline</label>
+                <input type="datetime-local" name="deadline">
+            </div>
+
+            <button type="submit" class="submit-action-btn">
+                Publish Assignment
+            </button>
+        </form>
+
+        <div class="footer-nav">
+            {% if request.user.profile.role == 'company' %}
+                <a href="{% url 'company_dashboard' %}" class="back-link">← Back to Dashboard</a>
+            {% elif request.user.profile.role == 'trainer' %}
+                <a href="{% url 'trainer_dashboard' %}" class="back-link">← Back to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</body>
+</html>

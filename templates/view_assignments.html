@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments | {{ course.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/student_dashboard.css' %}?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        .assignment-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            color: #1f2937;
+        }
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .assignment-header h3 {
+            margin: 0;
+            color: #111827;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+        .deadline {
+            font-size: 0.85rem;
+            color: #ef4444; 
+            background: #fee2e2;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .desc {
+            color: #4b5563;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .btn-submit {
+            background: #3b82f6;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover {
+            background: #2563eb;
+        }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        .status-badge {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: #d1fae5;
+            color: #059669;
+        }
+    </style>
+</head>
+<body style="background: #f9fafb; font-family: 'DM Sans', sans-serif;">
+
+<div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
+    <header style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+        <div>
+            <div style="color: #6b7280; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Course Assignments</div>
+            <h1 style="margin: 0; font-family: 'Syne', sans-serif; font-size: 2.2rem; color: #111827; font-weight: 700;">{{ course.title }}</h1>
+        </div>
+        {% if role == 'company' or role == 'trainer' %}
+            <a href="{% url 'create_assignment' course.id %}" class="btn-submit">+ New Assignment</a>
+        {% else %}
+            <a href="{% url 'student_courses' %}" class="btn-secondary">← Back to Course</a>
+        {% endif %}
+    </header>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background: #d1fae5; border: 1px solid #10b981; color: #047857; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-weight: 500;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div>
+        {% for assignment in assignments %}
+        <div class="assignment-card">
+            <div class="assignment-header">
+                <h3>{{ assignment.title }}</h3>
+                {% if assignment.deadline %}
+                    <span class="deadline">Due: {{ assignment.deadline }}</span>
+                {% endif %}
+            </div>
+            <p class="desc">{{ assignment.description|linebreaksbr }}</p>
+            
+            <div class="actions">
+                {% if assignment.file %}
+                    <a href="{{ assignment.file.url }}" class="btn-secondary" target="_blank">View Attachment</a>
+                {% endif %}
+
+                {% if role == 'student' %}
+                    {% if assignment.my_submission %}
+                        <span class="status-badge">Submitted</span>
+                        {% if assignment.my_submission.grade %}
+                            <span style="color: #059669; font-weight: 700; margin-left: 10px;">Grade: {{ assignment.my_submission.grade }}</span>
+                        {% endif %}
+                        <a href="{% url 'submit_assignment' assignment.id %}" class="btn-secondary" style="margin-left: auto;">View Submission</a>
+                    {% else %}
+                        <a href="{% url 'submit_assignment' assignment.id %}" class="btn-submit" style="margin-left: auto;">Submit Work</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'grade_assignment' assignment.id %}" class="btn-submit" style="margin-left: auto;">Grade Submissions</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 60px; color: #6b7280; background: #ffffff; border-radius: 12px; border: 1px dashed #d1d5db;">
+            <p style="font-size: 1.1rem;">No assignments posted yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

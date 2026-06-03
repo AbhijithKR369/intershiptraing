@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from .models import Course, QuizBatch
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
@@ -184,7 +185,8 @@ def student_courses(request):
 
         course_data.append({
             'course': course,
-            'materials': materials
+            'materials': materials,
+            'enroll': enroll
         })
 
     return render(request, 'student_courses.html', {
@@ -212,6 +214,9 @@ def add_course(request):
         end_date = request.POST.get('end_date') or None
         application_deadline = request.POST.get('application_deadline') or None
 
+        max_students = request.POST.get('max_students')
+        max_students = int(max_students) if max_students and max_students.strip() else 30
+
         Course.objects.create(
             company=request.user,   # ✅ company owns course
             title=request.POST['title'],
@@ -219,7 +224,8 @@ def add_course(request):
             fee=fee,
             start_date=start_date,
             end_date=end_date,
-            application_deadline=application_deadline
+            application_deadline=application_deadline,
+            max_students=max_students
         )
         return redirect('company_dashboard')
 
@@ -316,7 +322,12 @@ def view_courses(request):
 def enroll_course(request, id):
 
     if request.user.profile.role != 'student':
-        return HttpResponse("Only students allowed")
+        return render(request, 'message.html', {
+            'title': 'Access Denied',
+            'heading': 'Access Denied',
+            'message': 'Only students are allowed to enroll in courses.',
+            'back_url': reverse('view_courses')
+        })
 
     course = Course.objects.get(id=id)
 
@@ -343,16 +354,26 @@ def enroll_course(request, id):
             Notification.objects.create(
                 user=course.company,
                 message=f"New enrollment request from {request.user.username} for {course.title}",
-                link="/dashboard/"
+                link=reverse('view_applications')
             )
 
-            return HttpResponse("Request sent. Wait for approval")
+            return render(request, 'message.html', {
+                'title': 'Request Sent',
+                'heading': 'Application Pending',
+                'message': 'Your enrollment request has been sent successfully. Please wait for the company to approve your application.',
+                'back_url': reverse('student_dashboard')
+            })
 
         return render(request, 'upload_resume.html', {'course': course})
 
     # ✅ Already approved → direct enrollment request
     if Enrollment.objects.filter(student=request.user, course=course).exists():
-        return HttpResponse("Already requested")
+        return render(request, 'message.html', {
+            'title': 'Already Requested',
+            'heading': 'Already Applied',
+            'message': 'You have already requested to enroll in this course.',
+            'back_url': reverse('student_dashboard')
+        })
 
     Enrollment.objects.create(
         student=request.user,
@@ -363,10 +384,15 @@ def enroll_course(request, id):
     Notification.objects.create(
         user=course.company,
         message=f"New enrollment request from {request.user.username} for {course.title}",
-        link="/dashboard/"
+        link=reverse('view_applications')
     )
 
-    return HttpResponse("Enrollment request sent")
+    return render(request, 'message.html', {
+        'title': 'Request Sent',
+        'heading': 'Enrollment Request Sent',
+        'message': 'Your enrollment request has been sent successfully. Please wait for the company to approve your application.',
+        'back_url': reverse('student_dashboard')
+    })
 
 
 @login_required
@@ -374,7 +400,12 @@ def trainer_apply_list(request):
 
     # Only trainer allowed
     if request.user.profile.role != 'trainer':
-        return HttpResponse("Only trainers allowed")
+        return render(request, 'message.html', {
+            'title': 'Access Denied',
+            'heading': 'Access Denied',
+            'message': 'Only trainers are allowed to access this page.',
+            'back_url': '/'
+        })
 
     # Get all companies
     companies = User.objects.filter(profile__role='company')
@@ -394,14 +425,24 @@ def trainer_apply_list(request):
 def apply_company(request, company_id):
 
     if request.user.profile.role != 'trainer':
-        return HttpResponse("Only trainers allowed")
+        return render(request, 'message.html', {
+            'title': 'Access Denied',
+            'heading': 'Access Denied',
+            'message': 'Only trainers are allowed to apply to companies.',
+            'back_url': '/'
+        })
 
     company = User.objects.get(id=company_id)
 
     if TrainerApplication.objects.filter(
         trainer=request.user, company=company
     ).exists():
-        return HttpResponse("Already applied")
+        return render(request, 'message.html', {
+            'title': 'Already Applied',
+            'heading': 'Already Applied',
+            'message': 'You have already applied to this company.',
+            'back_url': reverse('trainer_apply_list')
+        })
 
     if request.method == 'POST':
         resume = request.FILES.get('resume')
@@ -421,14 +462,24 @@ def apply_company(request, company_id):
 
         return redirect('trainer_apply_list')
 
-    return HttpResponse("Invalid request")
+    return render(request, 'message.html', {
+        'title': 'Invalid Request',
+        'heading': 'Invalid Request',
+        'message': 'The request method or parameters are invalid.',
+        'back_url': reverse('trainer_apply_list')
+    })
 
 
 @login_required
 def view_trainer_requests(request):
 
     if request.user.profile.role != 'company':
-        return HttpResponse("Only companies allowed")
+        return render(request, 'message.html', {
+            'title': 'Access Denied',
+            'heading': 'Access Denied',
+            'message': 'Only companies are allowed to view trainer requests.',
+            'back_url': '/'
+        })
 
     apps = TrainerApplication.objects.filter(company=request.user)
 
@@ -440,7 +491,12 @@ def approve_trainer(request, id):
     app = TrainerApplication.objects.get(id=id)
 
     if app.company != request.user:
-        return HttpResponse("Unauthorized")
+        return render(request, 'message.html', {
+            'title': 'Unauthorized',
+            'heading': 'Unauthorized',
+            'message': 'You are not authorized to approve this trainer application.',
+            'back_url': '/'
+        })
 
     app.status = 'approved'
     app.save()
@@ -448,7 +504,7 @@ def approve_trainer(request, id):
     Notification.objects.create(
         user=app.trainer,
         message=f"Your trainer application to {request.user.username} was approved",
-        link="/dashboard/"
+        link=reverse('trainer_dashboard')
     )
 
     return redirect('view_trainer_requests')
@@ -460,10 +516,19 @@ def approve_enrollment(request, id):
     enroll = Enrollment.objects.get(id=id)
 
     if enroll.course.company != request.user:
-        return HttpResponse("Not allowed")
+        return render(request, 'message.html', {
+            'title': 'Access Denied',
+            'heading': 'Access Denied',
+            'message': 'You are not allowed to approve this enrollment request.',
+            'back_url': '/'
+        })
 
     # ✅ Set status
     enroll.status = 'approved'
+    
+    # ✅ Auto-pay if free
+    if not enroll.course.fee or enroll.course.fee <= 0:
+        enroll.is_paid = True
 
     # ✅ Assign roll number (per course)
     count = Enrollment.objects.filter(
@@ -477,8 +542,8 @@ def approve_enrollment(request, id):
 
     Notification.objects.create(
         user=enroll.student,
-        message=f"Your enrollment for {enroll.course.title} was approved",
-        link="/dashboard/"
+        message=f"Your request to enroll in {enroll.course.title} was approved.",
+        link=reverse('student_courses')
     )
 
     return redirect('company_dashboard')
@@ -490,15 +555,20 @@ def reject_enrollment(request, id):
     enroll = Enrollment.objects.get(id=id)
 
     if enroll.course.company != request.user:
-        return HttpResponse("Not allowed")
+        return render(request, 'message.html', {
+            'title': 'Access Denied',
+            'heading': 'Access Denied',
+            'message': 'You are not allowed to reject this enrollment request.',
+            'back_url': '/'
+        })
 
     enroll.status = 'rejected'
     enroll.save()
 
     Notification.objects.create(
         user=enroll.student,
-        message=f"Your enrollment for {enroll.course.title} was rejected",
-        link="/dashboard/"
+        message=f"Your request to enroll in {enroll.course.title} was rejected.",
+        link=reverse('student_courses')
     )
 
     return redirect('company_dashboard')
@@ -509,7 +579,12 @@ def reject_trainer(request, id):
     app = TrainerApplication.objects.get(id=id)
 
     if app.company != request.user:
-        return HttpResponse("Unauthorized")
+        return render(request, 'message.html', {
+            'title': 'Unauthorized',
+            'heading': 'Unauthorized',
+            'message': 'You are not authorized to reject this trainer application.',
+            'back_url': '/'
+        })
 
     app.status = 'rejected'
     app.save()
@@ -517,7 +592,7 @@ def reject_trainer(request, id):
     Notification.objects.create(
         user=app.trainer,
         message=f"Your trainer application to {request.user.username} was rejected",
-        link="/dashboard/"
+        link=reverse('trainer_apply_list')
     )
 
     return redirect('view_trainer_requests')
@@ -574,8 +649,8 @@ def assign_trainer(request, course_id):
 
         Notification.objects.create(
             user=trainer,
-            message=f"You have been assigned to course {course.title} by {request.user.username}",
-            link="/dashboard/"
+            message=f"You have been assigned to course: {course.title}",
+            link=reverse('trainer_dashboard')
         )
 
         return redirect('company_dashboard')
@@ -585,6 +660,166 @@ def assign_trainer(request, course_id):
         'course': course,
         'approved_apps': available_apps
     })
+
+
+@login_required
+def create_assignment(request, course_id):
+    from .models import Assignment
+    course = get_object_or_404(Course, id=course_id)
+    
+    if request.user != course.company and request.user != course.trainer:
+        return HttpResponse("Not allowed")
+
+    if request.method == "POST":
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        deadline = request.POST.get('deadline') or None
+        file = request.FILES.get('file')
+
+        Assignment.objects.create(
+            course=course,
+            title=title,
+            description=description,
+            deadline=deadline,
+            file=file
+        )
+        
+        # Notify students
+        from users.models import Notification
+        from django.urls import reverse
+        link = reverse('view_assignments', args=[course.id])
+        enrollments = Enrollment.objects.filter(course=course, status='approved')
+        for e in enrollments:
+            Notification.objects.create(
+                user=e.student,
+                message=f"New Assignment in {course.title}: {title}",
+                link=link
+            )
+            
+        messages.success(request, "Assignment created successfully.")
+        return redirect('view_assignments', course_id=course.id)
+
+    return render(request, 'create_assignment.html', {'course': course})
+
+@login_required
+def view_assignments(request, course_id):
+    from .models import Assignment, AssignmentSubmission
+    course = get_object_or_404(Course, id=course_id)
+    
+    # Check access
+    role = request.user.profile.role
+    if role == 'student':
+        enrollment = Enrollment.objects.filter(student=request.user, course=course, status='approved').first()
+        if not enrollment or (not enrollment.is_paid and course.fee and course.fee > 0):
+            return HttpResponse("You must be enrolled and have paid to view assignments.", status=403)
+    elif role == 'company' and course.company != request.user:
+        return HttpResponse("Not allowed")
+    elif role == 'trainer' and course.trainer != request.user:
+        return HttpResponse("Not allowed")
+
+    assignments = Assignment.objects.filter(course=course).order_by('-created_at')
+    
+    # For students, attach their submissions
+    if role == 'student':
+        submissions = AssignmentSubmission.objects.filter(student=request.user, assignment__course=course)
+        sub_map = {s.assignment_id: s for s in submissions}
+        for a in assignments:
+            a.my_submission = sub_map.get(a.id)
+
+    return render(request, 'view_assignments.html', {
+        'course': course,
+        'assignments': assignments,
+        'role': role
+    })
+
+@login_required
+def submit_assignment(request, assignment_id):
+    from .models import Assignment, AssignmentSubmission
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    course = assignment.course
+    
+    if request.user.profile.role != 'student':
+        return HttpResponse("Only students can submit")
+
+    enrollment = Enrollment.objects.filter(student=request.user, course=course, status='approved').first()
+    if not enrollment or (not enrollment.is_paid and course.fee and course.fee > 0):
+        return HttpResponse("Not allowed")
+
+    if request.method == "POST":
+        file = request.FILES.get('file')
+        github_link = request.POST.get('github_link')
+        
+        if not file and not github_link:
+            messages.error(request, "Please provide a file or a link.")
+            return redirect('submit_assignment', assignment_id=assignment.id)
+
+        AssignmentSubmission.objects.update_or_create(
+            assignment=assignment,
+            student=request.user,
+            defaults={
+                'submitted_file': file if file else None,
+                'github_link': github_link
+            }
+        )
+        
+        # Notify trainer/company
+        from users.models import Notification
+        from django.urls import reverse
+        link = reverse('grade_assignment', args=[assignment.id])
+        notify_users = []
+        if course.trainer:
+            notify_users.append(course.trainer)
+        if course.company:
+            notify_users.append(course.company)
+            
+        for u in set(notify_users):
+            Notification.objects.create(
+                user=u,
+                message=f"{request.user.profile.full_name or request.user.username} submitted '{assignment.title}'",
+                link=link
+            )
+
+        messages.success(request, "Assignment submitted successfully!")
+        return redirect('view_assignments', course_id=course.id)
+
+    submission = AssignmentSubmission.objects.filter(assignment=assignment, student=request.user).first()
+    return render(request, 'submit_assignment.html', {'assignment': assignment, 'submission': submission})
+
+@login_required
+def grade_assignment(request, assignment_id):
+    from .models import Assignment, AssignmentSubmission
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    course = assignment.course
+
+    if request.user != course.company and request.user != course.trainer:
+        return HttpResponse("Not allowed")
+
+    submissions = AssignmentSubmission.objects.filter(assignment=assignment).select_related('student')
+
+    if request.method == "POST":
+        sub_id = request.POST.get('submission_id')
+        grade = request.POST.get('grade')
+        feedback = request.POST.get('feedback')
+        
+        sub = AssignmentSubmission.objects.get(id=sub_id)
+        sub.grade = grade
+        sub.feedback = feedback
+        sub.save()
+        
+        # Notify student
+        from users.models import Notification
+        from django.urls import reverse
+        link = reverse('submit_assignment', args=[assignment.id])
+        Notification.objects.create(
+            user=sub.student,
+            message=f"Your submission for '{assignment.title}' has been graded.",
+            link=link
+        )
+        
+        messages.success(request, f"Graded {sub.student.username}'s submission.")
+        return redirect('grade_assignment', assignment_id=assignment.id)
+
+    return render(request, 'grade_assignment.html', {'assignment': assignment, 'submissions': submissions})
 
 
 @login_required
@@ -666,10 +901,9 @@ def take_quiz(request, batch_id):
     course = batch.course
 
     # enrollment check
-    if not Enrollment.objects.filter(
-        student=request.user, course=course
-    ).exists():
-        return HttpResponse("Enroll first")
+    enrollment = Enrollment.objects.filter(student=request.user, course=course, status='approved').first()
+    if not enrollment or (not enrollment.is_paid and course.fee and course.fee > 0):
+        return HttpResponse("You must be enrolled and have paid to take this quiz.", status=403)
 
     # Deadline check
     import django.utils.timezone as timezone
@@ -879,7 +1113,8 @@ def course_chat(request, course_id):
     elif role == 'trainer' and course.trainer == user:
         has_access = True
     elif role == 'student':
-        if Enrollment.objects.filter(student=user, course=course, status='approved').exists():
+        enrollment = Enrollment.objects.filter(student=user, course=course, status='approved').first()
+        if enrollment and (enrollment.is_paid or not course.fee or course.fee <= 0):
             has_access = True
 
     if not has_access:
@@ -956,7 +1191,7 @@ def handle_reattempt(request, request_id, action):
     Notification.objects.create(
         user=req.student,
         message=f"Your re-attempt request for {req.batch.course.title} was {status_msg}",
-        link="/dashboard/"
+        link=reverse('course_quizzes', args=[req.batch.course.id])
     )
 
     return redirect('view_reattempts')

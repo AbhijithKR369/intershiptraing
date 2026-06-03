@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Assignment | {{ assignment.title }}</title>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #1f2937; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .main-wrapper { width: 100%; padding: 40px 20px; display: flex; justify-content: center; }
+        .material-card-v2 {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+        .card-header { text-align: center; margin-bottom: 30px; }
+        .eyebrow { color: #6b7280; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+        .card-header h1 { font-family: 'Syne', sans-serif; font-size: 2.2rem; color: #111827; margin: 0; font-weight: 700; }
+        .card-header p { color: #4b5563; margin-top: 10px; font-size: 0.95rem; }
+        .card-header strong { color: #111827; }
+        .input-group { margin-bottom: 20px; }
+        .field-label { display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 8px; }
+        input[type="url"], input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: #111827;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        input[type="url"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+            color: #374151;
+            cursor: pointer;
+        }
+        .submit-action-btn {
+            width: 100%;
+            background: #3b82f6;
+            color: #ffffff;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .submit-action-btn:hover { background: #2563eb; }
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 100; }
+        .toast-alert { background: #d1fae5; border: 1px solid #10b981; color: #047857; padding: 12px 20px; border-radius: 8px; font-weight: 500; margin-bottom: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .footer-nav { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+        .back-link { color: #6b7280; text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .back-link:hover { color: #374151; }
+        .separator-v2 { display: flex; align-items: center; margin: 20px 0; }
+        .separator-v2 .line { flex: 1; height: 1px; background: #e5e7eb; }
+        .separator-v2 .text { padding: 0 10px; color: #9ca3af; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        .feedback-box { background: #f0fdf4; border: 1px solid #86efac; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .feedback-box h3 { color: #166534; margin: 0 0 10px 0; font-size: 1.1rem; }
+        .feedback-box p { color: #374151; margin: 0 0 10px 0; font-size: 0.95rem; }
+        .grade-box { margin-top: 15px; padding-top: 15px; border-top: 1px solid #bbf7d0; }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    {% if messages %}
+        <div class="toast-container">
+            {% for message in messages %}
+                <div class="toast-alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="material-card-v2">
+        <header class="card-header">
+            <div class="eyebrow">Submit Assignment</div>
+            <h1>{{ assignment.title }}</h1>
+            <p>Due: <strong>{{ assignment.deadline|default:"No deadline" }}</strong></p>
+        </header>
+
+        {% if submission %}
+            <div class="feedback-box">
+                <h3>Already Submitted</h3>
+                <p>Submitted on: {{ submission.submitted_at|date:"M d, Y h:i A" }}</p>
+                {% if submission.submitted_file %}
+                    <a href="{{ submission.submitted_file.url }}" target="_blank" style="color: #2563eb; font-weight: 500; text-decoration: none;">View File</a>
+                {% endif %}
+                {% if submission.github_link %}
+                    <br><a href="{{ submission.github_link }}" target="_blank" style="color: #2563eb; font-weight: 500; text-decoration: none; display: inline-block; margin-top: 5px;">View Link</a>
+                {% endif %}
+                
+                {% if submission.grade %}
+                    <div class="grade-box">
+                        <strong style="color: #059669; font-size: 1.1rem; display: block; margin-bottom: 5px;">Grade: {{ submission.grade }}</strong>
+                        {% if submission.feedback %}
+                            <p style="color: #4b5563; font-style: italic;">"{{ submission.feedback }}"</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 15px; text-align: center;">Resubmit to update your work:</p>
+                
+                <div class="input-group">
+                    <label class="field-label">File (PDF/Zip/Image)</label>
+                    <input type="file" name="file">
+                </div>
+                <div class="input-group">
+                    <label class="field-label">Or GitHub / Cloud Link</label>
+                    <input type="url" name="github_link" placeholder="https://github.com/..." value="{{ submission.github_link|default:'' }}">
+                </div>
+                
+                <button type="submit" class="submit-action-btn">
+                    Update Submission
+                </button>
+            </form>
+        {% else %}
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label class="field-label">Upload File (PDF, Zip, Images)</label>
+                    <input type="file" name="file">
+                </div>
+
+                <div class="separator-v2">
+                    <span class="line"></span>
+                    <span class="text">or</span>
+                    <span class="line"></span>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label">External Link (GitHub, Drive, etc.)</label>
+                    <input type="url" name="github_link" placeholder="https://github.com/...">
+                </div>
+
+                <button type="submit" class="submit-action-btn">
+                    Submit Work
+                </button>
+            </form>
+        {% endif %}
+
+        <div class="footer-nav">
+            <a href="{% url 'view_assignments' assignment.course.id %}" class="back-link">← Back to Assignments</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

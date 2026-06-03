@@ -103,10 +103,11 @@
                                 {{ course.company.profile.company_name }}
                             </div>
                         </div>
-                        <div class="course-actions-v2">
+                        <div class="course-actions-v2" style="flex-wrap: wrap;">
                             <a href="{% url 'add_material' course.id %}" class="btn-primary">Upload Content</a>
                             <a href="{% url 'create_quiz_batch' course.id %}" class="btn-secondary">Manage Quiz</a>
-                            <a href="{% url 'course_chat' course.id %}" class="btn-secondary" style="color: var(--accent); border-color: var(--accent);">Group Chat</a>
+                            <a href="{% url 'view_assignments' course.id %}" class="btn-secondary">Assignments</a>
+                            <a href="{% url 'course_chat' course.id %}" class="btn-secondary">Group Chat</a>
                         </div>
                     </div>
                     {% empty %}
